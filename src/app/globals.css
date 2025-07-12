@@ -116,15 +116,11 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-[family-name:var(--font-inter)];
+    @apply bg-background text-foreground font-[family-name:var(--font-inter)] text-[13px];
   }
 
   h1 {
     font-size: 20px;
     font-weight: bold;
-  }
-
-  p {
-    font-size: 14px;
   }
 }
