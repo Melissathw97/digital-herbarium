@@ -6,7 +6,7 @@ export default function UsersLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div>
+    <div className="min-h-screen relative py-20 flex justify-center items-center">
       <Image
         alt="herbarium"
         src="/herbarium-background.png"
@@ -18,10 +18,8 @@ export default function UsersLayout({
           zIndex: "-10",
         }}
       />
-      <div className="h-screen flex justify-center items-center">
-        <div className="bg-white m-auto p-10 min-w-md max-w-lg text-center">
-          {children}
-        </div>
+      <div className="bg-white m-auto p-10 min-w-md max-w-lg text-center">
+        {children}
       </div>
     </div>
   );
