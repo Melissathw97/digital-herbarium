@@ -1,1 +1,1 @@
-# digital-herbarium
+# digital-herbarium 🪴
