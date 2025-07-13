@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import { Home, Sprout, UserCircle, UsersRound } from "lucide-react";
 
 export default function PublicLayout({
@@ -17,7 +18,21 @@ export default function PublicLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const router = useRouter();
   const pathname = usePathname();
+
+  const onLogOutClick = async () => {
+    const supabase = createClient();
+    supabase.auth
+      .signOut()
+      .then(({ error }) => {
+        if (error) throw error;
+        router.push("/users/sign-in");
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
 
   return (
     <>
@@ -65,7 +80,7 @@ export default function PublicLayout({
                 <DropdownMenuItem>
                   <Link href="/profile">My Profile</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={onLogOutClick}>
                   <span className="text-red-800">Log Out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
