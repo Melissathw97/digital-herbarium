@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Plant } from "@/types/plant";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export default function DashboardPage() {
+export default function PlantsListPage() {
   const [plants, setPlants] = useState<Plant[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 

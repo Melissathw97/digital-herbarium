@@ -40,7 +40,7 @@ export default function UsersSignIn() {
 
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
-            <label className="font-medium">Email</label>
+            <label>Email</label>
             <Input
               type="email"
               name="email"
@@ -49,7 +49,7 @@ export default function UsersSignIn() {
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label className="font-medium">Password</label>
+            <label>Password</label>
             <Input
               type="password"
               name="password"

@@ -48,7 +48,7 @@ export default function UsersSignUp() {
         <div className="flex flex-col gap-5">
           <div className="flex gap-4">
             <div className="w-full flex flex-col gap-2">
-              <label className="font-medium">First Name</label>
+              <label>First Name</label>
               <Input
                 name="firstName"
                 onChange={onInputChange}
@@ -56,7 +56,7 @@ export default function UsersSignUp() {
               />
             </div>
             <div className="w-full flex flex-col gap-2">
-              <label className="font-medium">Last Name</label>
+              <label>Last Name</label>
               <Input
                 name="lastName"
                 onChange={onInputChange}
@@ -65,7 +65,7 @@ export default function UsersSignUp() {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <label className="font-medium">Email</label>
+            <label>Email</label>
             <Input
               type="email"
               name="email"
@@ -74,7 +74,7 @@ export default function UsersSignUp() {
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label className="font-medium">Password</label>
+            <label>Password</label>
             <Input
               type="password"
               name="password"
@@ -83,7 +83,7 @@ export default function UsersSignUp() {
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label className="font-medium">Confirm Password</label>
+            <label>Confirm Password</label>
             <Input
               type="password"
               name="confirmPassword"
