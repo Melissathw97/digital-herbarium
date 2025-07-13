@@ -58,6 +58,10 @@ export default function OcrForm() {
           </div>
         </div>
         <div className="flex flex-col gap-1 w-full">
+          <label>Genus</label>
+          <Input name="genus" />
+        </div>
+        <div className="flex flex-col gap-1 w-full">
           <label>Species</label>
           <Input name="species" />
         </div>
@@ -100,20 +104,7 @@ export default function OcrForm() {
         </div>
         <div className="flex flex-col gap-1 w-full">
           <label>District</label>
-          <Select>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a district" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {States.states.map(({ label, value }) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <Input name="district" />
         </div>
         <Button
           type="submit"
