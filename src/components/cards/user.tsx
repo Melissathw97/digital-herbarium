@@ -1,25 +1,35 @@
-import { Calendar, Crown, Mail, User } from "lucide-react";
+import { Calendar, Crown, Mail, PenBox, Trash, User } from "lucide-react";
+import { Button } from "../ui/button";
 
 export default function UserCard({
   name,
   role,
   email,
   dateJoined,
+  onEdit,
+  onDelete,
 }: {
   name: string;
   role: string;
   email: string;
   dateJoined: string;
+  onEdit: () => void;
+  onDelete: () => void;
 }) {
   return (
-    <div className="bg-white shadow-sm rounded-sm px-6 py-4 border flex flex-col gap-1 justify-center">
-      <div className="flex gap-4">
-        <div className="bg-gray-200 h-10 w-10 rounded-full grid place-items-center font-semibold text-gray-500 uppercase">
+    <div className="bg-white shadow-sm rounded-sm px-5 py-4 border flex flex-col gap-1 justify-center">
+      <div className="flex gap-2">
+        <div className="bg-gray-200 h-10 w-10 rounded-full grid place-items-center font-semibold text-gray-500 uppercase shrink-0">
           {name.substring(0, 1)}
         </div>
 
-        <div className="flex flex-col gap-1">
-          <p className="font-medium">{name}</p>
+        <div className="flex flex-col gap-1 overflow-hidden items-start">
+          <p
+            title={name}
+            className="font-medium whitespace-nowrap overflow-hidden w-full text-ellipsis"
+          >
+            {name}
+          </p>
           {role === "admin" ? (
             <div className="bg-violet-100 text-violet-800 px-1.5 py-0.5 text-[10px] rounded-sm font-semibold flex items-center gap-1">
               <Crown className="h-3 w-3" />
@@ -31,6 +41,19 @@ export default function UserCard({
               Member
             </div>
           )}
+        </div>
+
+        <div className="flex gap-1 ml-auto shrink-0">
+          <Button variant="outline" className="!h-7 w-7" onClick={onEdit}>
+            <PenBox className="!h-3 !w-3" />
+          </Button>
+          <Button
+            variant="outline"
+            className="!h-7 w-7 text-red-700"
+            onClick={onDelete}
+          >
+            <Trash className="!h-3 !w-3" />
+          </Button>
         </div>
       </div>
 
