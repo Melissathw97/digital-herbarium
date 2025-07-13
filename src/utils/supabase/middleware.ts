@@ -1,17 +1,18 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const allowedOrigins = [
-  'http://localhost:3000',      
-  'http://localhost:3001', 
-  // Add your production domains here when ready     
-]
+const isDevelopment = process.env.NODE_ENV === 'development'
+const isProduction = process.env.NODE_ENV === 'production'
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
+  : []
 
 const corsOptions = {
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
   'Access-Control-Allow-Credentials': 'true',
-  'Access-Control-Max-Age': '86400', // 24 hours
+  'Access-Control-Max-Age': isProduction ? '86400' : '300', 
 }
 
 export async function updateSession(request: NextRequest) {
@@ -56,8 +57,6 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // IMPORTANT: This validates and refreshes the auth token automatically
-  // Session refresh happens here for all requests to keep tokens fresh
   const { data: { user } } = await supabase.auth.getUser()
 
   const protectedRoutes = [
