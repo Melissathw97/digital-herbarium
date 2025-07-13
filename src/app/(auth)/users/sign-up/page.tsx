@@ -5,8 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 export default function UsersSignUp() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [formValues, setFormValues] = useState({
     firstName: "",
     lastName: "",
@@ -24,24 +28,48 @@ export default function UsersSignUp() {
     });
   };
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    setIsLoading(true);
     e.preventDefault();
 
-    const { password, confirmPassword } = formValues;
+    const supabase = createClient();
+
+    const { firstName, lastName, email, password, confirmPassword } =
+      formValues;
 
     if (password !== confirmPassword) {
       alert("Passwords do not match");
+      setIsLoading(false);
       return;
     }
 
-    console.log("SUBMIT", formValues);
+    supabase.auth
+      .signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+          },
+        },
+      })
+      .then(({ error }) => {
+        setIsLoading(false);
+
+        if (error) throw error.message;
+        router.push("/dashboard");
+      })
+      .catch((error) => {
+        alert(error);
+      });
   };
 
   return (
     <div className="flex flex-col gap-8 items-center">
       <Image src="/asm-logo.png" alt="ASM Logo" width={100} height={40} />
       <form onSubmit={onSubmit} className="flex flex-col gap-12 w-full">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 text-center">
           <h1>Create New Account</h1>
         </div>
 
@@ -49,38 +77,20 @@ export default function UsersSignUp() {
           <div className="flex gap-4">
             <div className="w-full flex flex-col gap-2">
               <label>First Name</label>
-              <Input
-                name="firstName"
-                onChange={onInputChange}
-                className="text-center"
-              />
+              <Input name="firstName" onChange={onInputChange} />
             </div>
             <div className="w-full flex flex-col gap-2">
               <label>Last Name</label>
-              <Input
-                name="lastName"
-                onChange={onInputChange}
-                className="text-center"
-              />
+              <Input name="lastName" onChange={onInputChange} />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <label>Email</label>
-            <Input
-              type="email"
-              name="email"
-              onChange={onInputChange}
-              className="text-center"
-            />
+            <Input type="email" name="email" onChange={onInputChange} />
           </div>
           <div className="flex flex-col gap-2">
             <label>Password</label>
-            <Input
-              type="password"
-              name="password"
-              onChange={onInputChange}
-              className="text-center"
-            />
+            <Input type="password" name="password" onChange={onInputChange} />
           </div>
           <div className="flex flex-col gap-2">
             <label>Confirm Password</label>
@@ -88,15 +98,16 @@ export default function UsersSignUp() {
               type="password"
               name="confirmPassword"
               onChange={onInputChange}
-              className="text-center"
             />
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 font-medium">
+        <div className="flex flex-col gap-4 font-medium text-center">
           <Button
             type="submit"
-            disabled={Object.values(formValues).some((value) => !value)}
+            disabled={
+              Object.values(formValues).some((value) => !value) || isLoading
+            }
           >
             Sign Up
           </Button>

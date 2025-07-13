@@ -18,7 +18,7 @@ export default function UsersLayout({
           zIndex: "-10",
         }}
       />
-      <div className="bg-white m-auto p-10 w-full min-w-md max-w-lg text-center">
+      <div className="bg-white m-auto p-10 w-full min-w-md max-w-lg">
         {children}
       </div>
     </div>

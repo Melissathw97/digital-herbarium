@@ -1,10 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Home, LogOut, Sprout, User, UsersRound } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Home, Sprout, UserCircle, UsersRound } from "lucide-react";
 
 export default function PublicLayout({
   children,
@@ -51,18 +57,19 @@ export default function PublicLayout({
           </div>
 
           <div className="flex gap-2">
-            <Link href="/profile">
-              <Button variant="ghost" size="sm">
-                <User />
-                Profile
-              </Button>
-            </Link>
-            <Link href="/plants">
-              <Button variant="ghost" size="sm">
-                <LogOut />
-                Log Out
-              </Button>
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <UserCircle />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <Link href="/profile">My Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <span className="text-red-800">Log Out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </nav>
