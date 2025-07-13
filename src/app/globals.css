@@ -113,7 +113,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50 transition;
   }
   body {
     @apply bg-background text-foreground font-[family-name:var(--font-inter)] text-[13px];
@@ -122,5 +122,9 @@
   h1 {
     font-size: 20px;
     font-weight: bold;
+  }
+
+  a {
+    @apply text-lime-800 underline hover:no-underline;
   }
 }
