@@ -40,6 +40,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --text-sm: 13px;
 }
 
 :root {
@@ -124,7 +125,16 @@
     font-weight: bold;
   }
 
+  h2 {
+    font-size: 17px;
+    font-weight: bold;
+  }
+
   a {
     @apply text-lime-800 underline hover:no-underline;
+  }
+
+  button {
+    @apply cursor-pointer;
   }
 }
