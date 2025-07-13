@@ -18,7 +18,7 @@ export default function PublicLayout({
           <Image src="/asm-logo.png" alt="ASM Logo" width={70} height={30} />
         </div>
       </nav>
-      <main className="py-24 h-full bg-[#F9FAFB]">
+      <main className="py-24 px-10 flex-1 bg-[#F9FAFB]">
         <div className="max-w-6xl mx-auto">{children}</div>
       </main>
     </>
