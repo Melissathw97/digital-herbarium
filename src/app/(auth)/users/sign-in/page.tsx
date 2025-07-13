@@ -50,9 +50,9 @@ export default function UsersSignIn() {
   };
 
   return (
-    <div className="flex flex-col gap-8 items-center">
+    <div className="flex flex-col gap-6 items-center">
       <Image src="/asm-logo.png" alt="ASM Logo" width={100} height={40} />
-      <form onSubmit={onSubmit} className="flex flex-col gap-12 w-full">
+      <form onSubmit={onSubmit} className="flex flex-col gap-8 w-full">
         <div className="flex flex-col gap-1 text-center">
           <h1>Welcome</h1>
           <p className="text-gray-500">
@@ -82,7 +82,9 @@ export default function UsersSignIn() {
           </Button>
           <p>
             Don't have an account yet?&nbsp;
-            <Link href="/users/sign-up">Sign up here</Link>
+            <Link href="/users/sign-up" className="text-lime-800">
+              Sign up here
+            </Link>
           </p>
         </div>
       </form>

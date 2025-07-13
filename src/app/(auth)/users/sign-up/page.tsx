@@ -66,9 +66,9 @@ export default function UsersSignUp() {
   };
 
   return (
-    <div className="flex flex-col gap-8 items-center">
+    <div className="flex flex-col gap-6 items-center">
       <Image src="/asm-logo.png" alt="ASM Logo" width={100} height={40} />
-      <form onSubmit={onSubmit} className="flex flex-col gap-12 w-full">
+      <form onSubmit={onSubmit} className="flex flex-col gap-8 w-full">
         <div className="flex flex-col gap-1 text-center">
           <h1>Create New Account</h1>
         </div>
@@ -113,7 +113,9 @@ export default function UsersSignUp() {
           </Button>
           <p>
             Already have an account?&nbsp;
-            <Link href="/users/sign-in">Sign in here</Link>
+            <Link href="/users/sign-in" className="text-lime-800">
+              Sign in here
+            </Link>
           </p>
         </div>
       </form>

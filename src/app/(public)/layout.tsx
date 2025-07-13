@@ -76,12 +76,15 @@ export default function PublicLayout({
               <DropdownMenuTrigger>
                 <UserCircle />
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem className="cursor-pointer">
                   <Link href="/profile">My Profile</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={onLogOutClick}>
-                  <span className="text-red-800">Log Out</span>
+                <DropdownMenuItem
+                  onClick={onLogOutClick}
+                  className="text-red-800 cursor-pointer"
+                >
+                  Log Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
