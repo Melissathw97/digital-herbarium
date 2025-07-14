@@ -37,7 +37,7 @@ export default function PublicLayout({
   return (
     <>
       {/* Header */}
-      <nav className="fixed bg-white p-5 py-4 border-b w-screen">
+      <nav className="fixed z-10 bg-white p-5 py-4 border-b w-screen">
         <div className="max-w-6xl mx-auto flex gap-8 items-center justify-between">
           <Image src="/asm-logo.png" alt="ASM Logo" width={70} height={30} />
 
