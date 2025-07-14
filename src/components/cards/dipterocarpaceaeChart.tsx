@@ -95,7 +95,7 @@ export default function DipterocarpaceaeChart() {
   );
 
   return (
-    <div className="bg-white shadow-sm rounded-sm px-6 py-7 border flex flex-col gap-6 w-[330px]">
+    <div className="bg-white shadow-sm rounded-sm px-6 py-7 border flex flex-col gap-6 min-w-[320px]">
       <div className="flex justify-between items-center">
         <p className="font-semibold">Dipterocarpaceae</p>
 

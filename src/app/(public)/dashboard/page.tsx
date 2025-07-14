@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import UserVerifiedModal from "@/components/modals/userVerified";
 import BurseraceaeChart from "@/components/cards/burseraceaeChart";
 import DipterocarpaceaeChart from "@/components/cards/dipterocarpaceaeChart";
+import DataCollectionChart from "@/components/cards/DataCollectionChart";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -72,6 +73,7 @@ export default function DashboardPage() {
       <div className="flex gap-4">
         <BurseraceaeChart />
         <DipterocarpaceaeChart />
+        <DataCollectionChart />
       </div>
 
       <UserVerifiedModal open={isModalOpen} toggle={toggleModal} />
