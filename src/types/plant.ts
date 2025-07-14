@@ -1,6 +1,7 @@
 export interface Plant {
   id: string;
   family: string;
+  genus: string;
   species: string;
   barCode: string;
   prefix: string;
@@ -10,7 +11,8 @@ export interface Plant {
   state: string;
   district: string;
   location: string;
-  fileName: string;
-  imgExists: boolean;
-  flippedImgExists: boolean;
+  fileName?: string;
+  imgExists?: boolean;
+  flippedImgExists?: boolean;
+  vernacularName: string;
 }
