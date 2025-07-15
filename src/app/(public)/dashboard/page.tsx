@@ -1,30 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import UserVerifiedModal from "@/components/modals/userVerified";
 import BurseraceaeChart from "@/components/cards/burseraceaeChart";
 import DipterocarpaceaeChart from "@/components/cards/dipterocarpaceaeChart";
 import DataCollectionChart from "@/components/cards/DataCollectionChart";
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const confirmedParam = searchParams.get("confirmed");
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-    router.push("/dashboard");
-  };
-
-  useEffect(() => {
-    if (confirmedParam === "true") {
-      setIsModalOpen(true);
-    }
-  }, [confirmedParam]);
-
   return (
     <>
       <h1>Welcome</h1>
@@ -75,8 +55,6 @@ export default function DashboardPage() {
         <DipterocarpaceaeChart />
         <DataCollectionChart />
       </div>
-
-      <UserVerifiedModal open={isModalOpen} toggle={toggleModal} />
     </>
   );
 }
