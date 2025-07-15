@@ -6,6 +6,7 @@ export default function UserCard({
   role,
   email,
   dateJoined,
+  currentUser,
   onEdit,
   onDelete,
 }: {
@@ -13,6 +14,7 @@ export default function UserCard({
   role: string;
   email: string;
   dateJoined: string;
+  currentUser: boolean;
   onEdit: () => void;
   onDelete: () => void;
 }) {
@@ -43,17 +45,29 @@ export default function UserCard({
           )}
         </div>
 
-        <div className="flex gap-1 ml-auto shrink-0">
-          <Button variant="outline" className="!h-7 w-7" onClick={onEdit}>
-            <PenBox className="!h-3 !w-3" />
-          </Button>
-          <Button
-            variant="outline"
-            className="!h-7 w-7 text-red-700"
-            onClick={onDelete}
-          >
-            <Trash className="!h-3 !w-3" />
-          </Button>
+        <div className="flex gap-1 ml-auto shrink-0 items-start">
+          {currentUser ? (
+            <div className="inline-block bg-lime-700/10 text-lime-700 text-[10px] rounded-sm px-1.5 py-0.5 mt-0.5 font-medium">
+              You
+            </div>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                className="!h-7 w-7 hover:text-lime-700"
+                onClick={onEdit}
+              >
+                <PenBox className="!h-3 !w-3" />
+              </Button>
+              <Button
+                variant="outline"
+                className="!h-7 w-7 text-red-700 hover:text-lime-700"
+                onClick={onDelete}
+              >
+                <Trash className="!h-3 !w-3" />
+              </Button>
+            </>
+          )}
         </div>
       </div>
 

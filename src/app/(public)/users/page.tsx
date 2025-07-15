@@ -52,6 +52,7 @@ export default function UsersPage() {
             role={user.role}
             email={user.email}
             dateJoined={user.joinedAt}
+            currentUser={user.id === "1"}
             onEdit={() => onEditClick(user)}
             onDelete={() => onDeleteClick(user)}
           />

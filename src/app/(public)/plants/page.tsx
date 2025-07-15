@@ -145,7 +145,7 @@ export default function PlantsListPage() {
                   <Input type="checkbox" />
                 </th>
                 {headers.map(({ label }) => (
-                  <th key={label} className="p-3 whitespace-nowrap">
+                  <th key={label} className="p-4 whitespace-nowrap">
                     {label}
                   </th>
                 ))}
