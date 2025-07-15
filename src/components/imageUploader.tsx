@@ -2,10 +2,23 @@ import { HardDriveUpload } from "lucide-react";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
-export default function ImageUploader({ disabled }: { disabled: boolean }) {
-  const onDrop = useCallback((acceptedFiles) => {
-    // Do something with the files
-  }, []);
+export default function ImageUploader({
+  accept,
+  disabled,
+  handleFiles,
+}: {
+  accept: string;
+  disabled?: boolean;
+  handleFiles: (files: File[]) => void;
+}) {
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      // Do something with the files
+      handleFiles(acceptedFiles);
+    },
+    [handleFiles]
+  );
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
@@ -13,7 +26,7 @@ export default function ImageUploader({ disabled }: { disabled: boolean }) {
       {...getRootProps()}
       className="w-full text-gray-400 bg-gray-100 hover:bg-gray-200 cursor-pointer p-4 py-8 rounded-sm flex flex-col gap-3 text-center items-center h-full justify-center"
     >
-      <input disabled={disabled} {...getInputProps()} />
+      <input disabled={disabled} {...getInputProps()} accept={accept} />
       <HardDriveUpload />
       {isDragActive ? (
         <p>Drop the files here ...</p>

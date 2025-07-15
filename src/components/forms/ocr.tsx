@@ -1,9 +1,10 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { Button } from "../ui/button";
+import Cropper from "../cropper";
 import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 import States from "@/constants/states.json";
 import { DatePicker } from "../ui/datepicker";
 import { CSSObjectWithLabel } from "react-select";
@@ -15,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import ImageUploader from "../imageUploader";
 
 const CreatableSelect = dynamic(() => import("react-select/creatable"), {
   ssr: false,
@@ -55,6 +55,10 @@ const genusOptions: { [key: string]: { label: string; value: string }[] } = {
 };
 
 export default function OcrForm() {
+  const [image, setImage] = useState("");
+  const previewCanvasRef = useRef<HTMLCanvasElement>();
+  const [selectedFile, setSelectedFile] = useState<File>();
+
   const [formValues, setFormValues] = useState({
     family: "",
     genus: "",
@@ -86,7 +90,12 @@ export default function OcrForm() {
   return (
     <div className="flex w-full gap-4 mb-6">
       <div className="flex-1">
-        <ImageUploader />
+        <Cropper
+          handleSetImgSrc={(image) => setImage(image)}
+          imgSrc={image}
+          previewCanvasRef={previewCanvasRef}
+          handleSetSelectedFile={(file) => setSelectedFile(file)}
+        />
       </div>
       <form
         onSubmit={onFormSubmit}
