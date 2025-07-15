@@ -52,6 +52,7 @@ export default function UsersSignUp() {
             first_name: firstName,
             last_name: lastName,
           },
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/users/sign-in?confirmed=true`
         },
       })
       .then(({ error }) => {
