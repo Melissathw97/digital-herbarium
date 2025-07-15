@@ -7,9 +7,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { BadgeCheck } from "lucide-react";
+import { Clock3 } from "lucide-react";
 
-export default function UserVerifiedModal({
+export default function UserPendingVerificationModal({
   open,
   toggle,
 }: {
@@ -18,14 +18,15 @@ export default function UserVerifiedModal({
 }) {
   return (
     <AlertDialog open={open}>
-      <AlertDialogContent className="gap-6">
+      <AlertDialogContent className="gap-8 pt-8">
         <AlertDialogHeader>
-          <BadgeCheck className="text-lime-700 w-10 h-10 mx-auto" />
+          <Clock3 className="text-lime-700 w-8 h-8 mx-auto mb-2" />
           <AlertDialogTitle className="text-center">
-            Account Verified
+            Account Pending Verification
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center">
-            Your account now has access to the digital herbarium. Enjoy!
+            Please check your inbox for a verification email to access the
+            digital herbarium.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="!justify-center">

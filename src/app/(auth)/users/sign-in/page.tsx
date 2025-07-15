@@ -3,11 +3,11 @@
 import { ChangeEvent, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import UserVerifiedModal from "@/components/modals/userVerified";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import { BadgeCheck } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
+import { useSearchParams, useRouter } from "next/navigation";
 
 export default function UsersSignIn() {
   const router = useRouter();
@@ -18,16 +18,11 @@ export default function UsersSignIn() {
   });
   const searchParams = useSearchParams();
   const confirmedParam = searchParams.get("confirmed");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-    router.push("/dashboard");
-  };
+  const [showVerified, setShowVerified] = useState(false);
 
   useEffect(() => {
     if (confirmedParam === "true") {
-      setIsModalOpen(true);
+      setShowVerified(true);
     }
   }, [confirmedParam]);
 
@@ -54,59 +49,64 @@ export default function UsersSignIn() {
         password,
       })
       .then(({ error }) => {
-        setIsLoading(false);
-
         if (error) throw error.message;
         router.push("/dashboard");
       })
       .catch((error) => {
+        setIsLoading(false);
         alert(error);
       });
   };
 
   return (
-    <>
-      <div className="flex flex-col gap-6 items-center">
-        <Image src="/asm-logo.png" alt="ASM Logo" width={100} height={40} />
-        <form onSubmit={onSubmit} className="flex flex-col gap-8 w-full">
-          <div className="flex flex-col gap-1 text-center">
-            <h1>Welcome</h1>
-            <p className="text-gray-500">
-              Enter your credentials to access the digital herbarium
-            </p>
-          </div>
+    <div className="flex flex-col gap-6 items-center">
+      <Image src="/asm-logo.png" alt="ASM Logo" width={100} height={40} />
+      <form onSubmit={onSubmit} className="flex flex-col gap-8 w-full">
+        <div className="flex flex-col gap-1 text-center">
+          <h1>Welcome</h1>
+          <p className="text-gray-500">
+            Enter your credentials to access the digital herbarium
+          </p>
+        </div>
 
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-col gap-2">
-              <label>Email</label>
-              <Input type="email" name="email" onChange={onInputChange} />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label>Password</label>
-              <Input type="password" name="password" onChange={onInputChange} />
+        {showVerified ? (
+          <div className="bg-lime-700/20 text-xs rounded-sm p-2.5 px-4 text-lime-800 flex gap-2">
+            <BadgeCheck className="w-5 h-5" />
+            <div className="flex flex-col gap-1 mt-0.5">
+              <p className="font-semibold">Account successfully verified.</p>
+              <p>Please sign in to access the digital herbarium. Enjoy!</p>
             </div>
           </div>
+        ) : null}
 
-          <div className="flex flex-col gap-4 font-medium text-center">
-            <Button
-              type="submit"
-              disabled={
-                Object.values(formValues).some((value) => !value) || isLoading
-              }
-            >
-              Sign In
-            </Button>
-            <p>
-              Don't have an account yet?&nbsp;
-              <Link href="/users/sign-up" className="text-lime-800">
-                Sign up here
-              </Link>
-            </p>
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
+            <label>Email</label>
+            <Input type="email" name="email" onChange={onInputChange} />
           </div>
-        </form>
-      </div>
-      
-      <UserVerifiedModal open={isModalOpen} toggle={toggleModal} />
-    </>
+          <div className="flex flex-col gap-2">
+            <label>Password</label>
+            <Input type="password" name="password" onChange={onInputChange} />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4 font-medium text-center">
+          <Button
+            type="submit"
+            disabled={
+              Object.values(formValues).some((value) => !value) || isLoading
+            }
+          >
+            Sign In
+          </Button>
+          <p>
+            Don&apos;t have an account yet?&nbsp;
+            <Link href="/users/sign-up" className="text-lime-800">
+              Sign up here
+            </Link>
+          </p>
+        </div>
+      </form>
+    </div>
   );
 }
