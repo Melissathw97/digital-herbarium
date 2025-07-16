@@ -3,12 +3,16 @@
 import { useEffect, useState } from "react";
 import UserCard from "@/components/cards/user";
 import { User } from "@/types/user";
+import UserRoleUpdateModal from "@/components/modals/userRoleUpdate";
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
+  const [selectedUser, setSelectedUser] = useState<User>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onEditClick = (user: User) => {
-    console.log("edit", user);
+    setSelectedUser(user);
+    setIsModalOpen(true);
   };
   const onDeleteClick = (user: User) => {
     console.log("delete", user);
@@ -19,14 +23,14 @@ export default function UsersPage() {
       {
         id: "1",
         name: "Melissa",
-        role: "admin",
+        role: "super_admin",
         email: "melissa@test.com",
         joinedAt: "13 July 2025",
       },
       {
         id: "2",
         name: "Ammar",
-        role: "admin",
+        role: "super_admin",
         email: "ammar321an@gmail.com",
         joinedAt: "01 July 2025",
       },
@@ -58,6 +62,12 @@ export default function UsersPage() {
           />
         ))}
       </div>
+
+      <UserRoleUpdateModal
+        user={selectedUser}
+        open={isModalOpen}
+        toggle={() => setIsModalOpen(!isModalOpen)}
+      />
     </>
   );
 }
