@@ -16,6 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import ImageCropper from "../cropper2";
+import CropperOld from "../cropper_old";
 
 const CreatableSelect = dynamic(() => import("react-select/creatable"), {
   ssr: false,
@@ -96,6 +98,20 @@ export default function OcrForm() {
           previewCanvasRef={previewCanvasRef}
           handleSetSelectedFile={(file) => setSelectedFile(file)}
         />
+
+        {/* <CropperOld
+          handleSetImgSrc={(image) => setImage(image)}
+          imgSrc={image}
+          previewCanvasRef={previewCanvasRef}
+          handleSetSelectedFile={(file) => setSelectedFile(file)}
+        /> */}
+
+        {/* <ImageCropper
+          handleSetImgSrc={(image) => setImage(image)}
+          imgSrc={image}
+          previewCanvasRef={previewCanvasRef}
+          handleSetSelectedFile={(file) => setSelectedFile(file)}
+        /> */}
       </div>
       <form
         onSubmit={onFormSubmit}
