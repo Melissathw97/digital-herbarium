@@ -9,14 +9,16 @@ export default function UserCard({
   currentUser,
   onEdit,
   onDelete,
+  fullDetails = true,
 }: {
   name: string;
   role: string;
-  email: string;
-  dateJoined: string;
-  currentUser: boolean;
-  onEdit: () => void;
-  onDelete: () => void;
+  email?: string;
+  dateJoined?: string;
+  currentUser?: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  fullDetails: boolean;
 }) {
   return (
     <div className="bg-white shadow-sm rounded-sm px-5 py-4 border flex flex-col gap-1 justify-center">
@@ -32,7 +34,7 @@ export default function UserCard({
           >
             {name}
           </p>
-          {role === "admin" ? (
+          {role === "super_admin" ? (
             <div className="bg-violet-100 text-violet-800 px-1.5 py-0.5 text-[10px] rounded-sm font-semibold flex items-center gap-1">
               <Crown className="h-3 w-3" />
               Admin
@@ -52,37 +54,45 @@ export default function UserCard({
             </div>
           ) : (
             <>
-              <Button
-                variant="outline"
-                className="!h-7 w-7 hover:text-lime-700"
-                onClick={onEdit}
-              >
-                <PenBox className="!h-3 !w-3" />
-              </Button>
-              <Button
-                variant="outline"
-                className="!h-7 w-7 text-red-700 hover:text-lime-700"
-                onClick={onDelete}
-              >
-                <Trash className="!h-3 !w-3" />
-              </Button>
+              {onEdit && (
+                <Button
+                  variant="outline"
+                  className="!h-7 w-7 hover:text-lime-700"
+                  onClick={onEdit}
+                >
+                  <PenBox className="!h-3 !w-3" />
+                </Button>
+              )}
+              {onDelete && (
+                <Button
+                  variant="outline"
+                  className="!h-7 w-7 text-red-700 hover:text-lime-700"
+                  onClick={onDelete}
+                >
+                  <Trash className="!h-3 !w-3" />
+                </Button>
+              )}
             </>
           )}
         </div>
       </div>
 
-      <hr className="mt-4" />
+      {fullDetails && (
+        <>
+          <hr className="mt-4" />
 
-      <div className="flex flex-col gap-2 mt-4 mb-2 text-xs text-gray-600">
-        <div className="flex gap-2 items-center">
-          <Mail className="h-3.5 w-3.5" />
-          <p className="font-medium">{email}</p>
-        </div>
-        <div className="flex gap-2 items-center">
-          <Calendar className="h-3.5 w-3.5" />
-          <p className="font-medium">Joined {dateJoined}</p>
-        </div>
-      </div>
+          <div className="flex flex-col gap-2 mt-4 mb-2 text-xs text-gray-600">
+            <div className="flex gap-2 items-center">
+              <Mail className="h-3.5 w-3.5" />
+              <p className="font-medium">{email}</p>
+            </div>
+            <div className="flex gap-2 items-center">
+              <Calendar className="h-3.5 w-3.5" />
+              <p className="font-medium">Joined {dateJoined}</p>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

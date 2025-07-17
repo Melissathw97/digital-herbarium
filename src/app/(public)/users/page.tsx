@@ -4,18 +4,22 @@ import { useEffect, useState } from "react";
 import UserCard from "@/components/cards/user";
 import { User } from "@/types/user";
 import UserRoleUpdateModal from "@/components/modals/userRoleUpdate";
+import UserDeleteModal from "@/components/modals/userDelete";
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User>();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const onEditClick = (user: User) => {
     setSelectedUser(user);
-    setIsModalOpen(true);
+    setIsUpdateModalOpen(true);
   };
+
   const onDeleteClick = (user: User) => {
-    console.log("delete", user);
+    setSelectedUser(user);
+    setIsDeleteModalOpen(true);
   };
 
   useEffect(() => {
@@ -65,8 +69,14 @@ export default function UsersPage() {
 
       <UserRoleUpdateModal
         user={selectedUser}
-        open={isModalOpen}
-        toggle={() => setIsModalOpen(!isModalOpen)}
+        open={isUpdateModalOpen}
+        toggle={() => setIsUpdateModalOpen(!isUpdateModalOpen)}
+      />
+
+      <UserDeleteModal
+        user={selectedUser}
+        open={isDeleteModalOpen}
+        toggle={() => setIsDeleteModalOpen(!isDeleteModalOpen)}
       />
     </>
   );
