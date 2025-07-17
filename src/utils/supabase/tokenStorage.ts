@@ -48,9 +48,17 @@ export class TokenStorage {
       safeStorage.set(KEYS.EXPIRES, expiresAt.toString());
     }
     
-    if (userRole) {
-      safeStorage.set(KEYS.ROLE, userRole);
-    }
+    // Extract role from JWT instead of relying on passed userRole
+    const decoded = decodeJWT(accessToken);
+    const jwtRole = decoded?.role;
+    const appMetadataRole = decoded?.app_metadata?.user_role;
+    
+    // Use JWT role first, then app_metadata role, then fallback to passed userRole
+    const finalRole = (jwtRole && jwtRole !== 'authenticated') 
+      ? jwtRole 
+      : (appMetadataRole || userRole || 'member');
+    
+    safeStorage.set(KEYS.ROLE, finalRole);
   }
 
   static getToken(): string | null {
@@ -58,14 +66,25 @@ export class TokenStorage {
   }
 
   static getUserRole(): string {
-    const storedRole = safeStorage.get(KEYS.ROLE);
-    if (storedRole) return storedRole;
-    
     const token = this.getToken();
     if (token) {
       const decoded = decodeJWT(token);
-      return decoded?.role || 'member';
+      const jwtRole = decoded?.role;
+      const appMetadataRole = decoded?.app_metadata?.user_role;
+      
+      // Return JWT role if it's not the default 'authenticated'
+      if (jwtRole && jwtRole !== 'authenticated') {
+        return jwtRole;
+      }
+      
+      if (appMetadataRole) {
+        return appMetadataRole;
+      }
     }
+    
+    // Fallback to stored role only if JWT doesn't have a valid role
+    const storedRole = safeStorage.get(KEYS.ROLE);
+    if (storedRole) return storedRole;
     
     return 'member';
   }
@@ -93,6 +112,23 @@ export class TokenStorage {
       isMember: role === 'member'
     };
   }
+
+  static refreshRoleFromToken(): string {
+    const token = this.getToken();
+    if (token) {
+      const decoded = decodeJWT(token);
+      const jwtRole = decoded?.role;
+      const appMetadataRole = decoded?.app_metadata?.user_role;
+      
+      const finalRole = (jwtRole && jwtRole !== 'authenticated') 
+        ? jwtRole 
+        : (appMetadataRole || 'member');
+      
+      safeStorage.set(KEYS.ROLE, finalRole);
+      return finalRole;
+    }
+    return 'member';
+  }
 }
 
 export const useAuth = () => {
@@ -104,6 +140,9 @@ export const useAuth = () => {
     refreshRole: () => {
       safeStorage.remove(KEYS.ROLE);
       return TokenStorage.getUserRole();
+    },
+    forceRefreshRole: () => {
+      return TokenStorage.refreshRoleFromToken();
     }
   };
 };

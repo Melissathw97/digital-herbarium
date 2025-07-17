@@ -20,26 +20,21 @@ const handleTokenStorage = (session: any): void => {
 export const initializeAuth = () => {
   const supabase = getSupabaseClient();
   
-  supabase.auth.onAuthStateChange((event, session) => {
-    console.log('Auth event:', event); 
-    
+  supabase.auth.onAuthStateChange((event, session) => {    
     switch (event) {
       case 'SIGNED_IN':
         if (session) {
           handleTokenStorage(session);
-          console.log('User signed in with role:', extractRole(session));
         }
         break;
         
       case 'SIGNED_OUT':
         TokenStorage.clearToken();
-        console.log('User signed out, tokens cleared');
         break;
         
       case 'TOKEN_REFRESHED':
         if (session) {
           handleTokenStorage(session);
-          console.log('Token refreshed');
         }
         break;
     }
