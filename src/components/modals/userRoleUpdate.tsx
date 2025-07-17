@@ -3,7 +3,6 @@ import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -40,7 +39,7 @@ export default function UserRoleUpdateModal({
       <AlertDialogContent className="!max-w-md gap-8 pt-8">
         <AlertDialogHeader>
           <AlertDialogTitle>Edit User Role</AlertDialogTitle>
-          <AlertDialogDescription className="flex flex-col gap-4 mt-2">
+          <div className="flex flex-col gap-4 mt-2">
             {user && (
               <UserCard
                 name={user?.name}
@@ -69,7 +68,7 @@ export default function UserRoleUpdateModal({
                 </SelectContent>
               </Select>
             </div>
-          </AlertDialogDescription>
+          </div>
         </AlertDialogHeader>
         <AlertDialogFooter className="!justify-center">
           <Button variant="outline" className="w-32" onClick={toggle}>

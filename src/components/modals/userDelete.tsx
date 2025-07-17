@@ -26,7 +26,7 @@ export default function UserDeleteModal({
           <AlertDialogTitle>
             Are you sure you wish to delete this user?
           </AlertDialogTitle>
-          <AlertDialogDescription className="flex flex-col justify-center gap-6">
+          <div className="flex flex-col justify-center gap-6">
             <p>
               This will permanently delete the user&apos;s record from this
               platform.
@@ -38,7 +38,7 @@ export default function UserDeleteModal({
                 fullDetails={false}
               />
             )}
-          </AlertDialogDescription>
+          </div>
         </AlertDialogHeader>
         <AlertDialogFooter className="!justify-center">
           <Button variant="outline" className="w-32" onClick={toggle}>

@@ -1,5 +1,5 @@
 import React, { useState, useRef, RefObject, useEffect } from "react";
-import { RotateCcw, RotateCw, X, ZoomIn, ZoomOut } from "lucide-react";
+import { Crop, RotateCcw, RotateCw, X, ZoomIn, ZoomOut } from "lucide-react";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import ImageUploader from "./imageUploader";
@@ -15,7 +15,7 @@ export default function Cropper({
   handleSetSelectedFile,
 }: {
   imgSrc: string;
-  previewCanvasRef: RefObject<HTMLCanvasElement>;
+  previewCanvasRef: RefObject<HTMLCanvasElement | null>;
   handleSetImgSrc: (src: string) => void;
   handleSetSelectedFile: (files?: File) => void;
 }) {
@@ -23,6 +23,7 @@ export default function Cropper({
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const [crop, setCrop] = useState({});
+  const [isCropEnabled, setIsCropEnabled] = useState(false);
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
@@ -93,6 +94,12 @@ export default function Cropper({
             </Button>
             <div>
               <Button
+                variant={isCropEnabled ? "secondary" : "ghost"}
+                onClick={() => setIsCropEnabled(!isCropEnabled)}
+              >
+                <Crop />
+              </Button>
+              <Button
                 variant="ghost"
                 onClick={() => setRotate(rotate - 1)}
                 onMouseDown={() =>
@@ -147,6 +154,7 @@ export default function Cropper({
       {imgSrc && (
         <ReactCrop
           crop={crop}
+          disabled={!isCropEnabled}
           onChange={(_, percentCrop) => setCrop(percentCrop)}
           onComplete={(c) => setCompletedCrop(c)}
           // minWidth={400}

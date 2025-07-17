@@ -1,0 +1,21 @@
+{
+  "genus": {
+    "Burseraceae": [
+      { "label": "Canarium", "value": "canarium" },
+      { "label": "Dacryodes", "value": "dacryodes" },
+      { "label": "Santiria", "value": "santiria" },
+      { "label": "Triomma", "value": "triomma" }
+    ],
+    "Dipterocarpaceae": [
+      { "label": "Anisoptera", "value": "anisoptera" },
+      { "label": "Dipterocarpus", "value": "dipterocarpus" },
+      { "label": "Hopea", "value": "hopea" },
+      { "label": "Neobalanocarpus", "value": "neobalanocarpus" },
+      { "label": "Parashorea", "value": "parashorea" },
+      { "label": "Richetia", "value": "richetia" },
+      { "label": "Rubroshorea", "value": "rubroshorea" },
+      { "label": "Shorea", "value": "shorea" },
+      { "label": "Vatica", "value": "vatica" }
+    ]
+  }
+}
