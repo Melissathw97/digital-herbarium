@@ -1,14 +1,16 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Cropper from "../cropper";
 import { Input } from "../ui/input";
 import { Info } from "lucide-react";
 import { Button } from "../ui/button";
 import ScanButton from "../scanButton";
+import { Plant } from "@/types/plant";
 import States from "@/constants/states.json";
 import { DatePicker } from "../ui/datepicker";
+import { FormValues, Option } from "@/types/form";
 import { CSSObjectWithLabel } from "react-select";
 import {
   Select,
@@ -31,20 +33,26 @@ const customSelectStyle = {
   }),
 };
 
-const familyOptions: { label: string; value: string }[] = [
+const familyOptions: Option[] = [
   { label: "Burseraceae", value: "Burseraceae" },
   { label: "Dipterocarpaceae", value: "Dipterocarpaceae" },
 ];
 
-export default function OcrForm() {
+export default function OcrForm({
+  update = false,
+  initialValues,
+}: {
+  update?: boolean;
+  initialValues?: Plant;
+}) {
   const [image, setImage] = useState("");
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const [selectedFile, setSelectedFile] = useState<File>();
 
-  const [formValues, setFormValues] = useState({
-    family: "",
+  const [formValues, setFormValues] = useState<FormValues>({
+    family: { label: "", value: "" },
     species: "",
-    barCode: "",
+    barcode: "",
     prefix: "",
     number: "",
     collector: "",
@@ -68,6 +76,35 @@ export default function OcrForm() {
     e.preventDefault();
     console.log("formValues", formValues);
   };
+
+  useEffect(() => {
+    if (update && initialValues) {
+      const family: Option = familyOptions.find(
+        (fam) => fam.value === initialValues.family
+      ) || { label: "", value: "" };
+      const state =
+        States.states.find((state) => state.value === initialValues.state)
+          ?.value || "";
+
+      setImage(initialValues.imagePath);
+      setFormValues({
+        ...formValues,
+        family,
+        species: initialValues.species,
+        barcode: initialValues.barcode,
+        prefix: initialValues.prefix,
+        number: initialValues.number,
+        collector: initialValues.collector,
+        date: new Date(initialValues.date),
+        state,
+        district: initialValues.district,
+        location: initialValues.location,
+        vernacularName: initialValues.vernacularName,
+      });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [update]);
 
   return (
     <>
@@ -98,9 +135,10 @@ export default function OcrForm() {
               onChange={(newValue) =>
                 setFormValues({
                   ...formValues,
-                  family: newValue?.value || "",
+                  family: newValue as Option,
                 })
               }
+              value={formValues.family}
               styles={customSelectStyle}
               placeholder="Select a family"
               className="w-full"
@@ -129,8 +167,8 @@ export default function OcrForm() {
 
             <div className="flex gap-2">
               <Input
-                name="barCode"
-                value={formValues.barCode}
+                name="barcode"
+                value={formValues.barcode}
                 onChange={onInputChange}
               />
 
@@ -138,7 +176,7 @@ export default function OcrForm() {
                 isBarcode
                 previewCanvasRef={previewCanvasRef}
                 onSubmit={(value) =>
-                  setFormValues({ ...formValues, barCode: value })
+                  setFormValues({ ...formValues, barcode: value })
                 }
               />
             </div>
@@ -146,16 +184,28 @@ export default function OcrForm() {
           <div className="flex gap-3 w-full">
             <div className="flex flex-col gap-1 w-full">
               <label>Prefix</label>
-              <Input name="prefix" onChange={onInputChange} />
+              <Input
+                name="prefix"
+                value={formValues.prefix}
+                onChange={onInputChange}
+              />
             </div>
             <div className="flex flex-col gap-1 w-full">
               <label>Number</label>
-              <Input name="number" onChange={onInputChange} />
+              <Input
+                name="number"
+                value={formValues.number}
+                onChange={onInputChange}
+              />
             </div>
           </div>
           <div className="flex flex-col gap-1 w-full">
             <label>Collector</label>
-            <Input name="collector" onChange={onInputChange} />
+            <Input
+              name="collector"
+              value={formValues.collector}
+              onChange={onInputChange}
+            />
           </div>
           <div className="flex flex-col gap-1 w-full">
             <label>Date</label>
@@ -166,37 +216,51 @@ export default function OcrForm() {
           </div>
           <div className="flex flex-col gap-1 w-full">
             <label>State</label>
-            <Select
-              value={formValues.state}
-              onValueChange={(value) =>
-                setFormValues({ ...formValues, state: value })
-              }
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a state" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {States.states.map(({ label, value }) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            {(!update || formValues.state) && (
+              <Select
+                value={formValues.state ?? ""}
+                onValueChange={(value) =>
+                  setFormValues({ ...formValues, state: value })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a state" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {States.states.map(({ label, value }) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            )}
           </div>
           <div className="flex flex-col gap-1 w-full">
             <label>District</label>
-            <Input name="district" onChange={onInputChange} />
+            <Input
+              name="district"
+              value={formValues.district}
+              onChange={onInputChange}
+            />
           </div>
           <div className="flex flex-col gap-1 w-full">
             <label>Location</label>
-            <Input name="location" onChange={onInputChange} />
+            <Input
+              name="location"
+              value={formValues.location}
+              onChange={onInputChange}
+            />
           </div>
           <div className="flex flex-col gap-1 w-full">
             <label>Vernacular Name</label>
-            <Input name="vernacularName" onChange={onInputChange} />
+            <Input
+              name="vernacularName"
+              value={formValues.vernacularName}
+              onChange={onInputChange}
+            />
           </div>
           <Button
             type="submit"

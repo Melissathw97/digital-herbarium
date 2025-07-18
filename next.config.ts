@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**", // This wildcard allows all hostnames
+        port: "",
+        pathname: "**",
+      },
+    ],
+  },
   async redirects() {
     return [
       // Basic redirect

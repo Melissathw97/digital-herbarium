@@ -3,7 +3,7 @@ export interface Plant {
   family: string;
   genus: string;
   species: string;
-  barCode: string;
+  barcode: string;
   prefix: string;
   number: string;
   collector: string;
@@ -12,7 +12,14 @@ export interface Plant {
   district: string;
   location: string;
   fileName?: string;
+  imagePath: string;
   imgExists?: boolean;
   flippedImgExists?: boolean;
   vernacularName: string;
+  actionType: ActionType;
+}
+
+export enum ActionType {
+  OCR = "OCR",
+  AI_DETECTION = "Ai Detection",
 }

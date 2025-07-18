@@ -7,7 +7,7 @@ export default function ImageUploader({
   disabled,
   handleFiles,
 }: {
-  accept: string;
+  accept?: string;
   disabled?: boolean;
   handleFiles: (files: File[]) => void;
 }) {
@@ -24,7 +24,7 @@ export default function ImageUploader({
   return (
     <div
       {...getRootProps()}
-      className="w-full text-gray-400 bg-gray-100 hover:bg-gray-200 cursor-pointer p-4 py-8 rounded-sm flex flex-col gap-3 text-center items-center h-full justify-center"
+      className="w-full text-lime-700/50 font-semibold bg-gray-100 hover:bg-gray-200 cursor-pointer p-4 py-8 rounded-sm flex flex-col gap-3 text-center items-center h-full justify-center border"
     >
       <input disabled={disabled} {...getInputProps()} accept={accept} />
       <HardDriveUpload />
