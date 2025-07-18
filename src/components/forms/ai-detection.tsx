@@ -43,6 +43,11 @@ export default function AiDetectionForm() {
     }
   };
 
+  const resetImage = () => {
+    setImage("");
+    setIsComplete(false);
+  };
+
   const onBeginDetectionClick = () => {
     setIsLoading(true);
 
@@ -64,7 +69,7 @@ export default function AiDetectionForm() {
           {image ? (
             <>
               <div className="flex border rounded-sm p-0.5 justify-between mb-4">
-                <Button variant="ghost" onClick={() => setImage("")}>
+                <Button variant="ghost" onClick={resetImage}>
                   <X />
                 </Button>
               </div>
