@@ -61,9 +61,9 @@ export default function PublicLayout({
                 Plants
               </Button>
             </Link>
-            <Link href={Pages.USERS}>
+            <Link href={Pages.MEMBERS}>
               <Button
-                variant={pathname === Pages.USERS ? "secondary" : "ghost"}
+                variant={pathname === Pages.MEMBERS ? "secondary" : "ghost"}
                 size="sm"
               >
                 <UsersRound />

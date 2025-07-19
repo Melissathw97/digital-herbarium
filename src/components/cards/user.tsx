@@ -1,5 +1,6 @@
-import { Calendar, Crown, Mail, PenBox, Trash, User } from "lucide-react";
 import { Button } from "../ui/button";
+import formatDate from "@/utils/formatDate";
+import { Calendar, Crown, Mail, PenBox, Trash, User } from "lucide-react";
 
 export default function UserCard({
   name,
@@ -18,7 +19,7 @@ export default function UserCard({
   currentUser?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
-  fullDetails: boolean;
+  fullDetails?: boolean;
 }) {
   return (
     <div className="bg-white shadow-sm rounded-sm px-5 py-4 border flex flex-col gap-1 justify-center">
@@ -88,7 +89,9 @@ export default function UserCard({
             </div>
             <div className="flex gap-2 items-center">
               <Calendar className="h-3.5 w-3.5" />
-              <p className="font-medium">Joined {dateJoined}</p>
+              <p className="font-medium">
+                Joined {dateJoined ? formatDate(dateJoined) : "-"}
+              </p>
             </div>
           </div>
         </>

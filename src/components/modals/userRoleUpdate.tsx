@@ -42,7 +42,7 @@ export default function UserRoleUpdateModal({
           <div className="flex flex-col gap-4 mt-2">
             {user && (
               <UserCard
-                name={user?.name}
+                name={`${user?.firstName} ${user?.lastName}`}
                 role={user?.role}
                 fullDetails={false}
               />

@@ -26,13 +26,13 @@ export default function UserDeleteModal({
             Are you sure you wish to delete this user?
           </AlertDialogTitle>
           <div className="flex flex-col justify-center gap-6">
-            <p>
+            <p className="text-gray-600">
               This will permanently delete the user&apos;s record from this
               platform.
             </p>
             {user && (
               <UserCard
-                name={user?.name}
+                name={`${user?.firstName} ${user?.lastName}`}
                 role={user?.role}
                 fullDetails={false}
               />

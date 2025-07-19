@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Pages } from "@/types/pages";
+import formatDate from "@/utils/formatDate";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -33,17 +34,6 @@ export default function PlantsListPage() {
     { label: "Location", dataKey: "location" },
     { label: "Vernacular Name", dataKey: "vernacularName" },
   ];
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    };
-
-    return date.toLocaleDateString("en-GB", options);
-  };
 
   const getActionTypeStyling = (action: ActionType) => {
     switch (action) {
