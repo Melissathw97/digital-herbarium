@@ -67,7 +67,7 @@ export default function UserCard({
               {onDelete && (
                 <Button
                   variant="outline"
-                  className="!h-7 w-7 text-red-700 hover:text-lime-700"
+                  className="!h-7 w-7 text-red-700 hover:text-red-700"
                   onClick={onDelete}
                 >
                   <Trash className="!h-3 !w-3" />
