@@ -11,12 +11,15 @@ import { ChevronLeftIcon, LoaderCircle } from "lucide-react";
 
 // TODO: Integrate with Plants API
 import mockPlantData from "@/constants/mock_plants.json";
+import PlantDeleteModal from "@/components/modals/plantDelete";
 
 export default function PlantDetailsPage() {
   const params = useParams();
   const router = useRouter();
+
   const [plant, setPlant] = useState<Plant>();
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const displayData = useMemo(() => {
     return [
@@ -44,6 +47,10 @@ export default function PlantDetailsPage() {
     }, 500);
   }, [params.id]);
 
+  const onDeleteClick = () => {
+    setIsDeleteModalOpen(true);
+  };
+
   return (
     <>
       <div className="flex gap-2 items-center">
@@ -58,7 +65,14 @@ export default function PlantDetailsPage() {
           <>
             <h2>{plant?.species}</h2>
 
-            <Link href={`/plants/${plant?.id}/edit`} className="ml-auto">
+            <Button
+              variant="outline"
+              className="ml-auto text-red-700 hover:text-red-700"
+              onClick={onDeleteClick}
+            >
+              Delete Plant
+            </Button>
+            <Link href={`/plants/${plant?.id}/edit`}>
               <Button>Edit Plant</Button>
             </Link>
           </>
@@ -88,6 +102,13 @@ export default function PlantDetailsPage() {
           </div>
         )}
       </div>
+
+      <PlantDeleteModal
+        open={isDeleteModalOpen}
+        plant={plant}
+        toggle={() => setIsDeleteModalOpen(false)}
+        onConfirm={() => setIsDeleteModalOpen(false)}
+      />
     </>
   );
 }
