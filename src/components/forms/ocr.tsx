@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import Alert from "../alert";
 
 const CreatableSelect = dynamic(() => import("react-select/creatable"), {
   ssr: false,
@@ -46,8 +47,10 @@ export default function OcrForm({
   initialValues?: Plant;
 }) {
   const [image, setImage] = useState("");
-  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File>();
+
+  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const [formValues, setFormValues] = useState<FormValues>({
     family: { label: "", value: "" },
@@ -79,6 +82,8 @@ export default function OcrForm({
 
   useEffect(() => {
     if (update && initialValues) {
+      setIsExpanded(false);
+
       const family: Option = familyOptions.find(
         (fam) => fam.value === initialValues.family
       ) || { label: "", value: "" };
@@ -108,11 +113,24 @@ export default function OcrForm({
 
   return (
     <>
-      <div className="flex items-center gap-2 text-center bg-blue-50 p-2 px-4 text-blue-500 rounded-sm mb-5">
-        <Info className="w-4" />
-        Upload an unflipped image and crop the section you wish to scan using
-        OCR.
-      </div>
+      <Alert
+        title="How does it work?"
+        expand
+        isExpanded={isExpanded}
+        toggleExpand={() => setIsExpanded(!isExpanded)}
+      >
+        <ol className="text-xs list-decimal ml-4 mt-1 leading-5">
+          <li>Upload an unflipped image</li>
+          <li>Click on the crop button to begin cropping</li>
+          <li>Click and drag on any part of the image</li>
+          <li>
+            Click on the scan button for the Species or Barcode fields to begin
+            scanning the text in the cropped image
+          </li>
+          <li>Fill in all other plant details</li>
+          <li>Submit the form</li>
+        </ol>
+      </Alert>
       <div className="flex w-full gap-4 mb-6">
         <div className="flex-1">
           <Cropper

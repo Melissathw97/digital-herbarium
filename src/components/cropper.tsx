@@ -148,7 +148,7 @@ export default function Cropper({
           </div>
         </div>
       ) : (
-        <ImageUploader accept=".jpg, .jpeg, .png" handleFiles={onSelectFile} />
+        <ImageUploader handleFiles={onSelectFile} />
       )}
 
       {imgSrc && (

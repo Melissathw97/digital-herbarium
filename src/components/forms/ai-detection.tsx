@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import ImageUploader from "../imageUploader";
 import { ChartConfig, ChartContainer } from "../ui/chart";
+import { LoaderCircle, Sparkles, X } from "lucide-react";
 import {
   Label,
   PolarGrid,
@@ -12,18 +13,15 @@ import {
   RadialBar,
   RadialBarChart,
 } from "recharts";
-import { Info, LoaderCircle, X } from "lucide-react";
+import Alert from "../alert";
 
 const chartData = [
-  { browser: "safari", visitors: 80, fill: "var(--color-safari)" },
+  { browser: "confidence", confidence: 80, fill: "var(--color-confidence)" },
 ];
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
-  },
-  safari: {
-    label: "Safari",
+  confidence: {
+    label: "Confidence",
     color: "var(--chart-12)",
   },
 } satisfies ChartConfig;
@@ -32,6 +30,7 @@ export default function AiDetectionForm() {
   const [image, setImage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const onSelectFile = (files: File[]) => {
     if (files?.length) {
@@ -59,11 +58,21 @@ export default function AiDetectionForm() {
 
   return (
     <>
-      <div className="flex items-center gap-2 text-center bg-blue-50 p-2 px-4 text-blue-500 rounded-sm mb-5">
-        <Info className="w-4" />
-        Upload a flipped image and begin detection, then submit the AI detection
-        result.
-      </div>
+      <Alert
+        title="How does it work?"
+        expand
+        isExpanded={isExpanded}
+        toggleExpand={() => setIsExpanded(!isExpanded)}
+      >
+        <ol className="text-xs list-decimal ml-4 mt-1 leading-5">
+          <li>
+            Upload a flipped image, ensuring the leaves are visible and not
+            blocked by notes
+          </li>
+          <li>Begin detection to identify the plant species</li>
+          <li>Submit the AI detection result</li>
+        </ol>
+      </Alert>
       <div className="flex gap-4">
         <div className="flex-1 min-h-[250px]">
           {image ? (
@@ -76,10 +85,7 @@ export default function AiDetectionForm() {
               <Image alt="Sample" src={image} width={550} height={200} />
             </>
           ) : (
-            <ImageUploader
-              accept=".jpg, .jpeg, .png"
-              handleFiles={onSelectFile}
-            />
+            <ImageUploader handleFiles={onSelectFile} />
           )}
         </div>
         {image ? (
@@ -117,7 +123,7 @@ export default function AiDetectionForm() {
                           polarRadius={[76, 64]}
                         />
                         <RadialBar
-                          dataKey="visitors"
+                          dataKey="confidence"
                           background
                           cornerRadius={10}
                         />
@@ -177,6 +183,7 @@ export default function AiDetectionForm() {
                     detection to identify the plant species.
                   </p>
                   <Button disabled={isComplete} onClick={onBeginDetectionClick}>
+                    <Sparkles />{" "}
                     {isComplete ? "Detection Complete!" : "Begin Detection"}
                   </Button>
                 </div>

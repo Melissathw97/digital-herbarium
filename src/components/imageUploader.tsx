@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
 export default function ImageUploader({
-  accept,
+  accept = ".jpg, .jpeg, .png",
   disabled,
   handleFiles,
 }: {
@@ -26,12 +26,17 @@ export default function ImageUploader({
       {...getRootProps()}
       className="w-full text-lime-700/50 font-semibold bg-gray-100 hover:bg-gray-200 cursor-pointer p-4 py-8 rounded-sm flex flex-col gap-3 text-center items-center h-full justify-center border"
     >
-      <input disabled={disabled} {...getInputProps()} accept={accept} />
+      <input
+        disabled={disabled}
+        {...getInputProps()}
+        accept={accept}
+        multiple={false}
+      />
       <HardDriveUpload />
       {isDragActive ? (
         <p>Drop the files here ...</p>
       ) : (
-        <p>Drag and drop some files here, or click to select files</p>
+        <p>Drag and drop an image here, or click to select files</p>
       )}
     </div>
   );
