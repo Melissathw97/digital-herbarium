@@ -21,5 +21,5 @@ export interface Plant {
 
 export enum ActionType {
   OCR = "OCR",
-  AI_DETECTION = "Ai Detection",
+  AI_DETECTION = "AI Detection",
 }
