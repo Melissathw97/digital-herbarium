@@ -7,7 +7,7 @@ import { Pages } from "@/types/pages";
 import { BadgeCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/utils/supabase/client";
+import { userSignIn } from "@/services/authServices";
 import { useSearchParams, useRouter } from "next/navigation";
 
 export default function UsersSignIn() {
@@ -40,15 +40,9 @@ export default function UsersSignIn() {
     setIsLoading(true);
     e.preventDefault();
 
-    const supabase = createClient();
-
     const { email, password } = formValues;
 
-    supabase.auth
-      .signInWithPassword({
-        email,
-        password,
-      })
+    userSignIn({ email, password })
       .then(({ error }) => {
         if (error) throw error.message;
         router.push(Pages.DASHBOARD);

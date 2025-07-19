@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { Pages } from "@/types/pages";
-import { createClient } from "@/utils/supabase/client";
+import { userSignOut } from "@/services/authServices";
 import { usePathname, useRouter } from "next/navigation";
 import { Home, Sprout, UserCircle, UsersRound } from "lucide-react";
 import {
@@ -23,9 +23,7 @@ export default function PublicLayout({
   const pathname = usePathname();
 
   const onLogOutClick = async () => {
-    const supabase = createClient();
-    supabase.auth
-      .signOut()
+    userSignOut()
       .then(({ error }) => {
         if (error) throw error;
         router.push(Pages.SIGN_IN);

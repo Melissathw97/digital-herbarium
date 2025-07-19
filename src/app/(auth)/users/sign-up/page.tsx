@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Pages } from "@/types/pages";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { userSignUp } from "@/services/authServices";
 import UserPendingVerificationModal from "@/components/modals/userPendingVerification";
 
 export default function UsersSignUp() {
@@ -44,8 +44,6 @@ export default function UsersSignUp() {
     setIsLoading(true);
     e.preventDefault();
 
-    const supabase = createClient();
-
     const { firstName, lastName, email, password, confirmPassword } =
       formValues;
 
@@ -55,18 +53,7 @@ export default function UsersSignUp() {
       return;
     }
 
-    supabase.auth
-      .signUp({
-        email,
-        password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-          },
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/users/sign-in?confirmed=true`,
-        },
-      })
+    userSignUp({ email, password, firstName, lastName })
       .then(({ error }) => {
         setIsLoading(false);
 
