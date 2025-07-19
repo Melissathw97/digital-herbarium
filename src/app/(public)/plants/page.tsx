@@ -93,6 +93,7 @@ export default function PlantsListPage() {
                     {label}
                   </th>
                 ))}
+                <th className="px-4 sticky right-0 z-2 bg-white">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -140,7 +141,7 @@ export default function PlantsListPage() {
                       </td>
                     ))}
                     <td
-                      className={`px-4 sticky right-0 z-2 ${index % 2 ? "bg-gray-100" : "bg-white"}`}
+                      className={`px-4 sticky right-0 z-2 ${index % 2 ? "bg-gray-100/90" : "bg-white/90"}`}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Link href={`/plants/${plant.id}/edit`}>
