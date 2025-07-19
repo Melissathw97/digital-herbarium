@@ -3,12 +3,15 @@
 import { ChangeEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import UserPendingVerificationModal from "@/components/modals/userPendingVerification";
 
 export default function UsersSignUp() {
+  const router = useRouter();
+
   const [isLoading, setIsLoading] = useState(false);
   const [formValues, setFormValues] = useState({
     firstName: "",
@@ -21,6 +24,10 @@ export default function UsersSignUp() {
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
+  };
+
+  const onModalConfirm = () => {
+    router.push("/users/sign-in");
   };
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -127,7 +134,10 @@ export default function UsersSignUp() {
         </form>
       </div>
 
-      <UserPendingVerificationModal open={isModalOpen} toggle={toggleModal} />
+      <UserPendingVerificationModal
+        open={isModalOpen}
+        onConfirm={onModalConfirm}
+      />
     </>
   );
 }

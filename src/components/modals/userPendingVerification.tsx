@@ -11,10 +11,10 @@ import { Clock3 } from "lucide-react";
 
 export default function UserPendingVerificationModal({
   open,
-  toggle,
+  onConfirm,
 }: {
   open: boolean;
-  toggle: () => void;
+  onConfirm: () => void;
 }) {
   return (
     <AlertDialog open={open}>
@@ -30,7 +30,7 @@ export default function UserPendingVerificationModal({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="!justify-center">
-          <AlertDialogAction onClick={toggle} className="w-32">
+          <AlertDialogAction onClick={onConfirm} className="w-32">
             Got it
           </AlertDialogAction>
         </AlertDialogFooter>
