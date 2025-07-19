@@ -27,7 +27,6 @@ export default function UpdatePlantPage() {
       const plantData = mockPlantData.plants.find(
         (plant) => plant.id === params.id
       );
-      console.log("plantData", plantData);
       setPlant(plantData as Plant);
       setIsLoading(false);
     }, 500);

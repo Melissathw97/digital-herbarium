@@ -47,6 +47,8 @@ export default function OcrForm({
 }) {
   const [image, setImage] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // TODO: Check if selectedFile is used
   const [selectedFile, setSelectedFile] = useState<File>();
 
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -76,6 +78,8 @@ export default function OcrForm({
 
   const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // TODO: Integrate OCR submit API
     console.log("formValues", formValues);
   };
 
