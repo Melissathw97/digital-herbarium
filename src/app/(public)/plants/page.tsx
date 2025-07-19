@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Pages } from "@/types/pages";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -75,7 +76,7 @@ export default function PlantsListPage() {
           <Button variant="secondary" size="sm">
             Export to CSV
           </Button>
-          <Link href="/plants/new">
+          <Link href={Pages.PLANTS_NEW}>
             <Button size="sm">Add Plant</Button>
           </Link>
         </div>

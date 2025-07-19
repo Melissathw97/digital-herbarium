@@ -1,11 +1,12 @@
 "use client";
 
 import { ChangeEvent, useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { Pages } from "@/types/pages";
 import { BadgeCheck } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/client";
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -50,7 +51,7 @@ export default function UsersSignIn() {
       })
       .then(({ error }) => {
         if (error) throw error.message;
-        router.push("/dashboard");
+        router.push(Pages.DASHBOARD);
       })
       .catch((error) => {
         setIsLoading(false);
@@ -101,7 +102,7 @@ export default function UsersSignIn() {
           </Button>
           <p>
             Don&apos;t have an account yet?&nbsp;
-            <Link href="/users/sign-up" className="text-lime-800">
+            <Link href={Pages.SIGN_UP} className="text-lime-800">
               Sign up here
             </Link>
           </p>

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { Pages } from "@/types/pages";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import UserPendingVerificationModal from "@/components/modals/userPendingVerification";
@@ -27,7 +28,7 @@ export default function UsersSignUp() {
   };
 
   const onModalConfirm = () => {
-    router.push("/users/sign-in");
+    router.push(Pages.SIGN_IN);
   };
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -126,7 +127,7 @@ export default function UsersSignUp() {
             </Button>
             <p>
               Already have an account?&nbsp;
-              <Link href="/users/sign-in" className="text-lime-800">
+              <Link href={Pages.SIGN_IN} className="text-lime-800">
                 Sign in here
               </Link>
             </p>

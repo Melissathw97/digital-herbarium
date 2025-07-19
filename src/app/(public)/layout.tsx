@@ -1,17 +1,18 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import Image from "next/image";
+import { Pages } from "@/types/pages";
+import { createClient } from "@/utils/supabase/client";
+import { usePathname, useRouter } from "next/navigation";
+import { Home, Sprout, UserCircle, UsersRound } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
-import { Home, Sprout, UserCircle, UsersRound } from "lucide-react";
 
 export default function PublicLayout({
   children,
@@ -27,7 +28,7 @@ export default function PublicLayout({
       .signOut()
       .then(({ error }) => {
         if (error) throw error;
-        router.push("/users/sign-in");
+        router.push(Pages.SIGN_IN);
       })
       .catch((error) => {
         alert(error.message);
@@ -42,27 +43,29 @@ export default function PublicLayout({
           <Image src="/asm-logo.png" alt="ASM Logo" width={70} height={30} />
 
           <div className="flex gap-2 w-full">
-            <Link href="/dashboard">
+            <Link href={Pages.DASHBOARD}>
               <Button
-                variant={pathname === "/dashboard" ? "secondary" : "ghost"}
+                variant={pathname === Pages.DASHBOARD ? "secondary" : "ghost"}
                 size="sm"
               >
                 <Home />
                 Home
               </Button>
             </Link>
-            <Link href="/plants">
+            <Link href={Pages.PLANTS}>
               <Button
-                variant={pathname.startsWith("/plants") ? "secondary" : "ghost"}
+                variant={
+                  pathname.startsWith(Pages.PLANTS) ? "secondary" : "ghost"
+                }
                 size="sm"
               >
                 <Sprout />
                 Plants
               </Button>
             </Link>
-            <Link href="/users">
+            <Link href={Pages.USERS}>
               <Button
-                variant={pathname === "/users" ? "secondary" : "ghost"}
+                variant={pathname === Pages.USERS ? "secondary" : "ghost"}
                 size="sm"
               >
                 <UsersRound />
@@ -77,7 +80,7 @@ export default function PublicLayout({
                 <UserCircle />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <Link href="/profile">
+                <Link href={Pages.PROFILE}>
                   <DropdownMenuItem className="cursor-pointer">
                     My Profile
                   </DropdownMenuItem>
