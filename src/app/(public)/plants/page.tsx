@@ -114,11 +114,13 @@ export default function PlantsListPage() {
             <thead>
               <tr className="border-b">
                 <th className="p-3">
-                  <Input
-                    type="checkbox"
-                    checked={selectedPlants.length === plants.length}
-                    onChange={onBulkCheckboxClick}
-                  />
+                  {plants.length > 0 && (
+                    <Input
+                      type="checkbox"
+                      checked={selectedPlants.length === plants.length}
+                      onChange={onBulkCheckboxClick}
+                    />
+                  )}
                 </th>
                 {headers.map(({ label }) => (
                   <th key={label} className="p-4 whitespace-nowrap">
