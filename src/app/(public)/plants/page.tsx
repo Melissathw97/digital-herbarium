@@ -8,7 +8,14 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plant, ActionType } from "@/types/plant";
-import { ChevronLeft, ChevronRight, LoaderCircle, Pen } from "lucide-react";
+import PlantDeleteModal from "@/components/modals/plantDelete";
+import {
+  ChevronLeft,
+  ChevronRight,
+  LoaderCircle,
+  Pen,
+  Trash,
+} from "lucide-react";
 
 // TODO: Integrate with Plants API
 import mockPlantData from "@/constants/mock_plants.json";
@@ -19,6 +26,9 @@ export default function PlantsListPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [plants, setPlants] = useState<Plant[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [selectedPlant, setSelectedPlant] = useState<Plant>();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const headers: { label: string; dataKey: keyof Plant }[] = [
     { label: "Date", dataKey: "date" },
@@ -45,8 +55,13 @@ export default function PlantsListPage() {
     }
   };
 
-  const rerouteToPlantDetails = (id: string) => {
-    router.push(`/plants/${id}`);
+  const onEditClick = (plant: Plant) => {
+    router.push(`/plants/${plant.id}`);
+  };
+
+  const onDeleteClick = (plant: Plant) => {
+    setSelectedPlant(plant);
+    setIsDeleteModalOpen(true);
   };
 
   useEffect(() => {
@@ -108,7 +123,7 @@ export default function PlantsListPage() {
                 plants.map((plant, index) => (
                   <tr
                     key={plant.id}
-                    onClick={() => rerouteToPlantDetails(plant.id)}
+                    onClick={() => onEditClick(plant)}
                     className={`${index % 2 ? "bg-gray-100" : ""} cursor-pointer`}
                   >
                     <td onClick={(e) => e.stopPropagation()}>
@@ -133,11 +148,25 @@ export default function PlantsListPage() {
                       className={`px-4 sticky right-0 z-2 ${index % 2 ? "bg-gray-100/90" : "bg-white/90"}`}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <Link href={`/plants/${plant.id}/edit`}>
-                        <Button size="sm" variant="outline">
-                          <Pen className="!w-3 !h-3 text-lime-700" />
+                      <div className="flex gap-1">
+                        <Link href={`/plants/${plant.id}/edit`}>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="!px-2 hover:text-lime-700"
+                          >
+                            <Pen className="!w-3 !h-3" />
+                          </Button>
+                        </Link>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="!px-2"
+                          onClick={() => onDeleteClick(plant)}
+                        >
+                          <Trash className="!w-3 !h-3 text-red-700" />
                         </Button>
-                      </Link>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -145,6 +174,13 @@ export default function PlantsListPage() {
             </tbody>
           </table>
         </div>
+
+        <PlantDeleteModal
+          open={isDeleteModalOpen}
+          plant={selectedPlant}
+          toggle={() => setIsDeleteModalOpen(false)}
+          onConfirm={() => setIsDeleteModalOpen(false)}
+        />
 
         <div className="flex items-center justify-between text-xs">
           <p>Showing 1 - 10 of 100 items</p>
