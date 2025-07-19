@@ -25,6 +25,7 @@ export default function PlantsListPage() {
     { label: "Action Type", dataKey: "actionType" },
     { label: "Family", dataKey: "family" },
     { label: "Species", dataKey: "species" },
+    { label: "Vernacular Name", dataKey: "vernacularName" },
     { label: "Barcode", dataKey: "barcode" },
     // { label: "Prefix", dataKey: "prefix" },
     // { label: "Number", dataKey: "number" },
@@ -32,7 +33,6 @@ export default function PlantsListPage() {
     { label: "State", dataKey: "state" },
     { label: "District", dataKey: "district" },
     { label: "Location", dataKey: "location" },
-    { label: "Vernacular Name", dataKey: "vernacularName" },
   ];
 
   const getActionTypeStyling = (action: ActionType) => {
