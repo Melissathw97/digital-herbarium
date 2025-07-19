@@ -64,7 +64,7 @@ export default function UpdatePlantPage() {
                 <OcrForm update initialValues={plant} />
               </TabsContent>
               <TabsContent value={ActionType.AI_DETECTION}>
-                <AiDetectionForm />
+                <AiDetectionForm update initialValues={plant} />
               </TabsContent>
             </Tabs>
           </>

@@ -1,12 +1,13 @@
 "use client";
 
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import Alert from "../alert";
-import { useState } from "react";
+import Image from "next/image";
+import { Plant } from "@/types/plant";
 import { Button } from "../ui/button";
 import ImageUploader from "../imageUploader";
-import { ChartConfig, ChartContainer } from "../ui/chart";
 import { LoaderCircle, Sparkles, X } from "lucide-react";
+import { ChartConfig, ChartContainer } from "../ui/chart";
 import {
   Label,
   PolarGrid,
@@ -26,11 +27,21 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function AiDetectionForm() {
+export default function AiDetectionForm({
+  update = false,
+  initialValues,
+}: {
+  update?: boolean;
+  initialValues?: Plant;
+}) {
   const [image, setImage] = useState("");
+  const [data, setData] = useState({
+    family: "",
+    species: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const onSelectFile = (files: File[]) => {
     if (files?.length) {
@@ -55,6 +66,21 @@ export default function AiDetectionForm() {
       setIsLoading(false);
     }, 2000);
   };
+
+  useEffect(() => {
+    if (update && initialValues) {
+      setIsComplete(true);
+      setImage(initialValues.imagePath);
+      setData({
+        family: initialValues.family,
+        species: initialValues.species,
+      });
+    } else {
+      setIsExpanded(true);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [update]);
 
   return (
     <>
@@ -163,12 +189,14 @@ export default function AiDetectionForm() {
                     </ChartContainer>
                     <div className="grid grid-cols-[100px_auto] mt-4 gap-y-1 font-semibold">
                       <p className="text-lime-700">Family:</p>
-                      <span>Burseraceae</span>
+                      <span>{data.family}</span>
                       <p className="text-lime-700">Species:</p>
-                      <em>Santiria Apiculata</em>
+                      <em>{data.species}</em>
                     </div>
                   </div>
-                  <Button className="w-full">Submit Result</Button>
+                  <Button className="w-full">
+                    {update ? "Update Results" : "Submit Results"}
+                  </Button>
                 </div>
               ) : (
                 <div className="flex flex-col gap-4 items-center p-12">
