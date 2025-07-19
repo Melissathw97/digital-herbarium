@@ -1,4 +1,5 @@
 import { Button } from "../ui/button";
+import Badge from "@/components/badge";
 import formatDate from "@/utils/formatDate";
 import { Calendar, Crown, Mail, Pen, Trash, User } from "lucide-react";
 
@@ -36,15 +37,15 @@ export default function UserCard({
             {name}
           </p>
           {role === "super_admin" ? (
-            <div className="bg-violet-100 text-violet-800 px-1.5 py-0.5 text-[10px] rounded-sm font-semibold flex items-center gap-1">
-              <Crown className="h-3 w-3" />
+            <Badge variant="purple">
+              <Crown />
               Admin
-            </div>
+            </Badge>
           ) : (
-            <div className="bg-sky-100 text-sky-800 px-1.5 py-0.5 text-[10px] rounded-sm font-semibold flex items-center gap-1">
-              <User className="h-3 w-3" />
+            <Badge>
+              <User />
               Member
-            </div>
+            </Badge>
           )}
         </div>
 

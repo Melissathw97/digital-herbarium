@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Pages } from "@/types/pages";
+import Badge from "@/components/badge";
 import formatDate from "@/utils/formatDate";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -46,13 +47,13 @@ export default function PlantsListPage() {
     { label: "Location", dataKey: "location" },
   ];
 
-  const getActionTypeStyling = (action: ActionType) => {
+  const getBadgeVariant = (action: ActionType) => {
     switch (action) {
       case ActionType.AI_DETECTION:
-        return "bg-violet-100 border-violet-300 text-violet-800";
+        return "purple";
       case ActionType.OCR:
       default:
-        return "bg-sky-100 border-sky-300 text-sky-800";
+        return "default";
     }
   };
 
@@ -169,11 +170,12 @@ export default function PlantsListPage() {
                         {dataKey === "date" ? (
                           formatDate(plant[dataKey])
                         ) : dataKey === "actionType" ? (
-                          <div
-                            className={`${getActionTypeStyling(plant[dataKey])} px-1.5 py-0.5 text-[10px] rounded-sm font-semibold inline-block border`}
+                          <Badge
+                            variant={getBadgeVariant(plant[dataKey])}
+                            bordered
                           >
                             {plant[dataKey]}
-                          </div>
+                          </Badge>
                         ) : (
                           plant[dataKey]
                         )}
