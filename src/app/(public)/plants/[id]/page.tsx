@@ -4,6 +4,7 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import { Plant } from "@/types/plant";
 import Link from "next/link";
 import Image from "next/image";
+import formatDate from "@/utils/formatDate";
 import { Button } from "@/components/ui/button";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronLeftIcon, LoaderCircle } from "lucide-react";
@@ -25,7 +26,7 @@ export default function PlantDetailsPage() {
       { label: "Prefix", value: plant?.prefix },
       { label: "Number", value: plant?.number },
       { label: "Collector", value: plant?.collector },
-      { label: "Date", value: plant?.date },
+      { label: "Date", value: plant?.date ? formatDate(plant?.date) : "-" },
       { label: "State", value: plant?.state },
       { label: "District", value: plant?.district },
       { label: "Location", value: plant?.location },
