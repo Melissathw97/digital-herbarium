@@ -28,6 +28,7 @@ export default function PlantsListPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [selectedPlant, setSelectedPlant] = useState<Plant>();
+  const [selectedPlants, setSelectedPlants] = useState<Plant[]>([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const headers: { label: string; dataKey: keyof Plant }[] = [
@@ -55,6 +56,29 @@ export default function PlantsListPage() {
     }
   };
 
+  const onBulkCheckboxClick = () => {
+    if (plants.length === selectedPlants.length) {
+      setSelectedPlants([]);
+    } else {
+      setSelectedPlants(plants);
+    }
+  };
+
+  const onCheckboxClick = (plant: Plant) => {
+    const updatedPlants = [...selectedPlants];
+    const index = selectedPlants.findIndex(
+      (selected) => selected.id === plant.id
+    );
+
+    if (index > -1) {
+      updatedPlants.splice(index, 1);
+    } else {
+      updatedPlants.push(plant);
+    }
+
+    setSelectedPlants(updatedPlants);
+  };
+
   const onEditClick = (plant: Plant) => {
     router.push(`/plants/${plant.id}`);
   };
@@ -78,7 +102,7 @@ export default function PlantsListPage() {
       <div className="bg-white shadow-sm rounded-sm px-4 py-5 border flex flex-col gap-5">
         <div className="flex items-center justify-end gap-3">
           <Button variant="secondary" size="sm">
-            Export to CSV
+            Export {selectedPlants.length ? selectedPlants.length : null} to CSV
           </Button>
           <Link href={Pages.PLANTS_NEW}>
             <Button size="sm">Add Plant</Button>
@@ -90,7 +114,11 @@ export default function PlantsListPage() {
             <thead>
               <tr className="border-b">
                 <th className="p-3">
-                  <Input type="checkbox" />
+                  <Input
+                    type="checkbox"
+                    checked={selectedPlants.length === plants.length}
+                    onChange={onBulkCheckboxClick}
+                  />
                 </th>
                 {headers.map(({ label }) => (
                   <th key={label} className="p-4 whitespace-nowrap">
@@ -127,7 +155,12 @@ export default function PlantsListPage() {
                     className={`${index % 2 ? "bg-gray-100" : ""} cursor-pointer`}
                   >
                     <td onClick={(e) => e.stopPropagation()}>
-                      <Input type="checkbox" className="mx-auto" />
+                      <Input
+                        type="checkbox"
+                        className="mx-auto"
+                        checked={selectedPlants.includes(plant)}
+                        onChange={() => onCheckboxClick(plant)}
+                      />
                     </td>
                     {headers.map(({ dataKey }) => (
                       <td key={dataKey} className="p-4 whitespace-nowrap">
@@ -151,20 +184,20 @@ export default function PlantsListPage() {
                       <div className="flex gap-1">
                         <Link href={`/plants/${plant.id}/edit`}>
                           <Button
-                            size="sm"
+                            size="xs"
                             variant="outline"
-                            className="!px-2 hover:text-lime-700"
+                            className="hover:text-lime-700"
                           >
-                            <Pen className="!w-3 !h-3" />
+                            <Pen />
                           </Button>
                         </Link>
                         <Button
-                          size="sm"
+                          size="xs"
                           variant="outline"
-                          className="!px-2"
+                          className="text-red-700 hover:text-red-700"
                           onClick={() => onDeleteClick(plant)}
                         >
-                          <Trash className="!w-3 !h-3 text-red-700" />
+                          <Trash />
                         </Button>
                       </div>
                     </td>

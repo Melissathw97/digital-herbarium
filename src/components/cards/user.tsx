@@ -1,6 +1,6 @@
 import { Button } from "../ui/button";
 import formatDate from "@/utils/formatDate";
-import { Calendar, Crown, Mail, PenBox, Trash, User } from "lucide-react";
+import { Calendar, Crown, Mail, Pen, Trash, User } from "lucide-react";
 
 export default function UserCard({
   name,
@@ -56,21 +56,18 @@ export default function UserCard({
           ) : (
             <>
               {onEdit && (
-                <Button
-                  variant="outline"
-                  className="!h-7 w-7 hover:text-lime-700"
-                  onClick={onEdit}
-                >
-                  <PenBox className="!h-3 !w-3" />
+                <Button variant="outline" size="xs" onClick={onEdit}>
+                  <Pen />
                 </Button>
               )}
               {onDelete && (
                 <Button
                   variant="outline"
-                  className="!h-7 w-7 text-red-700 hover:text-red-700"
+                  size="xs"
+                  className="text-red-700 hover:text-red-700"
                   onClick={onDelete}
                 >
-                  <Trash className="!h-3 !w-3" />
+                  <Trash />
                 </Button>
               )}
             </>
