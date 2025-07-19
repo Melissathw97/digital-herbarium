@@ -37,7 +37,7 @@ export default function PlantDeleteModal({
                   <p className="text-lime-700">Family:</p>
                   <span>{plant.family}</span>
                   <p className="text-lime-700">Species:</p>
-                  <span>{plant.species}</span>
+                  <em>{plant.species}</em>
                 </div>
               </div>
             )}

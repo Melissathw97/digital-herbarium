@@ -165,7 +165,7 @@ export default function AiDetectionForm() {
                       <p className="text-lime-700">Family:</p>
                       <span>Burseraceae</span>
                       <p className="text-lime-700">Species:</p>
-                      <span>Santiria Apiculata</span>
+                      <em>Santiria Apiculata</em>
                     </div>
                   </div>
                   <Button className="w-full">Submit Result</Button>
