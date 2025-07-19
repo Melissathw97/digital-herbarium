@@ -4,7 +4,6 @@ import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Cropper from "../cropper";
 import { Input } from "../ui/input";
-import { Info } from "lucide-react";
 import { Button } from "../ui/button";
 import ScanButton from "../scanButton";
 import { Plant } from "@/types/plant";
@@ -47,7 +46,7 @@ export default function OcrForm({
   initialValues?: Plant;
 }) {
   const [image, setImage] = useState("");
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File>();
 
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -82,8 +81,6 @@ export default function OcrForm({
 
   useEffect(() => {
     if (update && initialValues) {
-      setIsExpanded(false);
-
       const family: Option = familyOptions.find(
         (fam) => fam.value === initialValues.family
       ) || { label: "", value: "" };
@@ -106,6 +103,8 @@ export default function OcrForm({
         location: initialValues.location,
         vernacularName: initialValues.vernacularName,
       });
+    } else {
+      setIsExpanded(true);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

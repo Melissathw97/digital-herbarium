@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Alert from "../alert";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import ImageUploader from "../imageUploader";
@@ -13,7 +14,6 @@ import {
   RadialBar,
   RadialBarChart,
 } from "recharts";
-import Alert from "../alert";
 
 const chartData = [
   { browser: "confidence", confidence: 80, fill: "var(--color-confidence)" },
