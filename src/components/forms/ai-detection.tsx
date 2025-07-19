@@ -53,7 +53,7 @@ export default function AiDetectionForm() {
     setTimeout(() => {
       setIsComplete(true);
       setIsLoading(false);
-    }, 1000);
+    }, 2000);
   };
 
   return (
@@ -161,17 +161,11 @@ export default function AiDetectionForm() {
                         </PolarRadiusAxis>
                       </RadialBarChart>
                     </ChartContainer>
-                    <div className="grid grid-cols-[100px_auto] mt-4 gap-y-1">
-                      <p className="text-gray-500">Family:</p>
-                      <span className="text-lime-700 font-bold">
-                        Burseraceae
-                      </span>
-                      <p className="text-gray-500">Species:</p>
-                      <span className="text-lime-700 font-bold">
-                        Santiria Apiculata
-                      </span>
-                      <p className="text-gray-500">Vernacular:</p>
-                      <span className="text-lime-700 font-bold">Santiria</span>
+                    <div className="grid grid-cols-[100px_auto] mt-4 gap-y-1 font-semibold">
+                      <p className="text-lime-700">Family:</p>
+                      <span>Burseraceae</span>
+                      <p className="text-lime-700">Species:</p>
+                      <span>Santiria Apiculata</span>
                     </div>
                   </div>
                   <Button className="w-full">Submit Result</Button>
