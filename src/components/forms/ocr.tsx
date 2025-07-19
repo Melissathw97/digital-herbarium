@@ -180,6 +180,14 @@ export default function OcrForm({
             </div>
           </div>
           <div className="flex flex-col gap-1 w-full">
+            <label>Vernacular Name</label>
+            <Input
+              name="vernacularName"
+              value={formValues.vernacularName}
+              onChange={onInputChange}
+            />
+          </div>
+          <div className="flex flex-col gap-1 w-full">
             <label>Barcode</label>
 
             <div className="flex gap-2">
@@ -268,14 +276,6 @@ export default function OcrForm({
             <Input
               name="location"
               value={formValues.location}
-              onChange={onInputChange}
-            />
-          </div>
-          <div className="flex flex-col gap-1 w-full">
-            <label>Vernacular Name</label>
-            <Input
-              name="vernacularName"
-              value={formValues.vernacularName}
               onChange={onInputChange}
             />
           </div>
