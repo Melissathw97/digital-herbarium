@@ -23,7 +23,6 @@ export default function PlantsListPage() {
     { label: "Date", dataKey: "date" },
     { label: "Action Type", dataKey: "actionType" },
     { label: "Family", dataKey: "family" },
-    { label: "Genus", dataKey: "genus" },
     { label: "Species", dataKey: "species" },
     { label: "Barcode", dataKey: "barcode" },
     // { label: "Prefix", dataKey: "prefix" },
