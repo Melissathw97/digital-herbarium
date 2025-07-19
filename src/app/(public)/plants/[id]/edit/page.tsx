@@ -40,7 +40,7 @@ export default function UpdatePlantPage() {
           onClick={() => router.back()}
           className="hover:bg-gray-200 p-1 rounded-full"
         >
-          <ChevronLeftIcon className="w-4 h-4" />
+          <ChevronLeftIcon className="w-5 h-5" />
         </button>
         <h2>Edit Plant</h2>
       </div>
