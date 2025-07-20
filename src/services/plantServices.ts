@@ -1,4 +1,9 @@
-import { Pagination, Plant, PlantApi } from "@/types/plant";
+import {
+  Plant,
+  PlantApi,
+  Pagination,
+  PlantAiDetectionPayload,
+} from "@/types/plant";
 import { createClient } from "@/utils/supabase/client";
 
 export async function getPlants({
@@ -36,6 +41,7 @@ export async function getPlants({
           imagePath: plant.image_path,
           vernacularName: plant.vernacular,
           actionType: plant.action_type,
+          confidenceLevel: plant.confidence_level,
         })),
         pagination: data.pagination,
       };
@@ -67,7 +73,33 @@ export async function getPlantById({ id }: { id: string }): Promise<Plant> {
         imagePath: data.image_path,
         vernacularName: data.vernacular,
         actionType: data.action_type,
+        confidenceLevel: data.confidence_level,
       };
+    });
+}
+
+export async function postPlantAiDetection({
+  family,
+  species,
+  confidenceLevel,
+}: PlantAiDetectionPayload): Promise<Plant> {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke(`detection-data/ai`, {
+      body: {
+        family,
+        species,
+        confidence_level: confidenceLevel,
+      },
+    })
+    .then(async ({ data, response }) => {
+      if (response?.ok === false) {
+        const resp = await response?.json();
+        throw resp.error;
+      }
+
+      return data.data;
     });
 }
 

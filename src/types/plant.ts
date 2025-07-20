@@ -16,6 +16,7 @@ export interface Plant {
   flippedImgExists?: boolean;
   vernacularName: string;
   actionType: ActionType;
+  confidenceLevel: number;
 }
 
 export interface PlantApi {
@@ -50,4 +51,10 @@ export interface Pagination {
 export enum ActionType {
   OCR = "OCR",
   AI_DETECTION = "AI Detection",
+}
+
+export interface PlantAiDetectionPayload {
+  family: string;
+  species: string;
+  confidenceLevel: number;
 }

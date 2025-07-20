@@ -4,11 +4,14 @@ import { useEffect, useState } from "react";
 import Alert from "../alert";
 import Image from "next/image";
 import Spinner from "../spinner";
-import { Plant } from "@/types/plant";
 import { Button } from "../ui/button";
+import { Pages } from "@/types/pages";
 import { Sparkles, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import ImageUploader from "../imageUploader";
 import { ChartConfig, ChartContainer } from "../ui/chart";
+import { Plant, PlantAiDetectionPayload } from "@/types/plant";
+import { postPlantAiDetection } from "@/services/plantServices";
 import {
   Label,
   PolarGrid,
@@ -35,14 +38,18 @@ export default function AiDetectionForm({
   update?: boolean;
   initialValues?: Plant;
 }) {
+  const router = useRouter();
+
   const [image, setImage] = useState("");
-  const [data, setData] = useState({
+  const [data, setData] = useState<PlantAiDetectionPayload>({
     family: "",
     species: "",
+    confidenceLevel: 0,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSelectFile = (files: File[]) => {
     if (files?.length) {
@@ -68,6 +75,19 @@ export default function AiDetectionForm({
     }, 2000);
   };
 
+  const onSubmitClick = () => {
+    setIsSubmitting(true);
+
+    postPlantAiDetection(data)
+      .then((data) => {
+        router.push(`${Pages.PLANTS}/${data.id}`);
+      })
+      .catch((error) => {
+        alert(error);
+        setIsSubmitting(false);
+      });
+  };
+
   useEffect(() => {
     if (update && initialValues) {
       setIsComplete(true);
@@ -75,6 +95,7 @@ export default function AiDetectionForm({
       setData({
         family: initialValues.family,
         species: initialValues.species,
+        confidenceLevel: initialValues.confidenceLevel,
       });
     } else {
       setIsExpanded(true);
@@ -202,7 +223,11 @@ export default function AiDetectionForm({
                       <em>{data.species}</em>
                     </div>
                   </div>
-                  <Button className="w-full">
+                  <Button
+                    className="w-full"
+                    onClick={onSubmitClick}
+                    disabled={isSubmitting}
+                  >
                     {update ? "Update Results" : "Submit Results"}
                   </Button>
                 </div>

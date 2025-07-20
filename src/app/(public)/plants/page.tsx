@@ -207,7 +207,11 @@ export default function PlantsListPage() {
                     {headers.map(({ dataKey }) => (
                       <td key={dataKey} className="p-4 whitespace-nowrap">
                         {dataKey === "date" ? (
-                          formatDate(plant[dataKey])
+                          plant[dataKey] ? (
+                            formatDate(plant[dataKey])
+                          ) : (
+                            "-"
+                          )
                         ) : dataKey === "actionType" ? (
                           <Badge
                             variant={getBadgeVariant(plant[dataKey])}

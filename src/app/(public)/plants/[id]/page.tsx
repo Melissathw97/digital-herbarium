@@ -135,10 +135,17 @@ export default function PlantDetailsPage() {
             </div>
 
             <div className="flex-1 p-8 font-semibold shadow-sm rounded-sm border flex flex-col gap-6 sticky top-[80px] items-start">
-              <Badge variant={getBadge(plant.actionType).variant} bordered>
-                {getBadge(plant.actionType).icon}
-                {plant.actionType}
-              </Badge>
+              <div className="flex gap-2">
+                <Badge variant={getBadge(plant.actionType).variant} bordered>
+                  {getBadge(plant.actionType).icon}
+                  {plant.actionType}
+                </Badge>
+                {plant.actionType === ActionType.AI_DETECTION && (
+                  <Badge variant="info" bordered>
+                    Confidence Level: {plant.confidenceLevel * 100}%
+                  </Badge>
+                )}
+              </div>
               <div className="grid lg:grid-cols-[180px_auto] items-center gap-2 lg:gap-3">
                 {displayData.map(({ label, value }) => (
                   <Fragment key={label}>

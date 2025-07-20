@@ -7,6 +7,7 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: "bg-sky-100 text-sky-800 border-sky-700/30",
+        info: "bg-gray-100 text-gray-800 border-gray-700/30",
         purple: "bg-violet-100 text-violet-800 border-violet-300",
       },
     },
@@ -22,7 +23,7 @@ export default function Badge({
   bordered = false,
 }: {
   children: React.ReactNode;
-  variant?: "default" | "purple";
+  variant?: "default" | "purple" | "info";
   bordered?: boolean;
 }) {
   return (
