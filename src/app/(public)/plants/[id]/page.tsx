@@ -10,9 +10,9 @@ import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
 import { Button } from "@/components/ui/button";
 import { useParams, useRouter } from "next/navigation";
+import { getPlantById } from "@/services/plantServices";
 import PlantDeleteModal from "@/components/modals/plantDelete";
 import { ChevronLeftIcon, ScanText, Sparkles } from "lucide-react";
-import { deletePlant, getPlantById } from "@/services/plantServices";
 
 export default function PlantDetailsPage() {
   const params = useParams();
@@ -72,20 +72,6 @@ export default function PlantDetailsPage() {
 
   const onDeleteClick = () => {
     setIsDeleteModalOpen(true);
-  };
-
-  const onDeleteConfirm = () => {
-    if (plant) {
-      deletePlant({ id: plant.id })
-        .then(() => {
-          router.push(Pages.PLANTS);
-          alert("Plant deleted successfully!");
-        })
-        .catch((error) => {
-          setIsDeleteModalOpen(false);
-          alert(error);
-        });
-    }
   };
 
   return (
@@ -169,7 +155,7 @@ export default function PlantDetailsPage() {
         open={isDeleteModalOpen}
         plant={plant}
         toggle={() => setIsDeleteModalOpen(false)}
-        onConfirm={onDeleteConfirm}
+        onDeleteSuccess={() => router.push(Pages.PLANTS)}
       />
     </>
   );

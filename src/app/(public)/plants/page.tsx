@@ -14,11 +14,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Plant, ActionType, Pagination } from "@/types/plant";
 import PlantDeleteModal from "@/components/modals/plantDelete";
 import { downloadExcelFromCSV } from "@/utils/downloadExcelFromCsv";
-import {
-  getPlants,
-  deletePlant,
-  postPlantsExport,
-} from "@/services/plantServices";
+import { getPlants, postPlantsExport } from "@/services/plantServices";
 
 export default function PlantsListPage() {
   const router = useRouter();
@@ -129,20 +125,6 @@ export default function PlantsListPage() {
   const onDeleteClick = (plant: Plant) => {
     setSelectedPlant(plant);
     setIsDeleteModalOpen(true);
-  };
-
-  const onDeleteConfirm = () => {
-    if (selectedPlant) {
-      deletePlant({ id: selectedPlant.id })
-        .then(() => {
-          setIsDeleteModalOpen(false);
-          fetchPlants();
-          alert("Plant deleted successfully!");
-        })
-        .catch((error) => {
-          alert(error);
-        });
-    }
   };
 
   useEffect(() => {
@@ -277,7 +259,7 @@ export default function PlantsListPage() {
           open={isDeleteModalOpen}
           plant={selectedPlant}
           toggle={() => setIsDeleteModalOpen(false)}
-          onConfirm={onDeleteConfirm}
+          onDeleteSuccess={fetchPlants}
         />
       </div>
     </>

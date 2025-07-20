@@ -7,18 +7,34 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "../ui/button";
 import { Plant } from "@/types/plant";
+import { deletePlant } from "@/services/plantServices";
 
 export default function PlantDeleteModal({
   open,
   plant,
   toggle,
-  onConfirm,
+  onDeleteSuccess,
 }: {
   open: boolean;
   plant?: Plant;
   toggle: () => void;
-  onConfirm: () => void;
+  onDeleteSuccess: () => void;
 }) {
+  const onConfirm = () => {
+    if (plant) {
+      deletePlant({ id: plant.id })
+        .then(() => {
+          toggle();
+          onDeleteSuccess();
+          alert("Plant deleted successfully!");
+        })
+        .catch((error) => {
+          toggle();
+          alert(error);
+        });
+    }
+  };
+
   return (
     <AlertDialog open={open}>
       <AlertDialogContent className="!max-w-md gap-8 pt-8">

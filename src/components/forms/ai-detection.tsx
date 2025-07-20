@@ -166,7 +166,7 @@ export default function AiDetectionForm({
                       <RadialBarChart
                         data={chartData}
                         startAngle={90}
-                        endAngle={-220}
+                        endAngle={90 - 360 * data.confidenceLevel}
                         innerRadius={70}
                         outerRadius={100}
                       >
@@ -206,7 +206,7 @@ export default function AiDetectionForm({
                                       y={viewBox.cy}
                                       className="fill-foreground text-4xl font-bold"
                                     >
-                                      86%
+                                      {data.confidenceLevel * 100}%
                                     </tspan>
                                   </text>
                                 );
