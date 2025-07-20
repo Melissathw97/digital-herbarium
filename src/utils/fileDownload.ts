@@ -13,7 +13,7 @@ export async function downloadFileFromAPI({
   headers = {},
   body,
   filename,
-  mimeType = 'application/octet-stream'
+  mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 }: DownloadFileOptions): Promise<void> {
   const response = await fetch(url, {
     method,
