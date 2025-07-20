@@ -5,6 +5,7 @@ import {
   PlantAiDetectionPayload,
 } from "@/types/plant";
 import { createClient } from "@/utils/supabase/client";
+import { downloadFileFromAPI, generateTimestampedFilename } from "@/utils/fileDownload";
 
 export async function getPlants({
   page,
@@ -78,21 +79,49 @@ export async function getPlantById({ id }: { id: string }): Promise<Plant> {
     });
 }
 
+// export async function postPlantsExport({ ids }: { ids: string[] }) {
+//   const supabase = createClient();
+
+//   return supabase.functions
+//     .invoke("export-excel", {
+//       body: { ...(ids.length > 0 ? { id: ids } : {}) },
+//     })
+//     .then(async ({ data, response }) => {
+//       if (response?.ok === false) {
+//         const resp = await response?.json();
+//         throw resp.error;
+//       }
+
+//       return data;
+//     });
+// }
+
 export async function postPlantsExport({ ids }: { ids: string[] }) {
   const supabase = createClient();
+  
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session?.access_token) {
+    throw new Error('Not authenticated');
+  }
 
-  return supabase.functions
-    .invoke("export-excel", {
-      body: { ...(ids.length > 0 ? { id: ids } : {}) },
-    })
-    .then(async ({ data, response }) => {
-      if (response?.ok === false) {
-        const resp = await response?.json();
-        throw resp.error;
-      }
-
-      return data;
+  try {
+    await downloadFileFromAPI({
+      url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/export-excel`,
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ ...(ids.length > 0 ? { id: ids } : {}) }),
+      filename: generateTimestampedFilename('data_captured_export', 'xlsx'),
+      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Export error:', error);
+    throw error;
+  }
 }
 
 export async function postPlantAiDetection({
