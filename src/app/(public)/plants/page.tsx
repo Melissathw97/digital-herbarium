@@ -9,11 +9,11 @@ import formatDate from "@/utils/formatDate";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { getPlants } from "@/services/plantServices";
 import TablePagination from "@/components/pagination";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Plant, ActionType, Pagination } from "@/types/plant";
 import PlantDeleteModal from "@/components/modals/plantDelete";
+import { deletePlant, getPlants } from "@/services/plantServices";
 
 export default function PlantsListPage() {
   const router = useRouter();
@@ -114,6 +114,20 @@ export default function PlantsListPage() {
   const onDeleteClick = (plant: Plant) => {
     setSelectedPlant(plant);
     setIsDeleteModalOpen(true);
+  };
+
+  const onDeleteConfirm = () => {
+    if (selectedPlant) {
+      deletePlant({ id: selectedPlant.id })
+        .then(() => {
+          setIsDeleteModalOpen(false);
+          fetchPlants();
+          alert("Plant deleted successfully!");
+        })
+        .catch((error) => {
+          alert(error);
+        });
+    }
   };
 
   useEffect(() => {
@@ -243,7 +257,7 @@ export default function PlantsListPage() {
           open={isDeleteModalOpen}
           plant={selectedPlant}
           toggle={() => setIsDeleteModalOpen(false)}
-          onConfirm={() => setIsDeleteModalOpen(false)}
+          onConfirm={onDeleteConfirm}
         />
       </div>
     </>

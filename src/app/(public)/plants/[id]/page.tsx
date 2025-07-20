@@ -4,14 +4,15 @@ import { Fragment, ReactElement, useEffect, useMemo, useState } from "react";
 import { ActionType, Plant } from "@/types/plant";
 import Link from "next/link";
 import Image from "next/image";
+import { Pages } from "@/types/pages";
 import Badge from "@/components/badge";
 import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
-import { ChevronLeftIcon, ScanText, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useParams, useRouter } from "next/navigation";
-import { getPlantById } from "@/services/plantServices";
 import PlantDeleteModal from "@/components/modals/plantDelete";
+import { ChevronLeftIcon, ScanText, Sparkles } from "lucide-react";
+import { deletePlant, getPlantById } from "@/services/plantServices";
 
 export default function PlantDetailsPage() {
   const params = useParams();
@@ -73,6 +74,20 @@ export default function PlantDetailsPage() {
     setIsDeleteModalOpen(true);
   };
 
+  const onDeleteConfirm = () => {
+    if (plant) {
+      deletePlant({ id: plant.id })
+        .then(() => {
+          router.push(Pages.PLANTS);
+          alert("Plant deleted successfully!");
+        })
+        .catch((error) => {
+          setIsDeleteModalOpen(false);
+          alert(error);
+        });
+    }
+  };
+
   return (
     <>
       <div className="flex gap-2 items-center">
@@ -124,15 +139,17 @@ export default function PlantDetailsPage() {
                 {getBadge(plant.actionType).icon}
                 {plant.actionType}
               </Badge>
-              <div className="grid grid-cols-[180px_auto] items-center gap-3">
+              <div className="grid lg:grid-cols-[180px_auto] items-center gap-2 lg:gap-3">
                 {displayData.map(({ label, value }) => (
                   <Fragment key={label}>
                     <p className="text-lime-700 uppercase text-xs">{label}:</p>
-                    {label === "Species" ? (
-                      <em>{value || "-"}</em>
-                    ) : (
-                      <p>{value || "-"}</p>
-                    )}
+                    <div className="mb-4 lg:mb-0">
+                      {label === "Species" ? (
+                        <em>{value || "-"}</em>
+                      ) : (
+                        <p>{value || "-"}</p>
+                      )}
+                    </div>
                   </Fragment>
                 ))}
               </div>
@@ -145,7 +162,7 @@ export default function PlantDetailsPage() {
         open={isDeleteModalOpen}
         plant={plant}
         toggle={() => setIsDeleteModalOpen(false)}
-        onConfirm={() => setIsDeleteModalOpen(false)}
+        onConfirm={onDeleteConfirm}
       />
     </>
   );
