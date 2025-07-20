@@ -41,3 +41,32 @@ export async function getPlants({
       };
     });
 }
+
+export async function getPlantById({ id }: { id: string }): Promise<Plant> {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke(`plant-data/?id=${id}`, {
+      method: "GET",
+    })
+    .then(({ data, error }) => {
+      if (error) throw error;
+
+      return {
+        id: data.id,
+        family: data.family_name,
+        species: data.species_name,
+        barcode: data.barcode,
+        prefix: data.prefix,
+        number: data.number,
+        collector: data.collector,
+        date: data.collected_at,
+        state: data.state,
+        district: data.district,
+        location: data.location,
+        imagePath: data.image_path,
+        vernacularName: data.vernacular,
+        actionType: data.action_type,
+      };
+    });
+}

@@ -85,7 +85,7 @@ export default function Cropper({
   }, [completedCrop, scale, rotate, previewCanvasRef]);
 
   return (
-    <div className="h-full sticky top-0">
+    <div className="h-full">
       {imgSrc ? (
         <div className="mb-4">
           <div className="flex border rounded-sm p-0.5 justify-between">

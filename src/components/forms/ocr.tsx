@@ -85,12 +85,22 @@ export default function OcrForm({
 
   useEffect(() => {
     if (update && initialValues) {
-      const family: Option = familyOptions.find(
-        (fam) => fam.value === initialValues.family
-      ) || { label: "", value: "" };
+      const family = {
+        label: initialValues.family,
+        value: initialValues.family,
+      };
       const state =
         States.states.find((state) => state.value === initialValues.state)
           ?.value || "";
+
+      if (
+        familyOptions.find((fam) => fam.value === family.value) === undefined
+      ) {
+        familyOptions.push({
+          label: initialValues.family,
+          value: initialValues.family,
+        });
+      }
 
       setImage(initialValues.imagePath);
       setFormValues({
@@ -135,7 +145,7 @@ export default function OcrForm({
         </ol>
       </Alert>
       <div className="flex w-full gap-4 mb-6">
-        <div className="flex-1">
+        <div className="flex-1 max-w-[50%]">
           <Cropper
             handleSetImgSrc={(image) => setImage(image)}
             imgSrc={image}

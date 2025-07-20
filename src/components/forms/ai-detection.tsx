@@ -101,15 +101,22 @@ export default function AiDetectionForm({
         </ol>
       </Alert>
       <div className="flex gap-4">
-        <div className="flex-1 min-h-[250px]">
+        <div className="flex-1 min-h-[250px] max-w-[50%] flex flex-col gap-4">
           {image ? (
             <>
-              <div className="flex border rounded-sm p-0.5 justify-between mb-4">
+              <div className="flex border rounded-sm p-0.5 justify-between">
                 <Button variant="ghost" onClick={resetImage}>
                   <X />
                 </Button>
               </div>
-              <Image alt="Sample" src={image} width={550} height={200} />
+              <div className="bg-gray-100 rounded-sm h-full">
+                <Image
+                  alt={data.species}
+                  src={image}
+                  width={500}
+                  height={200}
+                />
+              </div>
             </>
           ) : (
             <ImageUploader handleFiles={onSelectFile} />

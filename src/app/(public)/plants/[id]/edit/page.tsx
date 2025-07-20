@@ -5,12 +5,10 @@ import { useEffect, useState } from "react";
 import Spinner from "@/components/spinner";
 import OcrForm from "@/components/forms/ocr";
 import { ActionType, Plant } from "@/types/plant";
+import { getPlantById } from "@/services/plantServices";
 import AiDetectionForm from "@/components/forms/ai-detection";
 import { ChevronLeftIcon, ScanText, Sparkles } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-// TODO: Integrate with Plants API
-import mockPlantData from "@/constants/mock_plants.json";
 
 export default function UpdatePlantPage() {
   const params = useParams();
@@ -19,13 +17,14 @@ export default function UpdatePlantPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
-      const plantData = mockPlantData.plants.find(
-        (plant) => plant.id === params.id
-      );
-      setPlant(plantData as Plant);
-      setIsLoading(false);
-    }, 500);
+    getPlantById({ id: params.id?.toString() || "" })
+      .then((data) => {
+        setPlant(data);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   }, [params.id]);
 
   return (

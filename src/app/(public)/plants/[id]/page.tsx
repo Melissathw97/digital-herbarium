@@ -1,18 +1,17 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useState } from "react";
-import { Plant } from "@/types/plant";
+import { Fragment, ReactElement, useEffect, useMemo, useState } from "react";
+import { ActionType, Plant } from "@/types/plant";
 import Link from "next/link";
 import Image from "next/image";
+import Badge from "@/components/badge";
 import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
-import { ChevronLeftIcon } from "lucide-react";
+import { ChevronLeftIcon, ScanText, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useParams, useRouter } from "next/navigation";
+import { getPlantById } from "@/services/plantServices";
 import PlantDeleteModal from "@/components/modals/plantDelete";
-
-// TODO: Integrate with Plants API
-import mockPlantData from "@/constants/mock_plants.json";
 
 export default function PlantDetailsPage() {
   const params = useParams();
@@ -22,10 +21,32 @@ export default function PlantDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  const getBadge = (
+    action: ActionType
+  ): {
+    variant: "purple" | "default";
+    icon: ReactElement;
+  } => {
+    switch (action) {
+      case ActionType.AI_DETECTION:
+        return {
+          variant: "purple",
+          icon: <Sparkles />,
+        };
+      case ActionType.OCR:
+      default:
+        return {
+          variant: "default",
+          icon: <ScanText />,
+        };
+    }
+  };
+
   const displayData = useMemo(() => {
     return [
       { label: "Family", value: plant?.family },
       { label: "Species", value: plant?.species },
+      { label: "Vernacular Name", value: plant?.vernacularName },
       { label: "Barcode", value: plant?.barcode },
       { label: "Prefix", value: plant?.prefix },
       { label: "Number", value: plant?.number },
@@ -34,22 +55,18 @@ export default function PlantDetailsPage() {
       { label: "State", value: plant?.state },
       { label: "District", value: plant?.district },
       { label: "Location", value: plant?.location },
-      { label: "Vernacular Name", value: plant?.vernacularName },
     ];
   }, [plant]);
 
   useEffect(() => {
-    setTimeout(() => {
-      const plantData = mockPlantData.plants.find(
-        (plant) => plant.id === params.id
-      );
-
-      if (plantData) {
-        setPlant(plantData as Plant);
-      }
-
-      setIsLoading(false);
-    }, 500);
+    getPlantById({ id: params.id?.toString() || "" })
+      .then((data) => {
+        setPlant(data);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   }, [params.id]);
 
   const onDeleteClick = () => {
@@ -93,20 +110,32 @@ export default function PlantDetailsPage() {
           </p>
         ) : (
           <div className="flex w-full gap-6 items-start">
-            <Image
-              alt={plant?.species || ""}
-              src={plant?.imagePath || ""}
-              width={500}
-              height={200}
-            />
+            <div className="bg-gray-100 max-w-[50%] rounded-sm">
+              <Image
+                alt={plant?.species || ""}
+                src={plant?.imagePath || ""}
+                width={500}
+                height={200}
+              />
+            </div>
 
-            <div className="flex-1 p-10 font-semibold shadow-sm rounded-sm border flex flex-col gap-3 grid grid-cols-[150px_auto] items-center sticky top-[80px]">
-              {displayData.map(({ label, value }) => (
-                <Fragment key={label}>
-                  <p className="text-lime-700 uppercase text-xs">{label}:</p>
-                  {label === "Species" ? <em>{value}</em> : <p>{value}</p>}
-                </Fragment>
-              ))}
+            <div className="flex-1 p-8 font-semibold shadow-sm rounded-sm border flex flex-col gap-6 sticky top-[80px] items-start">
+              <Badge variant={getBadge(plant.actionType).variant} bordered>
+                {getBadge(plant.actionType).icon}
+                {plant.actionType}
+              </Badge>
+              <div className="grid grid-cols-[180px_auto] items-center gap-3">
+                {displayData.map(({ label, value }) => (
+                  <Fragment key={label}>
+                    <p className="text-lime-700 uppercase text-xs">{label}:</p>
+                    {label === "Species" ? (
+                      <em>{value || "-"}</em>
+                    ) : (
+                      <p>{value || "-"}</p>
+                    )}
+                  </Fragment>
+                ))}
+              </div>
             </div>
           </div>
         )}
