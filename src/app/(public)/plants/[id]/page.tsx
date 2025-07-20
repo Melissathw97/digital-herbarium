@@ -4,14 +4,15 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import { Plant } from "@/types/plant";
 import Link from "next/link";
 import Image from "next/image";
+import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
+import { ChevronLeftIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronLeftIcon, LoaderCircle } from "lucide-react";
+import PlantDeleteModal from "@/components/modals/plantDelete";
 
 // TODO: Integrate with Plants API
 import mockPlantData from "@/constants/mock_plants.json";
-import PlantDeleteModal from "@/components/modals/plantDelete";
 
 export default function PlantDetailsPage() {
   const params = useParams();
@@ -85,7 +86,7 @@ export default function PlantDetailsPage() {
 
       <div className="bg-white shadow-sm rounded-sm px-4 py-5 border flex flex-col gap-5 items-center">
         {isLoading ? (
-          <LoaderCircle className="animate-spin mx-auto my-9" />
+          <Spinner className="my-9" />
         ) : !plant ? (
           <p className="text-center text-gray-600 text-xs py-10">
             No plant data found. Please try again later.

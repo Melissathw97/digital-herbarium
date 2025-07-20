@@ -2,19 +2,15 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Spinner from "@/components/spinner";
 import OcrForm from "@/components/forms/ocr";
-import {
-  ChevronLeftIcon,
-  LoaderCircle,
-  ScanText,
-  Sparkles,
-} from "lucide-react";
 import { ActionType, Plant } from "@/types/plant";
 import AiDetectionForm from "@/components/forms/ai-detection";
+import { ChevronLeftIcon, ScanText, Sparkles } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // TODO: Integrate with Plants API
 import mockPlantData from "@/constants/mock_plants.json";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function UpdatePlantPage() {
   const params = useParams();
@@ -46,7 +42,7 @@ export default function UpdatePlantPage() {
 
       <div className="bg-white shadow-sm rounded-sm px-4 py-5 border flex flex-col gap-5">
         {isLoading ? (
-          <LoaderCircle className="animate-spin mx-auto" />
+          <Spinner />
         ) : (
           <>
             <Tabs defaultValue={plant?.actionType}>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { User } from "@/types/user";
-import { LoaderCircle } from "lucide-react";
+import Spinner from "@/components/spinner";
 import UserCard from "@/components/cards/user";
 import { getUsers } from "@/services/userServices";
 import UserDeleteModal from "@/components/modals/userDelete";
@@ -44,7 +44,7 @@ export default function MembersPage() {
     <>
       <h1>Users</h1>
 
-      {isLoading && <LoaderCircle className="animate-spin mx-auto my-4" />}
+      {isLoading && <Spinner className="my-5" />}
       {hasError && (
         <p className="text-center text-gray-600 text-xs">
           Unable to fetch users. Please try again later.

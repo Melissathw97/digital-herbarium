@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import Alert from "../alert";
 import Image from "next/image";
+import Spinner from "../spinner";
 import { Plant } from "@/types/plant";
 import { Button } from "../ui/button";
+import { Sparkles, X } from "lucide-react";
 import ImageUploader from "../imageUploader";
-import { LoaderCircle, Sparkles, X } from "lucide-react";
 import { ChartConfig, ChartContainer } from "../ui/chart";
 import {
   Label,
@@ -122,7 +123,7 @@ export default function AiDetectionForm({
                   <p className="text-gray-600 text-center">
                     Detecting plant species...
                   </p>
-                  <LoaderCircle className="animate-spin mx-auto" />
+                  <Spinner />
                 </div>
               ) : isComplete ? (
                 <div className="pt-12 pb-6 px-6">

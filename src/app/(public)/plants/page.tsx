@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { Pages } from "@/types/pages";
 import Badge from "@/components/badge";
+import { Pen, Trash } from "lucide-react";
+import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { getPlants } from "@/services/plantServices";
 import TablePagination from "@/components/pagination";
-import { LoaderCircle, Pen, Trash } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Plant, ActionType, Pagination } from "@/types/plant";
 import PlantDeleteModal from "@/components/modals/plantDelete";
@@ -162,7 +163,7 @@ export default function PlantsListPage() {
                     colSpan={headers.length + 1}
                     className="p-3 text-gray-500"
                   >
-                    <LoaderCircle className="animate-spin mx-auto" />
+                    <Spinner />
                   </td>
                 </tr>
               ) : plants.length === 0 ? (
