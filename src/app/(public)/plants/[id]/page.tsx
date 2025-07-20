@@ -42,7 +42,11 @@ export default function PlantDetailsPage() {
       const plantData = mockPlantData.plants.find(
         (plant) => plant.id === params.id
       );
-      setPlant(plantData as Plant);
+
+      if (plantData) {
+        setPlant(plantData as Plant);
+      }
+
       setIsLoading(false);
     }, 500);
   }, [params.id]);
@@ -61,7 +65,7 @@ export default function PlantDetailsPage() {
           <ChevronLeftIcon className="w-5 h-5" />
         </button>
 
-        {isLoading ? null : (
+        {isLoading || !plant ? null : (
           <>
             <h2>{plant?.species}</h2>
 
@@ -81,7 +85,11 @@ export default function PlantDetailsPage() {
 
       <div className="bg-white shadow-sm rounded-sm px-4 py-5 border flex flex-col gap-5 items-center">
         {isLoading ? (
-          <LoaderCircle className="animate-spin mx-auto" />
+          <LoaderCircle className="animate-spin mx-auto my-9" />
+        ) : !plant ? (
+          <p className="text-center text-gray-600 text-xs py-10">
+            No plant data found. Please try again later.
+          </p>
         ) : (
           <div className="flex w-full gap-6 items-start">
             <Image
