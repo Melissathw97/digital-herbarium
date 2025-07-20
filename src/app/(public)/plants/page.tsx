@@ -4,36 +4,35 @@ import Link from "next/link";
 import { Pages } from "@/types/pages";
 import Badge from "@/components/badge";
 import formatDate from "@/utils/formatDate";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plant, ActionType } from "@/types/plant";
+import { getPlants } from "@/services/plantServices";
+import TablePagination from "@/components/pagination";
+import { LoaderCircle, Pen, Trash } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Plant, ActionType, Pagination } from "@/types/plant";
 import PlantDeleteModal from "@/components/modals/plantDelete";
-import {
-  ChevronLeft,
-  ChevronRight,
-  LoaderCircle,
-  Pen,
-  Trash,
-} from "lucide-react";
-
-// TODO: Integrate with Plants API
-import mockPlantData from "@/constants/mock_plants.json";
 
 export default function PlantsListPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [isLoading, setIsLoading] = useState(true);
   const [plants, setPlants] = useState<Plant[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<Pagination>({
+    limit: 0,
+    page: 0,
+    total: 0,
+    totalPages: 0,
+  });
 
   const [selectedPlant, setSelectedPlant] = useState<Plant>();
   const [selectedPlants, setSelectedPlants] = useState<Plant[]>([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const headers: { label: string; dataKey: keyof Plant }[] = [
-    { label: "Date", dataKey: "date" },
+    { label: "Date Collected", dataKey: "date" },
     { label: "Action Type", dataKey: "actionType" },
     { label: "Family", dataKey: "family" },
     { label: "Species", dataKey: "species" },
@@ -46,6 +45,33 @@ export default function PlantsListPage() {
     { label: "District", dataKey: "district" },
     { label: "Location", dataKey: "location" },
   ];
+
+  const fetchPlants = () => {
+    setIsLoading(true);
+
+    const page = searchParams.get("page");
+    const limit = searchParams.get("limit");
+
+    const queryParams = {
+      page: Number(page) || 1,
+      limit: Number(limit) || 10,
+    };
+
+    getPlants(queryParams)
+      .then((response) => {
+        setPlants(response.data);
+        setPagination(response.pagination);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);
+      });
+  };
+
+  const onPageClick = (page: number) => {
+    router.push(`?page=${page.toString()}`);
+  };
 
   const getBadgeVariant = (action: ActionType) => {
     switch (action) {
@@ -90,11 +116,9 @@ export default function PlantsListPage() {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      setPlants(mockPlantData.plants as Plant[]);
-      setIsLoading(false);
-    }, 500);
-  });
+    fetchPlants();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   return (
     <>
@@ -177,7 +201,7 @@ export default function PlantsListPage() {
                             {plant[dataKey]}
                           </Badge>
                         ) : (
-                          plant[dataKey]
+                          plant[dataKey] || "-"
                         )}
                       </td>
                     ))}
@@ -212,32 +236,14 @@ export default function PlantsListPage() {
           </table>
         </div>
 
+        <TablePagination pagination={pagination} onPageClick={onPageClick} />
+
         <PlantDeleteModal
           open={isDeleteModalOpen}
           plant={selectedPlant}
           toggle={() => setIsDeleteModalOpen(false)}
           onConfirm={() => setIsDeleteModalOpen(false)}
         />
-
-        <div className="flex items-center justify-between text-xs">
-          <p>Showing 1 - 10 of 100 items</p>
-          <div className="border rounded-sm flex items-center gap-1 px-1 py-1">
-            <button className="w-6 h-6 grid place-items-center hover:bg-gray-100 rounded-xs">
-              <ChevronLeft className="w-3 h-3" />
-            </button>
-            {[1, 2, 3].map((number) => (
-              <button
-                key={number}
-                className={`${number === currentPage ? "bg-lime-700/20" : ""} w-6 h-6 grid place-items-center hover:bg-gray-100 rounded-xs`}
-              >
-                {number}
-              </button>
-            ))}
-            <button className="w-6 h-6 grid place-items-center hover:bg-gray-100 rounded-xs">
-              <ChevronRight className="w-3 h-3" />
-            </button>
-          </div>
-        </div>
       </div>
     </>
   );
