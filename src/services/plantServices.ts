@@ -78,6 +78,23 @@ export async function getPlantById({ id }: { id: string }): Promise<Plant> {
     });
 }
 
+export async function postPlantsExport({ ids }: { ids: string[] }) {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke("export-excel", {
+      body: { ...(ids.length > 0 ? { id: ids } : {}) },
+    })
+    .then(async ({ data, response }) => {
+      if (response?.ok === false) {
+        const resp = await response?.json();
+        throw resp.error;
+      }
+
+      return data;
+    });
+}
+
 export async function postPlantAiDetection({
   family,
   species,

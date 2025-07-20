@@ -13,7 +13,12 @@ import TablePagination from "@/components/pagination";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Plant, ActionType, Pagination } from "@/types/plant";
 import PlantDeleteModal from "@/components/modals/plantDelete";
-import { deletePlant, getPlants } from "@/services/plantServices";
+import { downloadExcelFromCSV } from "@/utils/downloadExcelFromCsv";
+import {
+  getPlants,
+  deletePlant,
+  postPlantsExport,
+} from "@/services/plantServices";
 
 export default function PlantsListPage() {
   const router = useRouter();
@@ -84,6 +89,16 @@ export default function PlantsListPage() {
     }
   };
 
+  const onExportClick = () => {
+    postPlantsExport({ ids: selectedPlants.map((plant) => plant.id) })
+      .then((data) => {
+        downloadExcelFromCSV(data);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
   const onBulkCheckboxClick = () => {
     if (plants.length === selectedPlants.length) {
       setSelectedPlants([]);
@@ -141,8 +156,9 @@ export default function PlantsListPage() {
 
       <div className="bg-white shadow-sm rounded-sm px-4 py-5 border flex flex-col gap-5">
         <div className="flex items-center justify-end gap-3">
-          <Button variant="secondary" size="sm">
-            Export {selectedPlants.length ? selectedPlants.length : null} to CSV
+          <Button variant="secondary" size="sm" onClick={onExportClick}>
+            Export to Excel{" "}
+            {selectedPlants.length ? `(${selectedPlants.length})` : null}
           </Button>
           <Link href={Pages.PLANTS_NEW}>
             <Button size="sm">Add Plant</Button>
@@ -153,7 +169,7 @@ export default function PlantsListPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b">
-                <th className="p-3">
+                <th className="p-3 px-4">
                   {plants.length > 0 && (
                     <Input
                       type="checkbox"
