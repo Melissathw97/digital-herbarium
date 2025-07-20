@@ -18,17 +18,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { updateUserRole } from "@/services/userServices";
 
 export default function UserRoleUpdateModal({
   open,
-  toggle,
   user,
+  toggle,
+  onUpdateSuccess,
 }: {
   open: boolean;
-  toggle: () => void;
   user?: User;
+  toggle: () => void;
+  onUpdateSuccess: () => void;
 }) {
   const [role, setRole] = useState("");
+
+  const onUpdateClick = () => {
+    if (user)
+      updateUserRole({ userId: user.id, role })
+        .then(() => {
+          toggle();
+          onUpdateSuccess();
+        })
+        .catch((error) => {
+          alert(error);
+        });
+  };
 
   useEffect(() => {
     if (user) setRole(user.role);
@@ -74,7 +89,7 @@ export default function UserRoleUpdateModal({
           <Button variant="outline" className="w-32" onClick={toggle}>
             Cancel
           </Button>
-          <AlertDialogAction onClick={toggle} className="w-32">
+          <AlertDialogAction onClick={onUpdateClick} className="w-32">
             Update Role
           </AlertDialogAction>
         </AlertDialogFooter>

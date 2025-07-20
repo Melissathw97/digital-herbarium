@@ -20,3 +20,36 @@ export function getUsers(): Promise<User[]> {
       }));
     });
 }
+
+export function updateUserRole({
+  userId,
+  role,
+}: {
+  userId: string;
+  role: string;
+}): Promise<User> {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke(`user-data/?user_id=${userId}`, {
+      method: "PUT",
+      body: {
+        role,
+      },
+    })
+    .then(async ({ data, response }) => {
+      if (response?.ok === false) {
+        const resp = await response?.json();
+        throw resp.error;
+      }
+
+      return {
+        id: data.data.user_id,
+        firstName: data.data.first_name,
+        lastName: data.data.last_name,
+        role: data.data.role,
+        email: data.data.email,
+        joinedAt: data.data.created_at,
+      };
+    });
+}

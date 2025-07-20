@@ -17,6 +17,21 @@ export default function MembersPage() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  const fetchUsers = () => {
+    setIsLoading(true);
+
+    getUsers()
+      .then((data) => {
+        setUsers(data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setHasError(true);
+        setIsLoading(false);
+      });
+  };
+
   const onEditClick = (user: User) => {
     setSelectedUser(user);
     setIsUpdateModalOpen(true);
@@ -28,16 +43,7 @@ export default function MembersPage() {
   };
 
   useEffect(() => {
-    getUsers()
-      .then((data) => {
-        setUsers(data);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setHasError(true);
-        setIsLoading(false);
-      });
+    fetchUsers();
   }, []);
 
   return (
@@ -70,6 +76,7 @@ export default function MembersPage() {
         user={selectedUser}
         open={isUpdateModalOpen}
         toggle={() => setIsUpdateModalOpen(!isUpdateModalOpen)}
+        onUpdateSuccess={fetchUsers}
       />
 
       <UserDeleteModal
