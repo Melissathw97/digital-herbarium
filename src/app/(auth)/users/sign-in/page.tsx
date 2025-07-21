@@ -96,8 +96,8 @@ export default function UsersSignIn() {
           </Button>
           <p>
             Don&apos;t have an account yet?&nbsp;
-            <Link href={Pages.SIGN_UP} className="text-lime-800">
-              Sign up here
+            <Link href={Pages.SIGN_UP}>
+              <Button variant="link">Sign up here</Button>
             </Link>
           </p>
         </div>
