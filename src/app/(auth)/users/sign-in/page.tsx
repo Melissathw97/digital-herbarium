@@ -82,6 +82,11 @@ export default function UsersSignIn() {
           <div className="flex flex-col gap-2">
             <label>Password</label>
             <Input type="password" name="password" onChange={onInputChange} />
+            <Link href={Pages.RESET_PASSWORD} className="mt-1 inline ml-auto">
+              <Button variant="link" size="sm">
+                Forgot Password?
+              </Button>
+            </Link>
           </div>
         </div>
 
