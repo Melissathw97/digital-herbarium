@@ -69,6 +69,7 @@ export interface PlantOCRPayload {
 }
 
 export interface PlantAiDetectionPayload {
+  image?: File;
   family: string;
   species: string;
   confidenceLevel: number;

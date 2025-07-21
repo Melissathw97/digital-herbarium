@@ -203,19 +203,29 @@ export async function postPlantOCR({
 }
 
 export async function postPlantAiDetection({
+  image,
   family,
   species,
   confidenceLevel,
 }: PlantAiDetectionPayload): Promise<Plant> {
   const supabase = createClient();
 
+  const payload = {
+    image,
+    family,
+    species,
+    confidence_level: confidenceLevel,
+  };
+
+  const formData = new FormData();
+
+  Object.entries(payload).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+
   return supabase.functions
     .invoke(`detection-data/ai`, {
-      body: {
-        family,
-        species,
-        confidence_level: confidenceLevel,
-      },
+      body: formData,
     })
     .then(async ({ data, response }) => {
       if (response?.ok === false) {

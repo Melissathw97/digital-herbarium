@@ -42,6 +42,7 @@ export default function AiDetectionForm({
 
   const [image, setImage] = useState("");
   const [data, setData] = useState<PlantAiDetectionPayload>({
+    image: undefined,
     family: "",
     species: "",
     confidenceLevel: 0,
@@ -53,6 +54,7 @@ export default function AiDetectionForm({
 
   const onSelectFile = (files: File[]) => {
     if (files?.length) {
+      setData({ ...data, image: files[0] });
       const reader = new FileReader();
       reader.addEventListener("load", () =>
         setImage(reader.result?.toString() || "")
