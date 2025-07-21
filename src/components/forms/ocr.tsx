@@ -47,6 +47,7 @@ export default function OcrForm({
 }) {
   const [image, setImage] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showScanButton, setShowScanButton] = useState(false);
 
   // TODO: Check if selectedFile is used
   const [selectedFile, setSelectedFile] = useState<File>();
@@ -150,6 +151,7 @@ export default function OcrForm({
             handleSetImgSrc={(image) => setImage(image)}
             imgSrc={image}
             previewCanvasRef={previewCanvasRef}
+            showScanButton={() => setShowScanButton(true)}
             handleSetSelectedFile={(file) => setSelectedFile(file)}
           />
         </div>
@@ -185,12 +187,14 @@ export default function OcrForm({
                 onChange={onInputChange}
               />
 
-              <ScanButton
-                previewCanvasRef={previewCanvasRef}
-                onSubmit={(value) =>
-                  setFormValues({ ...formValues, species: value })
-                }
-              />
+              {showScanButton && (
+                <ScanButton
+                  previewCanvasRef={previewCanvasRef}
+                  onSubmit={(value) =>
+                    setFormValues({ ...formValues, species: value })
+                  }
+                />
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-1 w-full">
@@ -211,13 +215,15 @@ export default function OcrForm({
                 onChange={onInputChange}
               />
 
-              <ScanButton
-                isBarcode
-                previewCanvasRef={previewCanvasRef}
-                onSubmit={(value) =>
-                  setFormValues({ ...formValues, barcode: value })
-                }
-              />
+              {showScanButton && (
+                <ScanButton
+                  isBarcode
+                  previewCanvasRef={previewCanvasRef}
+                  onSubmit={(value) =>
+                    setFormValues({ ...formValues, barcode: value })
+                  }
+                />
+              )}
             </div>
           </div>
           <div className="flex gap-3 w-full">

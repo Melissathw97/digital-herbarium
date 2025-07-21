@@ -11,11 +11,13 @@ import ReactCrop, { PixelCrop } from "react-image-crop";
 export default function Cropper({
   imgSrc,
   previewCanvasRef,
+  showScanButton,
   handleSetImgSrc,
   handleSetSelectedFile,
 }: {
   imgSrc: string;
   previewCanvasRef: RefObject<HTMLCanvasElement | null>;
+  showScanButton: () => void;
   handleSetImgSrc: (src: string) => void;
   handleSetSelectedFile: (files?: File) => void;
 }) {
@@ -72,8 +74,9 @@ export default function Cropper({
       imgRef.current &&
       previewCanvasRef.current
     ) {
-      // We use canvasPreview as it's much faster than imgPreview.
+      showScanButton();
 
+      // We use canvasPreview as it's much faster than imgPreview.
       canvasPreview(
         imgRef.current,
         previewCanvasRef.current,
