@@ -13,7 +13,6 @@ import TablePagination from "@/components/pagination";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Plant, ActionType, Pagination } from "@/types/plant";
 import PlantDeleteModal from "@/components/modals/plantDelete";
-import { downloadExcelFromCSV } from "@/utils/downloadExcelFromCsv";
 import { getPlants, postPlantsExport } from "@/services/plantServices";
 
 export default function PlantsListPage() {
@@ -87,9 +86,7 @@ export default function PlantsListPage() {
 
   const onExportClick = () => {
     postPlantsExport({ ids: selectedPlants.map((plant) => plant.id) })
-      .then((data) => {
-        downloadExcelFromCSV(data);
-      })
+      .then(() => {})
       .catch((error) => {
         alert(error);
       });
