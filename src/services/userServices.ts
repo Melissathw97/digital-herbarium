@@ -53,3 +53,20 @@ export function updateUserRole({
       };
     });
 }
+
+export function deleteUser({ userId }: { userId: string }): Promise<User> {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke(`user-data/?user_id=${userId}`, {
+      method: "DELETE",
+    })
+    .then(async ({ data, response }) => {
+      if (response?.ok === false) {
+        const resp = await response?.json();
+        throw resp.error;
+      }
+
+      return data;
+    });
+}

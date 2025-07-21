@@ -83,6 +83,7 @@ export default function MembersPage() {
         user={selectedUser}
         open={isDeleteModalOpen}
         toggle={() => setIsDeleteModalOpen(!isDeleteModalOpen)}
+        onDeleteSuccess={fetchUsers}
       />
     </>
   );

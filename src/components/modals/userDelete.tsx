@@ -8,16 +8,30 @@ import {
 import { User } from "@/types/user";
 import { Button } from "../ui/button";
 import UserCard from "../cards/user";
+import { deleteUser } from "@/services/userServices";
 
 export default function UserDeleteModal({
   open,
-  toggle,
   user,
+  toggle,
+  onDeleteSuccess,
 }: {
   open: boolean;
-  toggle: () => void;
   user?: User;
+  toggle: () => void;
+  onDeleteSuccess: () => void;
 }) {
+  const onDeleteClick = () => {
+    if (user)
+      deleteUser({ userId: user.id })
+        .then(() => {
+          toggle();
+          onDeleteSuccess();
+        })
+        .catch((error) => {
+          alert(error);
+        });
+  };
   return (
     <AlertDialog open={open}>
       <AlertDialogContent className="!max-w-md gap-8 pt-8">
@@ -43,7 +57,11 @@ export default function UserDeleteModal({
           <Button variant="outline" className="w-32" onClick={toggle}>
             Cancel
           </Button>
-          <Button variant="destructive" className="w-32" onClick={toggle}>
+          <Button
+            variant="destructive"
+            className="w-32"
+            onClick={onDeleteClick}
+          >
             Delete
           </Button>
         </AlertDialogFooter>
