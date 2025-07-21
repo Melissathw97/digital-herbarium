@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 import Spinner from "@/components/spinner";
 import OcrForm from "@/components/forms/ocr";
 import { ActionType, Plant } from "@/types/plant";
-import { getPlantById } from "@/services/plantServices";
 import AiDetectionForm from "@/components/forms/ai-detection";
 import { ChevronLeftIcon, ScanText, Sparkles } from "lucide-react";
+import { getPlantById, getPlantImage } from "@/services/plantServices";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function UpdatePlantPage() {
@@ -19,8 +19,15 @@ export default function UpdatePlantPage() {
   useEffect(() => {
     getPlantById({ id: params.id?.toString() || "" })
       .then((data) => {
-        setPlant(data);
-        setIsLoading(false);
+        getPlantImage({ id: params.id?.toString() || "" }).then(
+          ({ imageUrl }) => {
+            setPlant({
+              ...data,
+              imagePath: imageUrl || "",
+            });
+            setIsLoading(false);
+          }
+        );
       })
       .catch(() => {
         setIsLoading(false);

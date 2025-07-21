@@ -3,9 +3,13 @@ import {
   PlantApi,
   Pagination,
   PlantAiDetectionPayload,
+  PlantOCRPayload,
 } from "@/types/plant";
 import { createClient } from "@/utils/supabase/client";
-import { downloadFileFromAPI, generateTimestampedFilename } from "@/utils/fileDownload";
+import {
+  downloadFileFromAPI,
+  generateTimestampedFilename,
+} from "@/utils/fileDownload";
 
 export async function getPlants({
   page,
@@ -79,6 +83,26 @@ export async function getPlantById({ id }: { id: string }): Promise<Plant> {
     });
 }
 
+export async function getPlantImage({
+  id,
+}: {
+  id: string;
+}): Promise<{ imageUrl: string }> {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke(`plant-data/image?id=${id}`, {
+      method: "GET",
+    })
+    .then(({ data, error }) => {
+      if (error) throw error;
+
+      return {
+        imageUrl: data.image_url,
+      };
+    });
+}
+
 // export async function postPlantsExport({ ids }: { ids: string[] }) {
 //   const supabase = createClient();
 
@@ -98,30 +122,84 @@ export async function getPlantById({ id }: { id: string }): Promise<Plant> {
 
 export async function postPlantsExport({ ids }: { ids: string[] }) {
   const supabase = createClient();
-  
-  const { data: { session } } = await supabase.auth.getSession();
-  
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
   if (!session?.access_token) {
-    throw new Error('Not authenticated');
+    throw new Error("Not authenticated");
   }
 
   try {
     await downloadFileFromAPI({
       url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/export-excel`,
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${session.access_token}`,
+        Authorization: `Bearer ${session.access_token}`,
       },
       body: JSON.stringify({ ...(ids.length > 0 ? { id: ids } : {}) }),
-      filename: generateTimestampedFilename('data_captured_export', 'xlsx'),
-      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      filename: generateTimestampedFilename("data_captured_export", "xlsx"),
+      mimeType:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
 
     return { success: true };
   } catch (error) {
-    console.error('Export error:', error);
+    console.error("Export error:", error);
     throw error;
   }
+}
+
+export async function postPlantOCR({
+  image,
+  family,
+  species,
+  barcode,
+  prefix,
+  number,
+  collector,
+  date,
+  state,
+  district,
+  location,
+  vernacularName,
+}: PlantOCRPayload): Promise<Plant> {
+  const supabase = createClient();
+
+  const payload = {
+    image,
+    family,
+    species,
+    vernacular: vernacularName,
+    barcode,
+    prefix,
+    number,
+    collector,
+    state,
+    district,
+    location,
+    collected_at: date.toISOString().split("T")[0],
+  };
+
+  const formData = new FormData();
+
+  Object.entries(payload).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+
+  return supabase.functions
+    .invoke(`detection-data/ocr`, {
+      body: formData,
+    })
+    .then(async ({ data, response }) => {
+      if (response?.ok === false) {
+        const resp = await response?.json();
+        throw resp.error;
+      }
+
+      return data.data;
+    });
 }
 
 export async function postPlantAiDetection({

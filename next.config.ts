@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "**",
       },
+      {
+        protocol: "http",
+        hostname: "127.0.0.1", // 👈 explicitly allow "kong"
+        port: "54321",
+        pathname: "/storage/v1/object/public/**",
+      },
     ],
   },
   async redirects() {

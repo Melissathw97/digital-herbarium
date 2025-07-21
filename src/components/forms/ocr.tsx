@@ -20,6 +20,9 @@ import {
   SelectValue,
 } from "../ui/select";
 import Alert from "../alert";
+import { Pages } from "@/types/pages";
+import { useRouter } from "next/navigation";
+import { postPlantOCR } from "@/services/plantServices";
 
 const CreatableSelect = dynamic(() => import("react-select/creatable"), {
   ssr: false,
@@ -45,6 +48,8 @@ export default function OcrForm({
   update?: boolean;
   initialValues?: Plant;
 }) {
+  const router = useRouter();
+
   const [image, setImage] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [showScanButton, setShowScanButton] = useState(false);
@@ -80,8 +85,14 @@ export default function OcrForm({
   const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // TODO: Integrate OCR submit API
-    console.log("formValues", formValues);
+    if (selectedFile)
+      postPlantOCR({
+        ...formValues,
+        family: formValues.family.value,
+        image: selectedFile,
+      }).then((data) => {
+        router.push(`${Pages.PLANTS}/${data.id}`);
+      });
   };
 
   useEffect(() => {

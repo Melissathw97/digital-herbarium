@@ -10,9 +10,9 @@ import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
 import { Button } from "@/components/ui/button";
 import { useParams, useRouter } from "next/navigation";
-import { getPlantById } from "@/services/plantServices";
 import PlantDeleteModal from "@/components/modals/plantDelete";
 import { ChevronLeftIcon, ScanText, Sparkles } from "lucide-react";
+import { getPlantById, getPlantImage } from "@/services/plantServices";
 
 export default function PlantDetailsPage() {
   const params = useParams();
@@ -62,8 +62,15 @@ export default function PlantDetailsPage() {
   useEffect(() => {
     getPlantById({ id: params.id?.toString() || "" })
       .then((data) => {
-        setPlant(data);
-        setIsLoading(false);
+        getPlantImage({ id: params.id?.toString() || "" }).then(
+          ({ imageUrl }) => {
+            setPlant({
+              ...data,
+              imagePath: imageUrl || "",
+            });
+            setIsLoading(false);
+          }
+        );
       })
       .catch(() => {
         setIsLoading(false);
@@ -78,7 +85,7 @@ export default function PlantDetailsPage() {
     <>
       <div className="flex gap-2 items-center">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push(Pages.PLANTS)}
           className="hover:bg-gray-200 p-1 rounded-full"
         >
           <ChevronLeftIcon className="w-5 h-5" />
