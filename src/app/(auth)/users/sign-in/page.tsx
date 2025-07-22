@@ -83,7 +83,7 @@ export default function UsersSignIn() {
             <label>Password</label>
             <Input type="password" name="password" onChange={onInputChange} />
             <Link href={Pages.RESET_PASSWORD} className="mt-1 inline ml-auto">
-              <Button variant="link" size="sm">
+              <Button type="button" variant="link" size="sm">
                 Forgot Password?
               </Button>
             </Link>
