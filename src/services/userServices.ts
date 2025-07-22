@@ -1,6 +1,56 @@
 import { User, UserApi } from "@/types/user";
 import { createClient } from "@/utils/supabase/client";
 
+export function getUserProfile(): Promise<User> {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke("profile-data", {
+      method: "GET",
+    })
+    .then(({ data, error }) => {
+      if (error) throw error;
+
+      return {
+        id: data?.id || "",
+        firstName: data?.first_name,
+        lastName: data?.last_name,
+        role: data?.role || "",
+        email: data?.email,
+        joinedAt: data?.created_at || "",
+      };
+    });
+}
+
+export function updateUserProfile({
+  firstName,
+  lastName,
+}: {
+  firstName: string;
+  lastName: string;
+}): Promise<User> {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke("profile-data", {
+      method: "PUT",
+      body: {
+        first_name: firstName,
+        last_name: lastName,
+      },
+    })
+    .then(({ data }) => {
+      return {
+        id: data?.id || "",
+        firstName: data?.first_name,
+        lastName: data?.last_name,
+        role: data?.role || "",
+        email: data?.email,
+        joinedAt: data?.created_at || "",
+      };
+    });
+}
+
 export function getUsers(): Promise<User[]> {
   const supabase = createClient();
   return supabase.functions
