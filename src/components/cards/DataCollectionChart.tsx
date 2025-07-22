@@ -28,22 +28,22 @@ const chartData = [
 const chartConfig = {
   ocr: {
     label: "OCR",
-    color: "var(--chart-10)",
+    color: "var(--chart-4)",
   },
   ai: {
     label: "AI",
-    color: "var(--chart-11)",
+    color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
 
 export default function DataCollectionChart() {
   return (
-    <div className="bg-white shadow-sm rounded-sm px-6 py-8 border flex flex-col gap-8 w-full">
+    <div className="bg-white shadow-sm rounded-sm px-6 py-7 border flex flex-col gap-8 w-full max-w-[480px]">
       <div className="flex flex-col gap-1">
         <p className="font-semibold">Data Collection</p>
         <p>January - December 2025</p>
       </div>
-      <div>
+      <div className="flex-1">
         <ChartContainer config={chartConfig}>
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
@@ -56,18 +56,8 @@ export default function DataCollectionChart() {
             />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
             <ChartLegend content={<ChartLegendContent />} />
-            <Bar
-              dataKey="ocr"
-              stackId="a"
-              fill="var(--color-ocr)"
-              radius={[0, 0, 4, 4]}
-            />
-            <Bar
-              dataKey="ai"
-              stackId="a"
-              fill="var(--color-ai)"
-              radius={[4, 4, 0, 0]}
-            />
+            <Bar dataKey="ocr" fill="var(--color-ocr)" radius={4} />
+            <Bar dataKey="ai" fill="var(--color-ai)" radius={4} />
           </BarChart>
         </ChartContainer>
       </div>
