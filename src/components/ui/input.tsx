@@ -13,7 +13,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   };
 
   return (
-    <div className="relative flex items-center">
+    <div className="relative flex items-center w-full">
       <input
         type={inputType}
         data-slot="input"
