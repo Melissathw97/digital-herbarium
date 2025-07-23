@@ -11,8 +11,8 @@ import formatDate from "@/utils/formatDate";
 import { Button } from "@/components/ui/button";
 import { useParams, useRouter } from "next/navigation";
 import PlantDeleteModal from "@/components/modals/plantDelete";
-import { ChevronLeftIcon, ScanText, Sparkles } from "lucide-react";
 import { getPlantById, getPlantImage } from "@/services/plantServices";
+import { ChevronLeftIcon, Gauge, ScanText, Sparkles } from "lucide-react";
 
 export default function PlantDetailsPage() {
   const params = useParams();
@@ -135,7 +135,8 @@ export default function PlantDetailsPage() {
                 </Badge>
                 {plant.actionType === ActionType.AI_DETECTION && (
                   <Badge variant="info" bordered>
-                    Confidence Level: {plant.confidenceLevel * 100}%
+                    <Gauge />
+                    Confidence Level: {Math.round(plant.confidenceLevel * 100)}%
                   </Badge>
                 )}
               </div>

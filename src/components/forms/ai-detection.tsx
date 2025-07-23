@@ -19,6 +19,7 @@ import {
   RadialBar,
   RadialBarChart,
 } from "recharts";
+import { postAiDetection, postImageToBase64 } from "@/services/aiServices";
 
 const chartData = [
   { browser: "confidence", confidence: 80, fill: "var(--color-confidence)" },
@@ -68,13 +69,44 @@ export default function AiDetectionForm({
     setIsComplete(false);
   };
 
+  const capitalizeFirstLetter = (string: string) => {
+    return string.substring(0, 1).toUpperCase() + string.substring(1);
+  };
+
   const onBeginDetectionClick = () => {
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsComplete(true);
-      setIsLoading(false);
-    }, 2000);
+    if (data.image)
+      postImageToBase64({ image: data.image })
+        .then((resp) => {
+          const { base64 } = resp;
+
+          postAiDetection({
+            image: base64.replace("data:image/jpeg;base64,", ""),
+          })
+            .then((response) => {
+              const { family, species, confidence } = response.final_result;
+
+              setData({
+                ...data,
+                family: capitalizeFirstLetter(family),
+                species: capitalizeFirstLetter(
+                  species.replace(family, "").trim()
+                ),
+                confidenceLevel: confidence,
+              });
+              setIsLoading(false);
+              setIsComplete(true);
+            })
+            .catch((error) => {
+              console.error(error);
+              alert(error);
+              setIsLoading(false);
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
   };
 
   const onSubmitClick = () => {
@@ -208,7 +240,7 @@ export default function AiDetectionForm({
                                       y={viewBox.cy}
                                       className="fill-foreground text-4xl font-bold"
                                     >
-                                      {data.confidenceLevel * 100}%
+                                      {Math.round(data.confidenceLevel * 100)}%
                                     </tspan>
                                   </text>
                                 );
@@ -218,7 +250,7 @@ export default function AiDetectionForm({
                         </PolarRadiusAxis>
                       </RadialBarChart>
                     </ChartContainer>
-                    <div className="grid grid-cols-[100px_auto] mt-4 gap-y-1 font-semibold">
+                    <div className="grid grid-cols-[80px_auto] mt-4 gap-y-1 font-semibold">
                       <p className="text-lime-700">Family:</p>
                       <span>{data.family}</span>
                       <p className="text-lime-700">Species:</p>

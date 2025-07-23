@@ -74,3 +74,10 @@ export interface PlantAiDetectionPayload {
   species: string;
   confidenceLevel: number;
 }
+
+export interface PlantImageToBase64Api {
+  base64: string;
+  filename: string;
+  size: number;
+  type: string;
+}
