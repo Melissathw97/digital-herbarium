@@ -200,7 +200,10 @@ export default function PlantsListPage() {
                       />
                     </td>
                     {headers.map(({ dataKey }) => (
-                      <td key={dataKey} className="p-4 whitespace-nowrap">
+                      <td
+                        key={dataKey}
+                        className="p-4 whitespace-nowrap max-w-[220px] overflow-hidden overflow-ellipsis"
+                      >
                         {dataKey === "date" ? (
                           plant[dataKey] ? (
                             formatDate(plant[dataKey])
