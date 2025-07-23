@@ -97,7 +97,7 @@ export default function UsersSignIn() {
               Object.values(formValues).some((value) => !value) || isLoading
             }
           >
-            Sign In
+            {isLoading ? "Signing In" : "Sign In"}
           </Button>
           <p>
             Don&apos;t have an account yet?&nbsp;

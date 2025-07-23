@@ -110,7 +110,7 @@ export default function UsersSignUp() {
                 Object.values(formValues).some((value) => !value) || isLoading
               }
             >
-              Sign Up
+              {isLoading ? "Signing Up" : "Sign Up"}
             </Button>
             <p>
               Already have an account?&nbsp;
