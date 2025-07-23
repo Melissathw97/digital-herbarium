@@ -53,8 +53,7 @@ export enum ActionType {
   AI_DETECTION = "AI Detection",
 }
 
-export interface PlantOCRPayload {
-  image: File;
+export interface PlantPayload {
   family: string;
   species: string;
   barcode: string;
@@ -66,6 +65,10 @@ export interface PlantOCRPayload {
   district: string;
   location: string;
   vernacularName: string;
+}
+
+export interface PlantOCRPayload extends PlantPayload {
+  image: File;
 }
 
 export interface PlantAiDetectionPayload {
@@ -80,4 +83,10 @@ export interface PlantImageToBase64Api {
   filename: string;
   size: number;
   type: string;
+}
+
+export interface PlantUpdatePayload extends PlantPayload {
+  id: string;
+  actionType: ActionType;
+  confidenceLevel?: number;
 }

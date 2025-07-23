@@ -6,11 +6,11 @@ import Cropper from "../cropper";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import ScanButton from "../scanButton";
-import { Plant } from "@/types/plant";
 import States from "@/constants/states.json";
 import { DatePicker } from "../ui/datepicker";
 import { FormValues, Option } from "@/types/form";
 import { CSSObjectWithLabel } from "react-select";
+import { ActionType, Plant } from "@/types/plant";
 import {
   Select,
   SelectContent,
@@ -22,7 +22,11 @@ import {
 import Alert from "../alert";
 import { Pages } from "@/types/pages";
 import { useRouter } from "next/navigation";
-import { postPlantOCR } from "@/services/plantServices";
+import {
+  postPlantOCR,
+  updatePlant,
+  updatePlantImage,
+} from "@/services/plantServices";
 
 const CreatableSelect = dynamic(() => import("react-select/creatable"), {
   ssr: false,
@@ -85,13 +89,30 @@ export default function OcrForm({
   const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (selectedFile)
+    // For create
+    if (!update && selectedFile)
       postPlantOCR({
         ...formValues,
         family: formValues.family.value,
         image: selectedFile,
       }).then((data) => {
         router.push(`${Pages.PLANTS}/${data.id}`);
+      });
+
+    // For update
+    if (update)
+      updatePlant({
+        ...formValues,
+        id: initialValues?.id || "",
+        actionType: ActionType.OCR,
+        family: formValues.family.value,
+      }).then((data) => {
+        updatePlantImage({
+          id: initialValues?.id || "",
+          image: selectedFile,
+        }).then(() => {
+          router.push(`${Pages.PLANTS}/${data.id}`);
+        });
       });
   };
 

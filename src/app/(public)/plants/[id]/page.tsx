@@ -140,10 +140,12 @@ export default function PlantDetailsPage() {
                   </Badge>
                 )}
               </div>
-              <div className="grid lg:grid-cols-[180px_auto] items-center gap-2 lg:gap-3">
+              <div className="grid lg:grid-cols-[180px_auto] gap-2 lg:gap-3">
                 {displayData.map(({ label, value }) => (
                   <Fragment key={label}>
-                    <p className="text-lime-700 uppercase text-xs">{label}:</p>
+                    <p className="text-lime-700 uppercase text-xs mt-0.5">
+                      {label}:
+                    </p>
                     <div className="mb-4 lg:mb-0">
                       {label === "Species" ? (
                         <em>{value || "-"}</em>

@@ -2,8 +2,9 @@ import {
   Plant,
   PlantApi,
   Pagination,
-  PlantAiDetectionPayload,
   PlantOCRPayload,
+  PlantUpdatePayload,
+  PlantAiDetectionPayload,
 } from "@/types/plant";
 import { createClient } from "@/utils/supabase/client";
 import {
@@ -225,6 +226,82 @@ export async function postPlantAiDetection({
 
   return supabase.functions
     .invoke(`detection-data/ai`, {
+      body: formData,
+    })
+    .then(async ({ data, response }) => {
+      if (response?.ok === false) {
+        const resp = await response?.json();
+        throw resp.error;
+      }
+
+      return data.data;
+    });
+}
+
+export async function updatePlant({
+  id,
+  actionType,
+  vernacularName,
+  barcode,
+  prefix,
+  number,
+  collector,
+  date,
+  state,
+  district,
+  location,
+  confidenceLevel,
+  species,
+  family,
+}: PlantUpdatePayload): Promise<Plant> {
+  const supabase = createClient();
+
+  const payload = {
+    action_type: actionType,
+    vernacular: vernacularName,
+    prefix,
+    barcode,
+    number,
+    collector,
+    state,
+    district,
+    location,
+    family_name: family,
+    species_name: species,
+    collected_at: date.toISOString().split("T")[0],
+    ...(confidenceLevel ? { confidence_level: confidenceLevel } : {}),
+  };
+
+  return supabase.functions
+    .invoke(`plant-data/?id=${id}`, {
+      method: "PUT",
+      body: payload,
+    })
+    .then(async ({ data, response }) => {
+      if (response?.ok === false) {
+        const resp = await response?.json();
+        throw resp.error;
+      }
+
+      return data.data;
+    });
+}
+
+export async function updatePlantImage({
+  id,
+  image,
+}: {
+  id: string;
+  image?: File;
+}): Promise<Plant> {
+  const supabase = createClient();
+
+  const formData = new FormData();
+  if (image) formData.append("image", image);
+
+  return supabase.functions
+    .invoke(`plant-data/image?id=${id}`, {
+      method: "PUT",
       body: formData,
     })
     .then(async ({ data, response }) => {
