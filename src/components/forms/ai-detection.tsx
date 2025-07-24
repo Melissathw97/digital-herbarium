@@ -1,17 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Alert from "../alert";
 import Image from "next/image";
 import Spinner from "../spinner";
+import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Pages } from "@/types/pages";
 import { Sparkles, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import States from "@/constants/states.json";
 import ImageUploader from "../imageUploader";
+import { DatePicker } from "../ui/datepicker";
 import { ChartConfig, ChartContainer } from "../ui/chart";
-import { Plant, PlantAiDetectionPayload } from "@/types/plant";
-import { postPlantAiDetection } from "@/services/plantServices";
+import { postAiDetection, postImageToBase64 } from "@/services/aiServices";
+import { ActionType, Plant, PlantAiDetectionPayload } from "@/types/plant";
+import {
+  postPlantAiDetection,
+  updatePlant,
+  updatePlantImage,
+} from "@/services/plantServices";
+
 import {
   Label,
   PolarGrid,
@@ -19,7 +28,15 @@ import {
   RadialBar,
   RadialBarChart,
 } from "recharts";
-import { postAiDetection, postImageToBase64 } from "@/services/aiServices";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const chartData = [
   { browser: "confidence", confidence: 80, fill: "var(--color-confidence)" },
@@ -47,6 +64,17 @@ export default function AiDetectionForm({
     family: "",
     species: "",
     confidenceLevel: 0,
+  });
+  const [formValues, setFormValues] = useState({
+    vernacularName: "",
+    barcode: "",
+    prefix: "",
+    number: "",
+    collector: "",
+    date: new Date(),
+    state: "",
+    district: "",
+    location: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -109,6 +137,15 @@ export default function AiDetectionForm({
         });
   };
 
+  const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
+  };
+
   const onSubmitClick = () => {
     setIsSubmitting(true);
 
@@ -122,6 +159,33 @@ export default function AiDetectionForm({
       });
   };
 
+  const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    // Update Plant Details
+    updatePlant({
+      ...formValues,
+      id: initialValues?.id || "",
+      actionType: ActionType.AI_DETECTION,
+      family: data.family,
+      species: data.species,
+      confidenceLevel: data.confidenceLevel,
+    }).then(() => {
+
+      // Update Plant Image
+      updatePlantImage({
+        id: initialValues?.id || "",
+        image: data.image,
+      }).then((response) => {
+        router.push(`${Pages.PLANTS}/${response.id}`);
+      });
+
+    }).catch(() => {
+      setIsSubmitting(false);
+    });
+  };
+
   useEffect(() => {
     if (update && initialValues) {
       setIsComplete(true);
@@ -130,6 +194,17 @@ export default function AiDetectionForm({
         family: initialValues.family,
         species: initialValues.species,
         confidenceLevel: initialValues.confidenceLevel,
+      });
+      setFormValues({
+        vernacularName: initialValues.vernacularName || "",
+        barcode: initialValues.barcode || "",
+        prefix: initialValues.prefix || "",
+        number: initialValues.number || "",
+        collector: initialValues.collector || "",
+        date: initialValues.date ? new Date(initialValues.date) : new Date(),
+        state: initialValues.state,
+        district: initialValues.district || "",
+        location: initialValues.location || "",
       });
     } else {
       setIsExpanded(true);
@@ -164,12 +239,13 @@ export default function AiDetectionForm({
                   <X />
                 </Button>
               </div>
-              <div className="bg-gray-100 rounded-sm h-full">
+              <div className="bg-gray-100 rounded-sm">
                 <Image
                   alt={data.species}
                   src={image}
                   width={500}
                   height={200}
+                  className="w-full"
                 />
               </div>
             </>
@@ -177,9 +253,10 @@ export default function AiDetectionForm({
             <ImageUploader handleFiles={onSelectFile} />
           )}
         </div>
-        {image ? (
-          <div className="flex-1">
-            <div className="sticky top-[80px] border shadow-sm rounded-sm">
+          <div className="flex-1 flex flex-col gap-3">
+            <div
+              className={`${update ? "" : "sticky top-[80px]"} border shadow-sm rounded-sm`}
+            >
               {isLoading ? (
                 <div className="flex flex-col gap-4 items-center p-12">
                   <p className="text-gray-600 text-center">
@@ -188,28 +265,28 @@ export default function AiDetectionForm({
                   <Spinner />
                 </div>
               ) : isComplete ? (
-                <div className="pt-12 pb-6 px-6">
-                  <div className="flex flex-col items-center gap-4 mb-12">
+                <div className="p-6">
+                  <div className="flex flex-col items-center gap-4">
                     <p className="text-xs text-gray-500 uppercase">
                       Confidence Level
                     </p>
                     <ChartContainer
                       config={chartConfig}
-                      className="mx-auto aspect-square h-[160px]"
+                      className="mx-auto aspect-square h-[140px]"
                     >
                       <RadialBarChart
                         data={chartData}
                         startAngle={90}
                         endAngle={90 - 360 * data.confidenceLevel}
-                        innerRadius={70}
-                        outerRadius={100}
+                        innerRadius={63}
+                        outerRadius={90}
                       >
                         <PolarGrid
                           gridType="circle"
                           radialLines={false}
                           stroke="none"
                           className="first:fill-muted last:fill-background"
-                          polarRadius={[76, 64]}
+                          polarRadius={[68, 57]}
                         />
                         <RadialBar
                           dataKey="confidence"
@@ -250,36 +327,146 @@ export default function AiDetectionForm({
                         </PolarRadiusAxis>
                       </RadialBarChart>
                     </ChartContainer>
-                    <div className="grid grid-cols-[80px_auto] mt-4 gap-y-1 font-semibold">
+                    <div className="grid grid-cols-[80px_auto] mt-2 gap-y-1 font-semibold">
                       <p className="text-lime-700">Family:</p>
                       <span>{data.family}</span>
                       <p className="text-lime-700">Species:</p>
                       <em>{data.species}</em>
                     </div>
                   </div>
-                  <Button
-                    className="w-full"
-                    onClick={onSubmitClick}
-                    disabled={isSubmitting}
-                  >
-                    {update ? "Update Results" : "Submit Results"}
-                  </Button>
+                  {!update && (
+                    <Button
+                      className="w-full mt-8"
+                      onClick={onSubmitClick}
+                      disabled={isSubmitting}
+                    >
+                      Submit Results
+                    </Button>
+                  )}
                 </div>
               ) : (
                 <div className="flex flex-col gap-4 items-center p-12">
                   <p className="text-gray-600 text-center">
-                    When you're ready, click on the button below to begin AI
-                    detection to identify the plant species.
+                    {image ? "When you're ready, click on the button below to begin AI detection to identify the plant species." : "Upload an image to begin AI detection"}
+                    
                   </p>
-                  <Button disabled={isComplete} onClick={onBeginDetectionClick}>
+                  <Button disabled={!image} onClick={onBeginDetectionClick}>
                     <Sparkles />{" "}
-                    {isComplete ? "Detection Complete!" : "Begin Detection"}
+                    Begin Detection
                   </Button>
                 </div>
               )}
             </div>
+
+            {update && (
+              <form
+                onSubmit={onFormSubmit}
+                className={`border shadow-sm rounded-sm p-6 flex flex-col gap-4`}
+              >
+                <div className="flex flex-col gap-1 w-full">
+                  <label>Vernacular Name</label>
+                  <Input
+                    name="vernacularName"
+                    value={formValues.vernacularName}
+                    onChange={onInputChange}
+                  />
+                </div>
+                <div className="flex flex-col gap-1 w-full">
+                  <label>Barcode</label>
+
+                  <div className="flex gap-2">
+                    <Input
+                      name="barcode"
+                      value={formValues.barcode}
+                      onChange={onInputChange}
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-3 w-full">
+                  <div className="flex flex-col gap-1 w-full">
+                    <label>Prefix</label>
+                    <Input
+                      name="prefix"
+                      value={formValues.prefix}
+                      onChange={onInputChange}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1 w-full">
+                    <label>Number</label>
+                    <Input
+                      name="number"
+                      value={formValues.number}
+                      onChange={onInputChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1 w-full">
+                  <label>Collector</label>
+                  <Input
+                    name="collector"
+                    value={formValues.collector}
+                    onChange={onInputChange}
+                  />
+                </div>
+                <div className="flex flex-col gap-1 w-full">
+                  <label>Date</label>
+                  <DatePicker
+                    date={formValues.date}
+                    setDate={(date) => setFormValues({ ...formValues, date })}
+                  />
+                </div>
+                <div className="flex flex-col gap-1 w-full">
+                  <label>State</label>
+                  {(!update || !initialValues?.state || formValues.state) && (
+                    <Select
+                      value={formValues.state ?? ""}
+                      onValueChange={(value) =>
+                        setFormValues({ ...formValues, state: value })
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {States.states.map(({ label, value }) => (
+                            <SelectItem key={value} value={value}>
+                              {label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  )}
+                </div>
+                <div className="flex flex-col gap-1 w-full">
+                  <label>District</label>
+                  <Input
+                    name="district"
+                    value={formValues.district}
+                    onChange={onInputChange}
+                  />
+                </div>
+                <div className="flex flex-col gap-1 w-full">
+                  <label>Location</label>
+                  <Input
+                    name="location"
+                    value={formValues.location}
+                    onChange={onInputChange}
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="ml-auto"
+                  disabled={!image || !isComplete || isSubmitting || Object.values(formValues).some((value) => !value)}
+                >
+                  Submit
+                </Button>
+              </form>
+            )}
           </div>
-        ) : null}
       </div>
     </>
   );
