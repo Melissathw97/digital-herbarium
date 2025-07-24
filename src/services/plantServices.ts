@@ -318,7 +318,7 @@ export async function deletePlant({ id }: { id: string }): Promise<Plant> {
   const supabase = createClient();
 
   return supabase.functions
-    .invoke(`plant-data/?id=${id}`, {
+    .invoke(`plant-data/complete?id=${id}`, {
       method: "DELETE",
     })
     .then(async ({ data, response }) => {
