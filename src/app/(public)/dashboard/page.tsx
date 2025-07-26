@@ -2,8 +2,8 @@
 
 import StateChart from "@/components/cards/stateChart";
 import FamilyChart from "@/components/cards/familyChart";
+import MonthChart from "@/components/cards/monthChart";
 import { Gauge, ScanText, Sparkles, Sprout } from "lucide-react";
-import DataCollectionChart from "@/components/cards/DataCollectionChart";
 
 export default function DashboardPage() {
   return (
@@ -43,7 +43,7 @@ export default function DashboardPage() {
       <div className="flex gap-4 flex-wrap">
         <FamilyChart />
         <StateChart />
-        <DataCollectionChart />
+        <MonthChart />
       </div>
     </>
   );

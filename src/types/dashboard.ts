@@ -18,3 +18,9 @@ export interface State {
     name: string;
     total: number;
 }
+
+export interface Month {
+    month: number;
+    "OCR": number;
+    "AI Detection": number;
+}
