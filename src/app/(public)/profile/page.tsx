@@ -129,25 +129,28 @@ export default function MembersPage() {
     <>
       <h1>My Profile</h1>
 
-      <div className="flex gap-4 items-start">
-        <div className="bg-white shadow-sm rounded-sm px-10 py-5 border flex flex-col gap-5 items-center text-center w-[280px]">
-          <div className="bg-gray-200 text-lg h-16 w-16 rounded-full grid place-items-center font-semibold text-gray-500 uppercase shrink-0">
+      <div className="flex flex-col sm:flex-row gap-4 items-start">
+        {/* User Details Card */}
+        <div className="bg-white shadow-sm rounded-sm px-6 sm:px-10 py-5 border flex sm:flex-col gap-5 items-center text-center w-full sm:w-[280px]">
+          <div className="bg-gray-200 text-lg size-12 sm:size-16 rounded-full grid place-items-center font-semibold text-gray-500 uppercase shrink-0">
             {user?.firstName?.substring(0, 1)}
           </div>
 
-          <div className="flex flex-col gap-2 items-center w-full">
+          <div className="flex flex-col gap-1 sm:gap-2 items-start sm:items-center w-full">
             {isLoading ? (
               <>
-                <div className="bg-gray-200 h-6 w-full rounded-sm"></div>
+                <div className="bg-gray-200 h-4 sm:h-6 w-full rounded-sm"></div>
                 <div className="bg-gray-200 h-4 w-full rounded-sm"></div>
-                <div className="bg-gray-200 h-4 w-14 rounded-sm mt-3 mx-auto"></div>
+                <div className="bg-gray-200 h-4 w-14 rounded-sm mt-1 sm:mt-3"></div>
               </>
             ) : (
               <>
-                <p className="text-[16px] font-semibold">
+                <p className="sm:text-[16px] font-semibold">
                   {user?.firstName} {user?.lastName}
                 </p>
-                <p className="text-xs font-semibold mb-3">{user?.email}</p>
+                <p className="text-xs font-medium mb-1 sm:mb-3">
+                  {user?.email}
+                </p>
                 {user &&
                   (user?.role === "super_admin" ? (
                     <Badge variant="purple">
@@ -163,12 +166,14 @@ export default function MembersPage() {
               </>
             )}
           </div>
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="hidden sm:block text-xs text-gray-500 mt-2">
             Joined at:{" "}
             <b>{user?.joinedAt ? formatDate(user?.joinedAt) : "-"}</b>
           </p>
         </div>
-        <div className="bg-white shadow-sm rounded-sm px-8 py-6 border flex flex-col gap-5 flex-1">
+
+        {/* Edit Profile Card */}
+        <div className="bg-white w-full shadow-sm rounded-sm px-8 py-6 border flex flex-col gap-5 flex-1">
           <h2>Edit Profile</h2>
           <hr />
 
@@ -179,8 +184,8 @@ export default function MembersPage() {
           ) : isLoading ? (
             <Spinner className="my-4" />
           ) : (
-            <form onSubmit={onSubmit} className="flex flex-col gap-4">
-              <div className="flex gap-4 my-2">
+            <form onSubmit={onSubmit} className="flex flex-col gap-4 md:gap-6">
+              <div className="flex flex-col md:flex-row gap-4">
                 <div className="w-full flex flex-col gap-2">
                   <label>First Name</label>
                   <Input
@@ -199,7 +204,7 @@ export default function MembersPage() {
                 </div>
               </div>
 
-              <div className="flex gap-4 my-2">
+              <div className="flex flex-col md:flex-row gap-4">
                 <div className="w-full flex flex-col gap-2">
                   <label>Password</label>
                   <Input
