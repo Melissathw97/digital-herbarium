@@ -1,5 +1,24 @@
 import { createClient } from "@/utils/supabase/client";
-import { Family, FamilyApi, Month, State, StateApi } from "@/types/dashboard";
+import { Summary, Family, FamilyApi, Month, State, StateApi } from "@/types/dashboard";
+
+export async function getSummary(): Promise<Summary> {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke(`dashboard-data/summaries`, {
+      method: "GET",
+    })
+    .then(({ data, error }) => {
+      if (error) throw error;
+
+      return {
+        total: data.total_records,
+        totalOcr: data.total_collections_ocr,
+        totalAi: data.total_collections_ai,
+        averageConfidence: data.average_confidence
+      }
+    });
+}
 
 export async function getTopFamilies(): Promise<Family[]> {
   const supabase = createClient();

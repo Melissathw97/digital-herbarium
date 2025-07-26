@@ -1,3 +1,10 @@
+export interface Summary {
+    total: number;
+    totalOcr: number;
+    totalAi: number;
+    averageConfidence: number;
+}
+
 export interface FamilyApi {
     family_id: string;
     family_name: string;
