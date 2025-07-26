@@ -8,9 +8,14 @@ import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Crown, User as UserIcon } from "lucide-react";
 import { userUpdatePassword } from "@/services/authServices";
+import { Check, Crown, User as UserIcon, X } from "lucide-react";
 import { getUserProfile, updateUserProfile } from "@/services/userServices";
+import {
+  passwordValidationMessage,
+  validatePassword,
+} from "@/utils/password-validation";
+import { PasswordValidationResult } from "@/types/password";
 
 export default function MembersPage() {
   const [user, setUser] = useState<User>();
@@ -52,6 +57,10 @@ export default function MembersPage() {
     });
   };
 
+  const passwordValidation: PasswordValidationResult = useMemo(() => {
+    return validatePassword(formValues.password);
+  }, [formValues]);
+
   const isButtonDisabled = useMemo(() => {
     const { firstName, lastName, password, confirmPassword } = formValues;
 
@@ -66,7 +75,12 @@ export default function MembersPage() {
     if (!lastName) return true;
     if (password && !confirmPassword) return true;
     if (!password && confirmPassword) return true;
-  }, [user, formValues, isSubmitting]);
+    if (password !== confirmPassword) return true;
+    if (Object.values(passwordValidation).some((isFulfilled) => !isFulfilled))
+      return true;
+
+    return false;
+  }, [user, formValues, isSubmitting, passwordValidation]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true);
@@ -193,7 +207,30 @@ export default function MembersPage() {
                     name="password"
                     onChange={onInputChange}
                   />
+                  {formValues.password && (
+                    <div className="text-[10px] flex flex-col gap-0.5">
+                      {(
+                        Object.entries(passwordValidation) as [
+                          keyof PasswordValidationResult,
+                          boolean,
+                        ][]
+                      ).map(([key, isFulfilled]) => (
+                        <p
+                          key={key}
+                          className={`${isFulfilled ? "text-green-700" : "text-red-700"} flex gap-2 items-center px-1`}
+                        >
+                          {isFulfilled ? (
+                            <Check className="size-3" />
+                          ) : (
+                            <X className="size-3" />
+                          )}
+                          {passwordValidationMessage[key]}
+                        </p>
+                      ))}
+                    </div>
+                  )}
                 </div>
+
                 <div className="w-full flex flex-col gap-2">
                   <label>Confirm Password</label>
                   <Input
@@ -201,6 +238,12 @@ export default function MembersPage() {
                     name="confirmPassword"
                     onChange={onInputChange}
                   />
+                  {formValues.confirmPassword &&
+                    formValues.password !== formValues.confirmPassword && (
+                      <p className="text-red-700 text-[10px] px-1">
+                        Passwords do not match
+                      </p>
+                    )}
                 </div>
               </div>
 
