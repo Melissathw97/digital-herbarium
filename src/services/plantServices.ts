@@ -180,7 +180,11 @@ export async function postPlantOCR({
     state,
     district,
     location,
-    collected_at: date.toISOString().split("T")[0],
+    collected_at: date.toLocaleDateString("en-CA", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }),
   };
 
   const formData = new FormData();
@@ -268,7 +272,11 @@ export async function updatePlant({
     location,
     family_name: family,
     species_name: species,
-    collected_at: date.toISOString().split("T")[0],
+    collected_at: date.toLocaleDateString("en-CA", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }),
     ...(confidenceLevel ? { confidence_level: confidenceLevel } : {}),
   };
 
