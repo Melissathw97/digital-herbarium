@@ -125,9 +125,17 @@
   * {
     @apply border-border outline-ring/50;
   }
-  
+
   body {
     @apply bg-background text-foreground font-[family-name:var(--font-inter)] text-[13px];
+  }
+
+  body {
+    background-image: url("/herbarium-background.png");
+    background-size: cover; /* Equivalent to object-fit: cover */
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
   }
 
   h1 {
