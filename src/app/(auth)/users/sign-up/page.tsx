@@ -89,7 +89,7 @@ export default function UsersSignUp() {
           </div>
 
           <div className="flex flex-col gap-5">
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <div className="w-full flex flex-col gap-2">
                 <label>First Name</label>
                 <Input name="firstName" onChange={onInputChange} />
