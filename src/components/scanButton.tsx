@@ -2,6 +2,7 @@ import { RefObject, useState } from "react";
 import { ScanText } from "lucide-react";
 import { Button } from "./ui/button";
 import Tesseract from "tesseract.js";
+import { toast } from "sonner";
 
 export default function ScanButton({
   previewCanvasRef,
@@ -50,7 +51,9 @@ export default function ScanButton({
         .then(({ data }) => {
           let text = data.text;
 
-          if (isBarcode) text = data.text.match(/([0-9]){5}/)[0] || "";
+          if (isBarcode) text = data.text.match(/([0-9]){5}/)?.[0] || "";
+
+          if (!text) toast.error("No text found");
           onSubmit(text);
           setIsLoading(false);
         });

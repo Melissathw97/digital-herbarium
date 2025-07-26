@@ -14,7 +14,7 @@ export default function DashboardPage() {
   useEffect(() => {
     getSummary().then((response) => {
       setSummary(response);
-    })
+    });
   }, []);
   return (
     <>
@@ -45,7 +45,11 @@ export default function DashboardPage() {
           <Gauge className="text-lime-700" />
           <div className="flex flex-col gap-1">
             <p className="text-lime-700 font-semibold">Average Confidence</p>
-            <p className="font-bold text-xl">{summary?.averageConfidence ? `${summary.averageConfidence * 100}%` : "-"}</p>
+            <p className="font-bold text-xl">
+              {summary?.averageConfidence
+                ? `${summary.averageConfidence * 100}%`
+                : "-"}
+            </p>
           </div>
         </div>
       </div>

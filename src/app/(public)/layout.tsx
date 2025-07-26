@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { toast } from "sonner";
 import { Pages } from "@/types/pages";
 import { userSignOut } from "@/services/authServices";
 import { usePathname, useRouter } from "next/navigation";
@@ -29,7 +30,7 @@ export default function PublicLayout({
         router.push(Pages.SIGN_IN);
       })
       .catch((error) => {
-        alert(error.message);
+        toast.error(error.message);
       });
   };
 

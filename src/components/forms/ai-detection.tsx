@@ -3,6 +3,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Alert from "../alert";
 import Image from "next/image";
+import { toast } from "sonner";
 import Spinner from "../spinner";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -127,13 +128,12 @@ export default function AiDetectionForm({
               setIsComplete(true);
             })
             .catch((error) => {
-              console.error(error);
-              alert(error);
+              toast.error(error);
               setIsLoading(false);
             });
         })
         .catch((error) => {
-          console.error(error);
+          toast.error(error);
         });
   };
 
@@ -154,7 +154,7 @@ export default function AiDetectionForm({
         router.push(`${Pages.PLANTS}/${data.id}`);
       })
       .catch((error) => {
-        alert(error);
+        toast.error(error);
         setIsSubmitting(false);
       });
   };
@@ -171,19 +171,20 @@ export default function AiDetectionForm({
       family: data.family,
       species: data.species,
       confidenceLevel: data.confidenceLevel,
-    }).then(() => {
-
-      // Update Plant Image
-      updatePlantImage({
-        id: initialValues?.id || "",
-        image: data.image,
-      }).then((response) => {
-        router.push(`${Pages.PLANTS}/${response.id}`);
+    })
+      .then(() => {
+        // Update Plant Image
+        updatePlantImage({
+          id: initialValues?.id || "",
+          image: data.image,
+        }).then((response) => {
+          toast.success("Plant updated succesfully");
+          router.push(`${Pages.PLANTS}/${response.id}`);
+        });
+      })
+      .catch(() => {
+        setIsSubmitting(false);
       });
-
-    }).catch(() => {
-      setIsSubmitting(false);
-    });
   };
 
   useEffect(() => {
@@ -253,220 +254,221 @@ export default function AiDetectionForm({
             <ImageUploader handleFiles={onSelectFile} />
           )}
         </div>
-          <div className="flex-1 flex flex-col gap-3">
-            <div
-              className={`${update ? "" : "sticky top-[80px]"} border shadow-sm rounded-sm`}
-            >
-              {isLoading ? (
-                <div className="flex flex-col gap-4 items-center p-12">
-                  <p className="text-gray-600 text-center">
-                    Detecting plant species...
+        <div className="flex-1 flex flex-col gap-3">
+          <div
+            className={`${update ? "" : "sticky top-[80px]"} border shadow-sm rounded-sm`}
+          >
+            {isLoading ? (
+              <div className="flex flex-col gap-4 items-center p-12">
+                <p className="text-gray-600 text-center">
+                  Detecting plant species...
+                </p>
+                <Spinner />
+              </div>
+            ) : isComplete ? (
+              <div className="p-6">
+                <div className="flex flex-col items-center gap-4">
+                  <p className="text-xs text-gray-500 uppercase">
+                    Confidence Level
                   </p>
-                  <Spinner />
-                </div>
-              ) : isComplete ? (
-                <div className="p-6">
-                  <div className="flex flex-col items-center gap-4">
-                    <p className="text-xs text-gray-500 uppercase">
-                      Confidence Level
-                    </p>
-                    <ChartContainer
-                      config={chartConfig}
-                      className="mx-auto aspect-square h-[140px]"
+                  <ChartContainer
+                    config={chartConfig}
+                    className="mx-auto aspect-square h-[140px]"
+                  >
+                    <RadialBarChart
+                      data={chartData}
+                      startAngle={90}
+                      endAngle={90 - 360 * data.confidenceLevel}
+                      innerRadius={63}
+                      outerRadius={90}
                     >
-                      <RadialBarChart
-                        data={chartData}
-                        startAngle={90}
-                        endAngle={90 - 360 * data.confidenceLevel}
-                        innerRadius={63}
-                        outerRadius={90}
+                      <PolarGrid
+                        gridType="circle"
+                        radialLines={false}
+                        stroke="none"
+                        className="first:fill-muted last:fill-background"
+                        polarRadius={[68, 57]}
+                      />
+                      <RadialBar
+                        dataKey="confidence"
+                        background
+                        cornerRadius={10}
+                      />
+                      <PolarRadiusAxis
+                        tick={false}
+                        tickLine={false}
+                        axisLine={false}
                       >
-                        <PolarGrid
-                          gridType="circle"
-                          radialLines={false}
-                          stroke="none"
-                          className="first:fill-muted last:fill-background"
-                          polarRadius={[68, 57]}
-                        />
-                        <RadialBar
-                          dataKey="confidence"
-                          background
-                          cornerRadius={10}
-                        />
-                        <PolarRadiusAxis
-                          tick={false}
-                          tickLine={false}
-                          axisLine={false}
-                        >
-                          <Label
-                            content={({ viewBox }) => {
-                              if (
-                                viewBox &&
-                                "cx" in viewBox &&
-                                "cy" in viewBox
-                              ) {
-                                return (
-                                  <text
+                        <Label
+                          content={({ viewBox }) => {
+                            if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                              return (
+                                <text
+                                  x={viewBox.cx}
+                                  y={viewBox.cy}
+                                  textAnchor="middle"
+                                  dominantBaseline="middle"
+                                >
+                                  <tspan
                                     x={viewBox.cx}
                                     y={viewBox.cy}
-                                    textAnchor="middle"
-                                    dominantBaseline="middle"
+                                    className="fill-foreground text-4xl font-bold"
                                   >
-                                    <tspan
-                                      x={viewBox.cx}
-                                      y={viewBox.cy}
-                                      className="fill-foreground text-4xl font-bold"
-                                    >
-                                      {Math.round(data.confidenceLevel * 100)}%
-                                    </tspan>
-                                  </text>
-                                );
-                              }
-                            }}
-                          />
-                        </PolarRadiusAxis>
-                      </RadialBarChart>
-                    </ChartContainer>
-                    <div className="grid grid-cols-[80px_auto] mt-2 gap-y-1 font-semibold">
-                      <p className="text-lime-700">Family:</p>
-                      <span>{data.family}</span>
-                      <p className="text-lime-700">Species:</p>
-                      <em>{data.species}</em>
-                    </div>
+                                    {Math.round(data.confidenceLevel * 100)}%
+                                  </tspan>
+                                </text>
+                              );
+                            }
+                          }}
+                        />
+                      </PolarRadiusAxis>
+                    </RadialBarChart>
+                  </ChartContainer>
+                  <div className="grid grid-cols-[80px_auto] mt-2 gap-y-1 font-semibold">
+                    <p className="text-lime-700">Family:</p>
+                    <span>{data.family}</span>
+                    <p className="text-lime-700">Species:</p>
+                    <em>{data.species}</em>
                   </div>
-                  {!update && (
-                    <Button
-                      className="w-full mt-8"
-                      onClick={onSubmitClick}
-                      disabled={isSubmitting}
-                    >
-                      Submit Results
-                    </Button>
-                  )}
                 </div>
-              ) : (
-                <div className="flex flex-col gap-4 items-center p-12">
-                  <p className="text-gray-600 text-center">
-                    {image ? "When you're ready, click on the button below to begin AI detection to identify the plant species." : "Upload an image to begin AI detection"}
-                    
-                  </p>
-                  <Button disabled={!image} onClick={onBeginDetectionClick}>
-                    <Sparkles />{" "}
-                    Begin Detection
+                {!update && (
+                  <Button
+                    className="w-full mt-8"
+                    onClick={onSubmitClick}
+                    disabled={isSubmitting}
+                  >
+                    Submit Results
                   </Button>
-                </div>
-              )}
-            </div>
-
-            {update && (
-              <form
-                onSubmit={onFormSubmit}
-                className={`border shadow-sm rounded-sm p-6 flex flex-col gap-4`}
-              >
-                <div className="flex flex-col gap-1 w-full">
-                  <label>Vernacular Name</label>
-                  <Input
-                    name="vernacularName"
-                    value={formValues.vernacularName}
-                    onChange={onInputChange}
-                  />
-                </div>
-                <div className="flex flex-col gap-1 w-full">
-                  <label>Barcode</label>
-
-                  <div className="flex gap-2">
-                    <Input
-                      name="barcode"
-                      value={formValues.barcode}
-                      onChange={onInputChange}
-                    />
-                  </div>
-                </div>
-                <div className="flex gap-3 w-full">
-                  <div className="flex flex-col gap-1 w-full">
-                    <label>Prefix</label>
-                    <Input
-                      name="prefix"
-                      value={formValues.prefix}
-                      onChange={onInputChange}
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1 w-full">
-                    <label>Number</label>
-                    <Input
-                      name="number"
-                      value={formValues.number}
-                      onChange={onInputChange}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-1 w-full">
-                  <label>Collector</label>
-                  <Input
-                    name="collector"
-                    value={formValues.collector}
-                    onChange={onInputChange}
-                  />
-                </div>
-                <div className="flex flex-col gap-1 w-full">
-                  <label>Date</label>
-                  <DatePicker
-                    date={formValues.date}
-                    setDate={(date) => setFormValues({ ...formValues, date })}
-                  />
-                </div>
-                <div className="flex flex-col gap-1 w-full">
-                  <label>State</label>
-                  {(!update || !initialValues?.state || formValues.state) && (
-                    <Select
-                      value={formValues.state ?? ""}
-                      onValueChange={(value) =>
-                        setFormValues({ ...formValues, state: value })
-                      }
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a state" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {States.states.map(({ label, value }) => (
-                            <SelectItem key={value} value={value}>
-                              {label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  )}
-                </div>
-                <div className="flex flex-col gap-1 w-full">
-                  <label>District</label>
-                  <Input
-                    name="district"
-                    value={formValues.district}
-                    onChange={onInputChange}
-                  />
-                </div>
-                <div className="flex flex-col gap-1 w-full">
-                  <label>Location</label>
-                  <Input
-                    name="location"
-                    value={formValues.location}
-                    onChange={onInputChange}
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  className="ml-auto"
-                  disabled={!image || !isComplete || isSubmitting || Object.values(formValues).some((value) => !value)}
-                >
-                  Submit
+                )}
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4 items-center p-12">
+                <p className="text-gray-600 text-center">
+                  {image
+                    ? "When you're ready, click on the button below to begin AI detection to identify the plant species."
+                    : "Upload an image to begin AI detection"}
+                </p>
+                <Button disabled={!image} onClick={onBeginDetectionClick}>
+                  <Sparkles /> Begin Detection
                 </Button>
-              </form>
+              </div>
             )}
           </div>
+
+          {update && (
+            <form
+              onSubmit={onFormSubmit}
+              className={`border shadow-sm rounded-sm p-6 flex flex-col gap-4`}
+            >
+              <div className="flex flex-col gap-1 w-full">
+                <label>Vernacular Name</label>
+                <Input
+                  name="vernacularName"
+                  value={formValues.vernacularName}
+                  onChange={onInputChange}
+                />
+              </div>
+              <div className="flex flex-col gap-1 w-full">
+                <label>Barcode</label>
+
+                <div className="flex gap-2">
+                  <Input
+                    name="barcode"
+                    value={formValues.barcode}
+                    onChange={onInputChange}
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3 w-full">
+                <div className="flex flex-col gap-1 w-full">
+                  <label>Prefix</label>
+                  <Input
+                    name="prefix"
+                    value={formValues.prefix}
+                    onChange={onInputChange}
+                  />
+                </div>
+                <div className="flex flex-col gap-1 w-full">
+                  <label>Number</label>
+                  <Input
+                    name="number"
+                    value={formValues.number}
+                    onChange={onInputChange}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1 w-full">
+                <label>Collector</label>
+                <Input
+                  name="collector"
+                  value={formValues.collector}
+                  onChange={onInputChange}
+                />
+              </div>
+              <div className="flex flex-col gap-1 w-full">
+                <label>Date</label>
+                <DatePicker
+                  date={formValues.date}
+                  setDate={(date) => setFormValues({ ...formValues, date })}
+                />
+              </div>
+              <div className="flex flex-col gap-1 w-full">
+                <label>State</label>
+                {(!update || !initialValues?.state || formValues.state) && (
+                  <Select
+                    value={formValues.state ?? ""}
+                    onValueChange={(value) =>
+                      setFormValues({ ...formValues, state: value })
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a state" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {States.states.map(({ label, value }) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+              <div className="flex flex-col gap-1 w-full">
+                <label>District</label>
+                <Input
+                  name="district"
+                  value={formValues.district}
+                  onChange={onInputChange}
+                />
+              </div>
+              <div className="flex flex-col gap-1 w-full">
+                <label>Location</label>
+                <Input
+                  name="location"
+                  value={formValues.location}
+                  onChange={onInputChange}
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="ml-auto"
+                disabled={
+                  !image ||
+                  !isComplete ||
+                  isSubmitting ||
+                  Object.values(formValues).some((value) => !value)
+                }
+              >
+                Submit
+              </Button>
+            </form>
+          )}
+        </div>
       </div>
     </>
   );

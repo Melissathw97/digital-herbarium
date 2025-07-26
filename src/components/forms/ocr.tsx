@@ -2,6 +2,7 @@
 
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { toast } from "sonner";
 import Cropper from "../cropper";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -96,6 +97,7 @@ export default function OcrForm({
         family: formValues.family.value,
         image: selectedFile,
       }).then((data) => {
+        toast.success("Plant created successfully");
         router.push(`${Pages.PLANTS}/${data.id}`);
       });
 
@@ -111,6 +113,7 @@ export default function OcrForm({
           id: initialValues?.id || "",
           image: selectedFile,
         }).then(() => {
+          toast.success("Plant updated successfully");
           router.push(`${Pages.PLANTS}/${data.id}`);
         });
       });

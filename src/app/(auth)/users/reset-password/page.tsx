@@ -1,8 +1,9 @@
 "use client";
 
 import { ChangeEvent, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
+import { toast } from "sonner";
 import { Pages } from "@/types/pages";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,7 @@ export default function UsersResetPassword() {
       })
       .catch((error) => {
         setIsLoading(false);
-        alert(error);
+        toast.error(error);
       });
   };
 

@@ -5,6 +5,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Plant } from "@/types/plant";
 import { deletePlant } from "@/services/plantServices";
@@ -26,11 +27,11 @@ export default function PlantDeleteModal({
         .then(() => {
           toggle();
           onDeleteSuccess();
-          alert("Plant deleted successfully!");
+          toast.success("Plant deleted successfully!");
         })
         .catch((error) => {
           toggle();
-          alert(error);
+          toast.error(error);
         });
     }
   };

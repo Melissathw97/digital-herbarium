@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { toast } from "sonner";
 import { Pages } from "@/types/pages";
 import Badge from "@/components/badge";
 import { Pen, Trash } from "lucide-react";
@@ -86,9 +87,11 @@ export default function PlantsListPage() {
 
   const onExportClick = () => {
     postPlantsExport({ ids: selectedPlants.map((plant) => plant.id) })
-      .then(() => {})
+      .then(() => {
+        toast.success("Data exported to excel successfully");
+      })
       .catch((error) => {
-        alert(error);
+        toast.error(error);
       });
   };
 

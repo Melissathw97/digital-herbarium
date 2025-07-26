@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { toast } from "sonner";
 import { Pages } from "@/types/pages";
 import { useRouter } from "next/navigation";
 import { userSignUp } from "@/services/authServices";
@@ -48,7 +49,7 @@ export default function UsersSignUp() {
       formValues;
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match");
       setIsLoading(false);
       return;
     }
@@ -61,7 +62,7 @@ export default function UsersSignUp() {
         toggleModal();
       })
       .catch((error) => {
-        alert(error);
+        toast.error(error);
       });
   };
 

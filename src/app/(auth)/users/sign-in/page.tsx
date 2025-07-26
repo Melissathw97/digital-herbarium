@@ -1,8 +1,9 @@
 "use client";
 
 import { ChangeEvent, useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
+import { toast } from "sonner";
 import { Pages } from "@/types/pages";
 import { BadgeCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -49,7 +50,7 @@ export default function UsersSignIn() {
       })
       .catch((error) => {
         setIsLoading(false);
-        alert(error);
+        toast.error(error);
       });
   };
 

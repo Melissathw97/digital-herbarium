@@ -5,6 +5,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 import { User } from "@/types/user";
 import { Button } from "../ui/button";
 import UserCard from "../cards/user";
@@ -25,11 +26,12 @@ export default function UserDeleteModal({
     if (user)
       deleteUser({ userId: user.id })
         .then(() => {
+          toast.success("User deleted successfully");
           toggle();
           onDeleteSuccess();
         })
         .catch((error) => {
-          alert(error);
+          toast.error(error);
         });
   };
   return (

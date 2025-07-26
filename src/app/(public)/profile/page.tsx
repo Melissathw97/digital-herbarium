@@ -1,6 +1,7 @@
 "use client";
 
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { User } from "@/types/user";
 import Badge from "@/components/badge";
 import Spinner from "@/components/spinner";
@@ -75,7 +76,7 @@ export default function MembersPage() {
 
     if (password) {
       if (password !== confirmPassword) {
-        alert("Passwords do not match");
+        toast.error("Passwords do not match");
         setIsSubmitting(false);
         return;
       }
@@ -87,7 +88,7 @@ export default function MembersPage() {
         })
         .catch((error) => {
           setIsSubmitting(false);
-          alert(error);
+          toast.error(error);
         });
     }
 
@@ -96,9 +97,10 @@ export default function MembersPage() {
         .then(() => {
           setIsSubmitting(false);
           fetchUserProfile();
+          toast.success("Profile updated successfully");
         })
         .catch((error) => {
-          console.error(error);
+          toast.error(error);
           setIsSubmitting(false);
         });
     }

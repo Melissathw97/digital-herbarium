@@ -7,6 +7,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 import { User } from "@/types/user";
 import { Button } from "../ui/button";
 import UserCard from "../cards/user";
@@ -37,11 +38,12 @@ export default function UserRoleUpdateModal({
     if (user)
       updateUserRole({ userId: user.id, role })
         .then(() => {
+          toast.success("User role updated successfully");
           toggle();
           onUpdateSuccess();
         })
         .catch((error) => {
-          alert(error);
+          toast.error(error);
         });
   };
 

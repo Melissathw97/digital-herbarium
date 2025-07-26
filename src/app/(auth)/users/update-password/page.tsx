@@ -2,6 +2,7 @@
 
 import { ChangeEvent, useState } from "react";
 import Image from "next/image";
+import { toast } from "sonner";
 import { Pages } from "@/types/pages";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
@@ -33,7 +34,7 @@ export default function UsersUpdatePassword() {
     const { password, confirmPassword } = formValues;
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match");
       setIsLoading(false);
       return;
     }
@@ -45,7 +46,7 @@ export default function UsersUpdatePassword() {
       })
       .catch((error) => {
         setIsLoading(false);
-        alert(error);
+        toast.error(error);
       });
   };
 
