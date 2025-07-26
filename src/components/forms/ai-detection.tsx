@@ -151,6 +151,7 @@ export default function AiDetectionForm({
 
     postPlantAiDetection(data)
       .then((data) => {
+        toast.success("Plant created successfully");
         router.push(`${Pages.PLANTS}/${data.id}`);
       })
       .catch((error) => {
