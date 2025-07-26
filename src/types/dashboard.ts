@@ -1,0 +1,10 @@
+export interface FamilyApi {
+    family_id: string;
+    family_name: string;
+    total_collections: number;
+}
+
+export interface Family {
+    name: string;
+    total: number;
+}
