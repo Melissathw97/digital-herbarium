@@ -59,14 +59,11 @@ const ImageCropper = ({ imageSrc, resetFile, onCropCompleteImage }: Props) => {
   return (
     <div className="w-full">
       <div className="mb-4">
-        <div className="flex border rounded-sm p-0.5 justify-between">
+        <div className="flex border rounded-md p-1 justify-between">
           <Button variant="ghost" onClick={resetFile}>
             <X />
           </Button>
           <div>
-            <Button variant="ghost" onClick={showCroppedImage}>
-              <Crop />
-            </Button>
             <Button
               variant="ghost"
               onClick={() => setRotation(rotation - 1)}
@@ -111,6 +108,9 @@ const ImageCropper = ({ imageSrc, resetFile, onCropCompleteImage }: Props) => {
               onMouseLeave={stopHold}
             >
               <ZoomIn />
+            </Button>
+            <Button onClick={showCroppedImage}>
+              <Crop />
             </Button>
           </div>
         </div>
