@@ -3,6 +3,7 @@ import { ScanText } from "lucide-react";
 import { Button } from "./ui/button";
 import Tesseract from "tesseract.js";
 import { toast } from "sonner";
+import Spinner from "./spinner";
 
 export default function ScanButton({
   previewRef,
@@ -66,7 +67,7 @@ export default function ScanButton({
       onClick={handleSubmitAppend}
       disabled={isLoading || !previewRef.current}
     >
-      <ScanText />
+      {isLoading ? <Spinner className="text-white" /> : <ScanText />}
     </Button>
   );
 }
