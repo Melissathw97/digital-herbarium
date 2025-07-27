@@ -13,7 +13,7 @@ import { PasswordValidationResult } from "@/types/password";
 import {
   passwordValidationMessage,
   validatePassword,
-} from "@/utils/password-validation";
+} from "@/utils/passwordValidation";
 
 export default function UsersUpdatePassword() {
   const router = useRouter();

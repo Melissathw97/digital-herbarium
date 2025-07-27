@@ -15,7 +15,7 @@ import UserPendingVerificationModal from "@/components/modals/userPendingVerific
 import {
   passwordValidationMessage,
   validatePassword,
-} from "@/utils/password-validation";
+} from "@/utils/passwordValidation";
 
 export default function UsersSignUp() {
   const router = useRouter();

@@ -14,7 +14,7 @@ import { getUserProfile, updateUserProfile } from "@/services/userServices";
 import {
   passwordValidationMessage,
   validatePassword,
-} from "@/utils/password-validation";
+} from "@/utils/passwordValidation";
 import { PasswordValidationResult } from "@/types/password";
 
 export default function MembersPage() {
