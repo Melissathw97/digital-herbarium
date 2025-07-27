@@ -57,12 +57,10 @@ export default function OcrForm({
 
   const [image, setImage] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File>();
   const [showScanButton, setShowScanButton] = useState(false);
 
-  // TODO: Check if selectedFile is used
-  const [selectedFile, setSelectedFile] = useState<File>();
-
-  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
+  const previewRef = useRef<HTMLImageElement>(null);
 
   const [formValues, setFormValues] = useState<FormValues>({
     family: { label: "", value: "" },
@@ -183,9 +181,9 @@ export default function OcrForm({
       <div className="flex w-full gap-4 mb-6">
         <div className="flex-1 max-w-[50%]">
           <Cropper
-            handleSetImgSrc={(image) => setImage(image)}
             imgSrc={image}
-            previewCanvasRef={previewCanvasRef}
+            previewRef={previewRef}
+            handleSetImgSrc={(image) => setImage(image)}
             showScanButton={() => setShowScanButton(true)}
             handleSetSelectedFile={(file) => setSelectedFile(file)}
           />
@@ -224,7 +222,7 @@ export default function OcrForm({
 
               {showScanButton && (
                 <ScanButton
-                  previewCanvasRef={previewCanvasRef}
+                  previewRef={previewRef}
                   onSubmit={(value) =>
                     setFormValues({ ...formValues, species: value })
                   }
@@ -253,7 +251,7 @@ export default function OcrForm({
               {showScanButton && (
                 <ScanButton
                   isBarcode
-                  previewCanvasRef={previewCanvasRef}
+                  previewRef={previewRef}
                   onSubmit={(value) =>
                     setFormValues({ ...formValues, barcode: value })
                   }
@@ -336,7 +334,9 @@ export default function OcrForm({
           </div>
           <Button
             type="submit"
-            disabled={Object.values(formValues).some((value) => !value)}
+            disabled={
+              Object.values(formValues).some((value) => !value) || !image
+            }
           >
             Submit
           </Button>

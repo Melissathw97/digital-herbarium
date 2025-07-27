@@ -5,36 +5,36 @@ import Tesseract from "tesseract.js";
 import { toast } from "sonner";
 
 export default function ScanButton({
-  previewCanvasRef,
+  previewRef,
   onSubmit,
   isBarcode = false,
 }: {
-  previewCanvasRef: RefObject<HTMLCanvasElement | null>;
+  previewRef: RefObject<HTMLImageElement | null>;
   onSubmit: (text: string) => void;
   isBarcode?: boolean;
 }) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const base64toBlob = (base64Data: string) => {
-    const byteString = atob(base64Data.split(",")[1]);
-    const mimeString = base64Data.split(",")[0].split(":")[1].split(";")[0];
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
+  const imgSrctoBlob = async (src: string): Promise<Blob> => {
+    const response = await fetch(src);
 
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
+    if (!response.ok) {
+      // This might happen if the original Blob was revoked,
+      // or the URL is somehow invalid.
+      throw new Error(
+        `Failed to fetch blob URL: ${response.status} ${response.statusText}`
+      );
     }
 
-    return new Blob([ab], { type: mimeString });
+    const blob = await response.blob();
+    return blob;
   };
 
-  const handleSubmitAppend = () => {
+  const handleSubmitAppend = async () => {
     setIsLoading(true);
 
-    if (previewCanvasRef.current) {
-      const canvasRef = previewCanvasRef.current;
-      const imageData64 = canvasRef.toDataURL("image/jpg");
-      const blob = base64toBlob(imageData64);
+    if (previewRef.current) {
+      const blob = await imgSrctoBlob(previewRef.current.src);
       const croppedImage = window.URL.createObjectURL(blob);
 
       Tesseract.recognize(croppedImage, "eng", {
@@ -64,7 +64,7 @@ export default function ScanButton({
     <Button
       type="button"
       onClick={handleSubmitAppend}
-      disabled={isLoading || !previewCanvasRef.current}
+      disabled={isLoading || !previewRef.current}
     >
       <ScanText />
     </Button>
