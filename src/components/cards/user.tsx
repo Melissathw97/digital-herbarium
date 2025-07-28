@@ -24,7 +24,7 @@ export default function UserCard({
 }) {
   return (
     <div
-      className={`${currentUser && "border border-lime-700"} bg-white shadow-sm rounded-sm px-5 py-4 border flex flex-col gap-1 justify-center`}
+      className={`${currentUser && "border border-lime-700/50"} bg-white shadow-sm rounded-sm px-5 py-4 border flex flex-col gap-1 justify-center`}
     >
       <div className="flex gap-2">
         <div className="bg-gray-200 h-10 w-10 rounded-full grid place-items-center font-semibold text-gray-500 uppercase shrink-0">
