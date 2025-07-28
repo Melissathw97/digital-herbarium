@@ -74,8 +74,8 @@ export default function UsersSignUp() {
         if (error) throw error.message;
         toggleModal();
       })
-      .catch((error) => {
-        toast.error(error);
+      .catch(() => {
+        toast.error("Failed to sign up. Please try again later.");
       });
   };
 
