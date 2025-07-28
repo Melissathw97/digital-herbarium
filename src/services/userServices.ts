@@ -51,10 +51,14 @@ export function updateUserProfile({
     });
 }
 
-export function getUsers(): Promise<User[]> {
+export function getUsers({ search }: { search: string }): Promise<User[]> {
+  let path = "user-data";
+  if (search) path += `?search=${search}`;
+
   const supabase = createClient();
+
   return supabase.functions
-    .invoke("user-data", {
+    .invoke(path, {
       method: "GET",
     })
     .then(({ data, error }) => {
