@@ -109,14 +109,11 @@ const ImageCropper = ({ imageSrc, resetFile, onCropCompleteImage }: Props) => {
             >
               <ZoomIn />
             </Button>
-            <Button onClick={showCroppedImage}>
-              <Crop />
-            </Button>
           </div>
         </div>
       </div>
 
-      <div className="relative w-full h-[450px] bg-gray-200 rounded-md overflow-hidden">
+      <div className="relative w-full h-[450px] bg-gray-200 rounded-md overflow-hidden flex justify-center">
         <Cropper
           image={imageSrc}
           crop={crop}
@@ -128,6 +125,15 @@ const ImageCropper = ({ imageSrc, resetFile, onCropCompleteImage }: Props) => {
           onRotationChange={setRotation}
           onCropComplete={onCropComplete}
         />
+
+        <Button
+          variant="white"
+          onClick={showCroppedImage}
+          className="absolute bottom-8 z-10"
+        >
+          <Crop />
+          Crop
+        </Button>
       </div>
     </div>
   );
