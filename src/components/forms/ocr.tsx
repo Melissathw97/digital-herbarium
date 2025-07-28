@@ -168,11 +168,10 @@ export default function OcrForm({
       >
         <ol className="text-xs list-decimal ml-4 mt-1 leading-5">
           <li>Upload an unflipped image</li>
-          <li>Click on the crop button to begin cropping</li>
-          <li>Click and drag on any part of the image</li>
+          <li>Crop any part of the image</li>
           <li>
-            Click on the scan button for the Species or Barcode fields to begin
-            scanning the text in the cropped image
+            Scan the text within the cropped image for the Species or Barcode
+            fields
           </li>
           <li>Fill in all other plant details</li>
           <li>Submit the form</li>
