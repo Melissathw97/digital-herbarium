@@ -12,7 +12,7 @@ export function getUserProfile(): Promise<User> {
       if (error) throw error;
 
       return {
-        id: data?.id || "",
+        id: data?.user_id || "",
         firstName: data?.first_name,
         lastName: data?.last_name,
         role: data?.role || "",
@@ -41,7 +41,7 @@ export function updateUserProfile({
     })
     .then(({ data }) => {
       return {
-        id: data?.id || "",
+        id: data?.user_id || "",
         firstName: data?.first_name,
         lastName: data?.last_name,
         role: data?.role || "",
