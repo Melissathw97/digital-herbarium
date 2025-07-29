@@ -48,7 +48,7 @@ export default function FamilyChart() {
   useEffect(() => {
     getTopFamilies().then((response) => {
       setData(response.slice(0, 5));
-      setIsLoading(false);
+      setTimeout(() => setIsLoading(false), 500);
     });
   }, []);
 

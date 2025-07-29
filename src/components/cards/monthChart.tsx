@@ -41,21 +41,21 @@ const months = [
 
 export default function MonthChart() {
   const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState<{ year: number, months: Month[] }>();
+  const [data, setData] = useState<{ year: number; months: Month[] }>();
 
   const chartData = useMemo(() => {
     return data?.months.map((month, index) => ({
       month: months[index + 1],
       ocr: month["OCR"],
-      ai: month["AI Detection"]
-    }))
+      ai: month["AI Detection"],
+    }));
   }, [data]);
 
   useEffect(() => {
     getYearByMonths().then((response) => {
       setData(response);
-      setIsLoading(false);
-    })
+      setTimeout(() => setIsLoading(false), 300);
+    });
   }, []);
 
   return (
@@ -66,7 +66,7 @@ export default function MonthChart() {
       </div>
       <div className="flex-1">
         {isLoading ? (
-          <div className="text-center text-xs text-gray-500 grid place-items-center h-full pb-8">
+          <div className="text-center text-xs text-gray-500 grid place-items-center h-full pb-8 min-h-[200px]">
             Loading data...
           </div>
         ) : (
