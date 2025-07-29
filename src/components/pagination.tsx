@@ -65,7 +65,7 @@ export default function Pagination({
       <p>
         Showing {startCount} - {endCount} of {pagination.total} items
       </p>
-      <div className="border rounded-sm flex items-center gap-1 px-1 py-1">
+      <div className="border rounded-sm flex items-center gap-1 px-1 py-1 bg-white shadow-sm">
         <button className="w-6 h-6 grid place-items-center hover:bg-gray-100 rounded-xs">
           <ChevronLeft className="size-3" />
         </button>

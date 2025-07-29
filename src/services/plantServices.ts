@@ -322,12 +322,15 @@ export async function updatePlantImage({
     });
 }
 
-export async function deletePlant({ id }: { id: string }): Promise<Plant> {
+export async function deletePlants({ ids }: { ids: string[] }): Promise<Plant> {
   const supabase = createClient();
 
   return supabase.functions
-    .invoke(`plant-data/complete?id=${id}`, {
+    .invoke("plant-data/complete", {
       method: "DELETE",
+      body: {
+        ids,
+      },
     })
     .then(async ({ data, response }) => {
       if (response?.ok === false) {

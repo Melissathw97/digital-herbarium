@@ -1,20 +1,23 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Pages } from "@/types/pages";
 import Badge from "@/components/badge";
-import { Pen, Trash } from "lucide-react";
+import { Pen, Trash, X } from "lucide-react";
 import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
-import { useEffect, useState } from "react";
+import { User, UserRole } from "@/types/user";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import TablePagination from "@/components/pagination";
+import { getUserProfile } from "@/services/userServices";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Plant, ActionType, Pagination } from "@/types/plant";
 import PlantDeleteModal from "@/components/modals/plantDelete";
 import { getPlants, postPlantsExport } from "@/services/plantServices";
+import PlantBulkDeleteModal from "@/components/modals/plantBulkDelete";
 
 export default function PlantsListPage() {
   const router = useRouter();
@@ -22,6 +25,7 @@ export default function PlantsListPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [plants, setPlants] = useState<Plant[]>([]);
+  const [currentUser, setCurrentUser] = useState<User>();
   const [pagination, setPagination] = useState<Pagination>({
     limit: 0,
     page: 0,
@@ -32,6 +36,7 @@ export default function PlantsListPage() {
   const [selectedPlant, setSelectedPlant] = useState<Plant>();
   const [selectedPlants, setSelectedPlants] = useState<Plant[]>([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
 
   const headers: { label: string; dataKey: keyof Plant }[] = [
     { label: "Date Collected", dataKey: "date" },
@@ -48,8 +53,14 @@ export default function PlantsListPage() {
     { label: "Location", dataKey: "location" },
   ];
 
+  const isAdmin = useMemo(
+    () => currentUser?.role === UserRole.ADMIN,
+    [currentUser]
+  );
+
   const fetchPlants = () => {
     setIsLoading(true);
+    setSelectedPlants([]);
 
     const page = searchParams.get("page");
     const limit = searchParams.get("limit");
@@ -60,9 +71,15 @@ export default function PlantsListPage() {
     };
 
     getPlants(queryParams)
-      .then((response) => {
+      .then(async (response) => {
         setPlants(response.data);
         setPagination(response.pagination);
+
+        if (!currentUser?.id) {
+          const current = await getUserProfile();
+          setCurrentUser(current);
+        }
+
         setIsLoading(false);
       })
       .catch((error) => {
@@ -93,6 +110,10 @@ export default function PlantsListPage() {
       .catch((error) => {
         toast.error(error);
       });
+  };
+
+  const onBulkDeleteClick = () => {
+    setIsBulkDeleteModalOpen(true);
   };
 
   const onBulkCheckboxClick = () => {
@@ -136,15 +157,42 @@ export default function PlantsListPage() {
     <>
       <h1>Plant Collection</h1>
 
-      <div className="bg-white shadow-sm rounded-sm px-4 py-5 border flex flex-col gap-5">
-        <div className="flex items-center justify-end gap-3">
-          <Button variant="secondary" size="sm" onClick={onExportClick}>
-            Export to Excel{" "}
-            {selectedPlants.length ? `(${selectedPlants.length})` : null}
-          </Button>
-          <Link href={Pages.PLANTS_NEW}>
-            <Button size="sm">Add Plant</Button>
-          </Link>
+      <div className="bg-white shadow-sm rounded-sm px-4 py-5 border flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            {selectedPlants.length ? (
+              <div className="flex items-center gap-5 px-1.5 font-semibold">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedPlants([])}
+                >
+                  <X className="text-gray-500" />
+                </Button>
+                {selectedPlants.length} selected
+              </div>
+            ) : null}
+          </div>
+          <div className="flex items-center gap-2">
+            {selectedPlants.length > 0 && isAdmin && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onBulkDeleteClick}
+                className="text-red-700 hover:text-red-900"
+              >
+                Delete{" "}
+                {selectedPlants.length ? `(${selectedPlants.length})` : null}
+              </Button>
+            )}
+            <Button variant="secondary" size="sm" onClick={onExportClick}>
+              Export to Excel{" "}
+              {selectedPlants.length ? `(${selectedPlants.length})` : null}
+            </Button>
+            <Link href={Pages.PLANTS_NEW}>
+              <Button size="sm">Add Plant</Button>
+            </Link>
+          </div>
         </div>
 
         <div className="rounded-md border overflow-auto text-xs">
@@ -239,14 +287,16 @@ export default function PlantsListPage() {
                             <Pen />
                           </Button>
                         </Link>
-                        <Button
-                          size="xs"
-                          variant="outline"
-                          className="text-red-700 hover:text-red-700"
-                          onClick={() => onDeleteClick(plant)}
-                        >
-                          <Trash />
-                        </Button>
+                        {isAdmin && (
+                          <Button
+                            size="xs"
+                            variant="outline"
+                            className="text-red-700 hover:text-red-700"
+                            onClick={() => onDeleteClick(plant)}
+                          >
+                            <Trash />
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -262,6 +312,13 @@ export default function PlantsListPage() {
           open={isDeleteModalOpen}
           plant={selectedPlant}
           toggle={() => setIsDeleteModalOpen(false)}
+          onDeleteSuccess={fetchPlants}
+        />
+
+        <PlantBulkDeleteModal
+          open={isBulkDeleteModalOpen}
+          plants={selectedPlants}
+          toggle={() => setIsBulkDeleteModalOpen(false)}
           onDeleteSuccess={fetchPlants}
         />
       </div>

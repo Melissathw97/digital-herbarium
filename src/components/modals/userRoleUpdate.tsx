@@ -8,9 +8,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { User } from "@/types/user";
-import { Button } from "../ui/button";
 import UserCard from "../cards/user";
+import { Button } from "../ui/button";
+import { User, UserRole } from "@/types/user";
 import {
   Select,
   SelectContent,
@@ -57,13 +57,7 @@ export default function UserRoleUpdateModal({
         <AlertDialogHeader>
           <AlertDialogTitle>Edit User Role</AlertDialogTitle>
           <div className="flex flex-col gap-4 mt-2">
-            {user && (
-              <UserCard
-                name={`${user?.firstName} ${user?.lastName}`}
-                role={user?.role}
-                fullDetails={false}
-              />
-            )}
+            {user && <UserCard user={user} fullDetails={false} />}
 
             <div className="flex flex-col gap-2">
               <label>New Role</label>
@@ -74,8 +68,8 @@ export default function UserRoleUpdateModal({
                 <SelectContent>
                   <SelectGroup>
                     {[
-                      { label: "Admin", value: "super_admin" },
-                      { label: "Member", value: "member" },
+                      { label: "Admin", value: UserRole.ADMIN },
+                      { label: "Member", value: UserRole.MEMBER },
                     ].map(({ label, value }) => (
                       <SelectItem key={value} value={value}>
                         {label}

@@ -1,3 +1,4 @@
+import { Pagination } from "@/types/plant";
 import { User, UserApi } from "@/types/user";
 import { createClient } from "@/utils/supabase/client";
 
@@ -51,9 +52,20 @@ export function updateUserProfile({
     });
 }
 
-export function getUsers({ search }: { search: string }): Promise<User[]> {
-  let path = "user-data";
-  if (search) path += `?search=${search}`;
+export function getUsers({
+  search,
+  page,
+  limit,
+}: {
+  search: string;
+  page: number;
+  limit: number;
+}): Promise<{
+  data: User[];
+  pagination: Pagination;
+}> {
+  let path = `user-data?page=${page}&limit=${limit}`;
+  if (search) path += `&search=${search}`;
 
   const supabase = createClient();
 
@@ -64,14 +76,17 @@ export function getUsers({ search }: { search: string }): Promise<User[]> {
     .then(({ data, error }) => {
       if (error) throw error;
 
-      return data.map((user: UserApi) => ({
-        id: user.user_id,
-        firstName: user.first_name,
-        lastName: user.last_name,
-        role: user.role,
-        email: user.email,
-        joinedAt: user.created_at,
-      }));
+      return {
+        data: data.data.map((user: UserApi) => ({
+          id: user.user_id,
+          firstName: user.first_name,
+          lastName: user.last_name,
+          role: user.role,
+          email: user.email,
+          joinedAt: user.created_at,
+        })),
+        pagination: data.pagination,
+      };
     });
 }
 
@@ -108,12 +123,15 @@ export function updateUserRole({
     });
 }
 
-export function deleteUser({ userId }: { userId: string }): Promise<User> {
+export function deleteUsers({ ids }: { ids: string[] }): Promise<User> {
   const supabase = createClient();
 
   return supabase.functions
-    .invoke(`user-data/?user_id=${userId}`, {
+    .invoke("user-data", {
       method: "DELETE",
+      body: {
+        ids,
+      },
     })
     .then(async ({ data, response }) => {
       if (response?.ok === false) {

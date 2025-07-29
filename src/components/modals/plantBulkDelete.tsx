@@ -6,27 +6,26 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { User } from "@/types/user";
+import { Plant } from "@/types/plant";
 import { Button } from "../ui/button";
-import UserCard from "../cards/user";
-import { deleteUsers } from "@/services/userServices";
+import { deletePlants } from "@/services/plantServices";
 
-export default function UserDeleteModal({
+export default function PlantBulkDeleteModal({
   open,
-  user,
+  plants,
   toggle,
   onDeleteSuccess,
 }: {
   open: boolean;
-  user?: User;
+  plants?: Plant[];
   toggle: () => void;
   onDeleteSuccess: () => void;
 }) {
   const onDeleteClick = () => {
-    if (user)
-      deleteUsers({ ids: [user.id] })
+    if (plants?.length)
+      deletePlants({ ids: plants?.map((plant) => plant.id) })
         .then(() => {
-          toast.success("User deleted successfully");
+          toast.success("Plants deleted successfully");
           toggle();
           onDeleteSuccess();
         })
@@ -34,19 +33,18 @@ export default function UserDeleteModal({
           toast.error(error);
         });
   };
+
   return (
     <AlertDialog open={open}>
       <AlertDialogContent className="!max-w-md gap-8 pt-8">
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Are you sure you wish to delete this user?
+            Are you sure you wish to delete {plants?.length} plant(s)?
           </AlertDialogTitle>
           <div className="flex flex-col justify-center gap-6">
             <p className="text-gray-600">
-              This will permanently delete the user&apos;s record from this
-              platform.
+              This will permanently delete the plant records from this platform.
             </p>
-            {user && <UserCard user={user} fullDetails={false} />}
           </div>
         </AlertDialogHeader>
         <AlertDialogFooter className="!justify-center">

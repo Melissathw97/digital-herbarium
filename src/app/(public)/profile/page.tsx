@@ -2,10 +2,10 @@
 
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { User } from "@/types/user";
 import Badge from "@/components/badge";
 import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
+import { User, UserRole } from "@/types/user";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { userUpdatePassword } from "@/services/authServices";
@@ -152,7 +152,7 @@ export default function MembersPage() {
                   {user?.email}
                 </p>
                 {user &&
-                  (user?.role === "super_admin" ? (
+                  (user?.role === UserRole.ADMIN ? (
                     <Badge variant="purple">
                       <Crown />
                       Admin

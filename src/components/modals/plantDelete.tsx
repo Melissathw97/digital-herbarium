@@ -8,7 +8,7 @@ import {
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Plant } from "@/types/plant";
-import { deletePlant } from "@/services/plantServices";
+import { deletePlants } from "@/services/plantServices";
 
 export default function PlantDeleteModal({
   open,
@@ -23,7 +23,7 @@ export default function PlantDeleteModal({
 }) {
   const onConfirm = () => {
     if (plant) {
-      deletePlant({ id: plant.id })
+      deletePlants({ ids: [plant.id] })
         .then(() => {
           toggle();
           onDeleteSuccess();
