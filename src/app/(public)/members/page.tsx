@@ -175,7 +175,7 @@ export default function MembersPage() {
                 user={user}
                 isSelected={selectedUsers.has(user)}
                 currentUser={user.id === currentUser?.id}
-                onEdit={() => onEditClick(user)}
+                onEdit={isAdmin ? () => onEditClick(user) : undefined}
                 onDelete={isAdmin ? () => onDeleteClick(user) : undefined}
                 onSelect={isAdmin ? () => onSelect(user) : undefined}
               />
