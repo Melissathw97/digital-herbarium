@@ -30,11 +30,12 @@ export default function UserCard({
   fullDetails?: boolean;
 }) {
   const fullName = user.firstName + " " + user.lastName;
+  const allowSelect = onSelect && !currentUser;
 
   return (
     <div
-      className={`bg-white shadow-sm rounded-sm px-5 py-4 border flex flex-col gap-1 justify-center ${onSelect && "cursor-pointer"}`}
-      onClick={onSelect}
+      className={`bg-white shadow-sm rounded-sm px-5 py-4 border flex flex-col gap-1 justify-center ${allowSelect && "cursor-pointer"}`}
+      onClick={allowSelect ? () => onSelect() : undefined}
     >
       <div className="flex gap-2">
         <div className="bg-gray-200 h-10 w-10 rounded-full grid place-items-center font-semibold text-gray-500 uppercase shrink-0">
