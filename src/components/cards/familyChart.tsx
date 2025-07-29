@@ -21,8 +21,8 @@ export default function FamilyChart() {
     return data?.map((family) => ({
       family: family.name,
       count: family.total,
-      fill: `var(--color-${family.name})`
-    }))
+      fill: `var(--color-${family.name})`,
+    }));
   }, [data]);
 
   const chartConfig = useMemo(() => {
@@ -31,7 +31,7 @@ export default function FamilyChart() {
         obj[family.name] = {
           label: family.name,
           color: `var(--chart-${index + 1})`,
-        }
+        };
       }
 
       return obj;
@@ -41,15 +41,15 @@ export default function FamilyChart() {
       count: {
         label: "Count",
       },
-      ...(data ? config : {})
-    }
+      ...(data ? config : {}),
+    };
   }, [data]);
 
   useEffect(() => {
     getTopFamilies().then((response) => {
-      setData(response);
+      setData(response.slice(0, 5));
       setIsLoading(false);
-    })
+    });
   }, []);
 
   return (

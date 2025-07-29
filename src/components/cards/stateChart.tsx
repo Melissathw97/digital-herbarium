@@ -24,11 +24,10 @@ export default function StateChart() {
       return {
         state: stateName,
         count: state.total,
-        fill: `var(--color-${stateName})`
-      }
-    })
+        fill: `var(--color-${stateName})`,
+      };
+    });
   }, [data]);
-
 
   const chartConfig = useMemo(() => {
     const config = data?.reduce((obj, state, index) => {
@@ -38,7 +37,7 @@ export default function StateChart() {
         obj[stateName] = {
           label: state.name,
           color: `var(--chart-${index + 6})`,
-        }
+        };
       }
 
       return obj;
@@ -48,15 +47,15 @@ export default function StateChart() {
       count: {
         label: "Count",
       },
-      ...(data ? config : {})
-    }
+      ...(data ? config : {}),
+    };
   }, [data]);
-  
+
   useEffect(() => {
     getTopStates().then((response) => {
-      setData(response);
+      setData(response.slice(0, 5));
       setIsLoading(false);
-    })
+    });
   }, []);
 
   return (
@@ -65,27 +64,27 @@ export default function StateChart() {
         <p className="font-semibold">Top 5 States</p>
       </div>
       <div className="flex-1 pb-0">
-      {isLoading ? (
-        <div className="text-center text-xs text-gray-500 grid place-items-center h-full pb-8">
-          Loading data...
-        </div>
-      ) : (
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square h-full w-full"
-        >
-          <PieChart>
-            <ChartTooltip
-              content={<ChartTooltipContent nameKey="state" hideLabel />}
-            />
-            <Pie data={chartData} dataKey="count" />
-            <ChartLegend
-              content={<ChartLegendContent nameKey="state" />}
-              className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
-            />
-          </PieChart>
-        </ChartContainer>
-      )}
+        {isLoading ? (
+          <div className="text-center text-xs text-gray-500 grid place-items-center h-full pb-8">
+            Loading data...
+          </div>
+        ) : (
+          <ChartContainer
+            config={chartConfig}
+            className="mx-auto aspect-square h-full w-full"
+          >
+            <PieChart>
+              <ChartTooltip
+                content={<ChartTooltipContent nameKey="state" hideLabel />}
+              />
+              <Pie data={chartData} dataKey="count" />
+              <ChartLegend
+                content={<ChartLegendContent nameKey="state" />}
+                className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
+              />
+            </PieChart>
+          </ChartContainer>
+        )}
       </div>
     </div>
   );
