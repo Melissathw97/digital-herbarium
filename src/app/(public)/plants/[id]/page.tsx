@@ -97,7 +97,7 @@ export default function PlantDetailsPage() {
 
             <Button
               variant="outline"
-              className="ml-auto text-red-700 hover:text-red-700"
+              className="ml-auto text-red-700 hover:text-red-900"
               onClick={onDeleteClick}
             >
               Delete Plant
