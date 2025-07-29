@@ -29,8 +29,6 @@ export default function MembersPage() {
   });
 
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
-
   const [currentUser, setCurrentUser] = useState<User>();
   const [selectedUser, setSelectedUser] = useState<User>();
   const [selectedUsers, setSelectedUsers] = useState<Set<User>>(new Set());
@@ -43,44 +41,57 @@ export default function MembersPage() {
     [currentUser]
   );
 
-  const fetchUsers = useCallback(
-    async (search?: string) => {
-      setIsLoading(true);
-      setHasError(false);
+  const fetchUsers = async () => {
+    setIsLoading(true);
+    setHasError(false);
 
-      const page = searchParams.get("page");
-      const limit = searchParams.get("limit");
+    const page = searchParams.get("page");
+    const limit = searchParams.get("limit");
+    const search = searchParams.get("search");
 
-      const queryParams = {
-        search: search || "",
-        page: Number(page) || 1,
-        limit: Number(limit) || 12,
-      };
+    const queryParams = {
+      search: search || "",
+      page: Number(page) || 1,
+      limit: Number(limit) || 12,
+    };
 
-      getUsers(queryParams)
-        .then(async (data) => {
-          setUsers(data.data);
-          setPagination(data.pagination);
+    if (search) setSearch(search);
 
-          if (!currentUser?.id) {
-            const current = await getUserProfile();
-            setCurrentUser(current);
-          }
+    getUsers(queryParams)
+      .then(async (data) => {
+        setUsers(data.data);
+        setPagination(data.pagination);
 
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          console.error(error);
-          setHasError(true);
-          setIsLoading(false);
-        });
-    },
-    [searchParams, currentUser?.id]
-  );
+        if (!currentUser?.id) {
+          const current = await getUserProfile();
+          setCurrentUser(current);
+        }
 
-  const onPageClick = (page: number) => {
-    router.push(`?page=${page.toString()}${search ? `&search=${search}` : ""}`);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setHasError(true);
+        setIsLoading(false);
+      });
   };
+
+  const onPageClick = useCallback(
+    (page: number) => {
+      const currentParams = new URLSearchParams(searchParams.toString());
+
+      currentParams.set("page", page.toString());
+
+      if (search) {
+        currentParams.set("search", search);
+      } else {
+        currentParams.delete("search");
+      }
+
+      router.push(`?${currentParams.toString()}`);
+    },
+    [router, searchParams, search]
+  );
 
   const onEditClick = (user: User) => {
     setSelectedUser(user);
@@ -116,18 +127,28 @@ export default function MembersPage() {
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedSearch(search);
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.set("page", "1"); // Reset page to 1
+
+      if (search) {
+        newParams.set("search", search);
+      } else {
+        newParams.delete("search"); // Remove search param if search is empty
+      }
+
+      router.replace(`?${newParams.toString()}`);
     }, 500);
 
     return () => {
       clearTimeout(handler);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   useEffect(() => {
-    fetchUsers(debouncedSearch);
+    fetchUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearch]);
+  }, [searchParams]);
 
   const onInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,6 +174,7 @@ export default function MembersPage() {
           ) : null}
           <Input
             name="search"
+            value={search}
             onChange={onInputChange}
             className="bg-white shadow-sm min-w-[220px]"
             placeholder="Search..."
