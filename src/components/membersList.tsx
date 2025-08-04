@@ -198,8 +198,16 @@ export default function MembersList() {
                 isSelected={selectedUsers.has(user)}
                 currentUser={user.id === currentUser?.id}
                 onEdit={isAdmin ? () => onEditClick(user) : undefined}
-                onDelete={isAdmin ? () => onDeleteClick(user) : undefined}
-                onSelect={isAdmin ? () => onSelect(user) : undefined}
+                onDelete={
+                  isAdmin && user.role !== UserRole.ADMIN
+                    ? () => onDeleteClick(user)
+                    : undefined
+                }
+                onSelect={
+                  isAdmin && user.role !== UserRole.ADMIN
+                    ? () => onSelect(user)
+                    : undefined
+                }
               />
             ))}
           </div>
