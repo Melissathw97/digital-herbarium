@@ -68,6 +68,10 @@ export default function StateChart() {
           <div className="text-center text-xs text-gray-500 grid place-items-center h-full pb-8">
             Loading data...
           </div>
+        ) : data?.length === 0 ? (
+          <div className="text-center text-xs text-gray-500 grid place-items-center h-full py-8">
+            No data found
+          </div>
         ) : (
           <ChartContainer
             config={chartConfig}

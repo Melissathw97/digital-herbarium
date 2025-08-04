@@ -44,6 +44,8 @@ export default function MonthChart() {
   const [data, setData] = useState<{ year: number; months: Month[] }>();
 
   const chartData = useMemo(() => {
+    if (!data?.months) return [];
+
     return data?.months.map((month, index) => ({
       month: months[index + 1],
       ocr: month["OCR"],
@@ -68,6 +70,10 @@ export default function MonthChart() {
         {isLoading ? (
           <div className="text-center text-xs text-gray-500 grid place-items-center h-full pb-8 min-h-[200px]">
             Loading data...
+          </div>
+        ) : data?.months.length === 0 ? (
+          <div className="text-center text-xs text-gray-500 grid place-items-center h-full pb-8 min-h-[200px]">
+            No data found
           </div>
         ) : (
           <ChartContainer config={chartConfig}>
