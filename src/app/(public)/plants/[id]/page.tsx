@@ -107,7 +107,7 @@ export default function PlantDetailsPage() {
           <>
             <h2>{plant?.species}</h2>
 
-            <div className="ml-auto gap-2">
+            <div className="ml-auto flex gap-2">
               {isAdmin && (
                 <Button
                   variant="outline"
@@ -142,7 +142,6 @@ export default function PlantDetailsPage() {
                 height={200}
               />
             </div>
-
             <div className="flex-1 p-8 font-semibold shadow-sm rounded-sm border flex flex-col gap-6 sticky top-[80px] items-start">
               <div className="flex gap-2">
                 <Badge variant={getBadge(plant.actionType).variant} bordered>
@@ -172,6 +171,10 @@ export default function PlantDetailsPage() {
                   </Fragment>
                 ))}
               </div>
+              <p className="text-gray-600 font-normal italic text-xs mt-6 -mb-2">
+                Record created by: {plant.creatorFirstName}{" "}
+                {plant.creatorLastName}
+              </p>
             </div>
           </div>
         )}
