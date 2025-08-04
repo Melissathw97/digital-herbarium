@@ -185,10 +185,12 @@ export default function PlantsList() {
                 {selectedPlants.length ? `(${selectedPlants.length})` : null}
               </Button>
             )}
-            <Button variant="secondary" size="sm" onClick={onExportClick}>
-              Export to Excel{" "}
-              {selectedPlants.length ? `(${selectedPlants.length})` : null}
-            </Button>
+            {plants.length > 0 && (
+              <Button variant="secondary" size="sm" onClick={onExportClick}>
+                Export to Excel{" "}
+                {selectedPlants.length ? `(${selectedPlants.length})` : null}
+              </Button>
+            )}
             <Link href={Pages.PLANTS_NEW}>
               <Button size="sm">Add Plant</Button>
             </Link>
