@@ -8,8 +8,10 @@ import { Pages } from "@/types/pages";
 import Badge from "@/components/badge";
 import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
+import { User, UserRole } from "@/types/user";
 import { Button } from "@/components/ui/button";
 import { useParams, useRouter } from "next/navigation";
+import { getUserProfile } from "@/services/userServices";
 import PlantDeleteModal from "@/components/modals/plantDelete";
 import { getPlantById, getPlantImage } from "@/services/plantServices";
 import { ChevronLeftIcon, Gauge, ScanText, Sparkles } from "lucide-react";
@@ -20,6 +22,7 @@ export default function PlantDetailsPage() {
 
   const [plant, setPlant] = useState<Plant>();
   const [isLoading, setIsLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<User>();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const getBadge = (
@@ -59,15 +62,24 @@ export default function PlantDetailsPage() {
     ];
   }, [plant]);
 
+  const isAdmin = useMemo(
+    () => currentUser?.role === UserRole.ADMIN,
+    [currentUser]
+  );
+
   useEffect(() => {
     getPlantById({ id: params.id?.toString() || "" })
       .then((data) => {
         getPlantImage({ id: params.id?.toString() || "" }).then(
-          ({ imageUrl }) => {
+          async ({ imageUrl }) => {
             setPlant({
               ...data,
               imagePath: imageUrl || "",
             });
+
+            const current = await getUserProfile();
+            setCurrentUser(current);
+
             setIsLoading(false);
           }
         );
@@ -95,16 +107,20 @@ export default function PlantDetailsPage() {
           <>
             <h2>{plant?.species}</h2>
 
-            <Button
-              variant="outline"
-              className="ml-auto text-red-700 hover:text-red-900"
-              onClick={onDeleteClick}
-            >
-              Delete Plant
-            </Button>
-            <Link href={`/plants/${plant?.id}/edit`}>
-              <Button>Edit Plant</Button>
-            </Link>
+            <div className="ml-auto gap-2">
+              {isAdmin && (
+                <Button
+                  variant="outline"
+                  className="text-red-700 hover:text-red-900"
+                  onClick={onDeleteClick}
+                >
+                  Delete Plant
+                </Button>
+              )}
+              <Link href={`/plants/${plant?.id}/edit`}>
+                <Button>Edit Plant</Button>
+              </Link>
+            </div>
           </>
         )}
       </div>

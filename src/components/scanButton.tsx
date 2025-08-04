@@ -1,9 +1,9 @@
 import { RefObject, useState } from "react";
 import { ScanText } from "lucide-react";
 import { Button } from "./ui/button";
-import Tesseract from "tesseract.js";
 import { toast } from "sonner";
 import Spinner from "./spinner";
+import Tesseract, { RecognizeResult } from "tesseract.js";
 
 export default function ScanButton({
   previewRef,
@@ -49,13 +49,14 @@ export default function ScanButton({
           console.error(err);
           setIsLoading(false);
         })
-        .then(({ data }) => {
-          let text = data.text;
+        .then((result: RecognizeResult | void) => {
+          let text = result?.data.text;
 
-          if (isBarcode) text = data.text.match(/([0-9]){5}/)?.[0] || "";
+          if (isBarcode)
+            text = result?.data.text.match(/([0-9]){5}/)?.[0] || "";
 
           if (!text) toast.error("No text found");
-          onSubmit(text);
+          if (text) onSubmit(text);
           setIsLoading(false);
         });
     }

@@ -2,7 +2,7 @@ import { Pages } from "@/types/pages";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const isDevelopment = process.env.NODE_ENV === "development";
+// const isDevelopment = process.env.NODE_ENV === "development";
 const isProduction = process.env.NODE_ENV === "production";
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS

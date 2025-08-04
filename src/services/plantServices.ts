@@ -225,7 +225,7 @@ export async function postPlantAiDetection({
   const formData = new FormData();
 
   Object.entries(payload).forEach(([key, value]) => {
-    formData.append(key, value);
+    formData.append(key, value as string | Blob);
   });
 
   return supabase.functions
