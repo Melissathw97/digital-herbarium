@@ -65,32 +65,34 @@ export default function Pagination({
       <p>
         Showing {startCount} - {endCount} of {pagination.total} items
       </p>
-      <div className="border rounded-sm flex items-center gap-1 px-1 py-1 bg-white shadow-sm">
-        <button className="w-6 h-6 grid place-items-center hover:bg-gray-100 rounded-xs">
-          <ChevronLeft className="size-3" />
-        </button>
-        {pages.map((page, index) =>
-          page === "ellipsis" ? (
-            <span
-              key={`ellipsis-${index}`}
-              className="size-6 text-gray-400 grid place-items-center"
-            >
-              ...
-            </span>
-          ) : (
-            <button
-              key={page}
-              onClick={() => onPageClick(page as number)}
-              className={`${page === pagination.page ? "bg-lime-700/20" : ""} size-6 grid place-items-center hover:bg-gray-100 rounded-xs`}
-            >
-              {page}
-            </button>
-          )
-        )}
-        <button className="w-6 h-6 grid place-items-center hover:bg-gray-100 rounded-xs">
-          <ChevronRight className="size-3" />
-        </button>
-      </div>
+      {pages.length > 0 && (
+        <div className="border rounded-sm flex items-center gap-1 px-1 py-1 bg-white shadow-sm">
+          <button className="w-6 h-6 grid place-items-center hover:bg-gray-100 rounded-xs">
+            <ChevronLeft className="size-3" />
+          </button>
+          {pages.map((page, index) =>
+            page === "ellipsis" ? (
+              <span
+                key={`ellipsis-${index}`}
+                className="size-6 text-gray-400 grid place-items-center"
+              >
+                ...
+              </span>
+            ) : (
+              <button
+                key={page}
+                onClick={() => onPageClick(page as number)}
+                className={`${page === pagination.page ? "bg-lime-700/20" : ""} size-6 grid place-items-center hover:bg-gray-100 rounded-xs`}
+              >
+                {page}
+              </button>
+            )
+          )}
+          <button className="w-6 h-6 grid place-items-center hover:bg-gray-100 rounded-xs">
+            <ChevronRight className="size-3" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
