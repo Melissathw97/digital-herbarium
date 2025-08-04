@@ -127,8 +127,10 @@ export default function AiDetectionForm({
               setIsLoading(false);
               setIsComplete(true);
             })
-            .catch((error) => {
-              toast.error(error);
+            .catch(() => {
+              toast.error(
+                "AI detection failed. Please ensure the image is correct."
+              );
               setIsLoading(false);
             });
         })
