@@ -1,5 +1,12 @@
 import { createClient } from "@/utils/supabase/client";
-import { Summary, Family, FamilyApi, Month, State, StateApi } from "@/types/dashboard";
+import {
+  Summary,
+  Family,
+  FamilyApi,
+  Month,
+  State,
+  StateApi,
+} from "@/types/dashboard";
 
 export async function getSummary(): Promise<Summary> {
   const supabase = createClient();
@@ -15,8 +22,8 @@ export async function getSummary(): Promise<Summary> {
         total: data.total_records,
         totalOcr: data.total_collections_ocr,
         totalAi: data.total_collections_ai,
-        averageConfidence: data.average_confidence
-      }
+        averageConfidence: data.average_confidence,
+      };
     });
 }
 
@@ -31,9 +38,9 @@ export async function getTopFamilies(): Promise<Family[]> {
       if (error) throw error;
 
       return data.map((family: FamilyApi) => ({
-          name: family.family_name,
-          total: family.total_collections
-        }))
+        name: family.family_name,
+        total: family.total_collections,
+      }));
     });
 }
 
@@ -48,15 +55,15 @@ export async function getTopStates(): Promise<State[]> {
       if (error) throw error;
 
       return data.map((state: StateApi) => ({
-          name: state.state_name,
-          total: state.total_collections
-        }))
+        name: state.state_name,
+        total: state.total_collections,
+      }));
     });
 }
 
 export async function getYearByMonths(): Promise<{
-  year: number,
-  months: Month[]
+  year: number;
+  months: Month[];
 }> {
   const supabase = createClient();
 
@@ -67,12 +74,19 @@ export async function getYearByMonths(): Promise<{
     .then(({ data, error }) => {
       if (error) throw error;
 
+      if (Object.keys(data).length === 0) {
+        return {
+          year: new Date().getFullYear(),
+          months: [],
+        };
+      }
+
       const years = Object.keys(data).map(Number);
       const latestYear = Math.max(...years);
 
       return {
         year: latestYear,
-        months: data[latestYear]
+        months: data[latestYear],
       };
     });
 }

@@ -17,6 +17,8 @@ export interface Plant {
   vernacularName: string;
   actionType: ActionType;
   confidenceLevel: number;
+  creatorFirstName?: string;
+  creatorLastName?: string;
 }
 
 export interface PlantApi {

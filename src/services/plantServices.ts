@@ -80,6 +80,8 @@ export async function getPlantById({ id }: { id: string }): Promise<Plant> {
         vernacularName: data.vernacular,
         actionType: data.action_type,
         confidenceLevel: data.confidence_level,
+        creatorFirstName: data.creator_first_name,
+        creatorLastName: data.creator_last_name,
       };
     });
 }
