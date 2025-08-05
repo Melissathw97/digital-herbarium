@@ -36,7 +36,19 @@ export function userSignUp({
         first_name: firstName,
         last_name: lastName,
       },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/users/sign-in?confirmed=true`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/users/sign-in?confirmed=true&email=${email}`,
+    },
+  });
+}
+
+export function userResendConfirmationEmail({ email }: { email: string }) {
+  const supabase = createClient();
+
+  return supabase.auth.resend({
+    type: "signup",
+    email,
+    options: {
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/users/sign-in?confirmed=true&email=${email}`,
     },
   });
 }

@@ -8,8 +8,13 @@ import { Pages } from "@/types/pages";
 import { BadgeCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { userSignIn } from "@/services/authServices";
+import {
+  userSignIn,
+  userResendConfirmationEmail,
+} from "@/services/authServices";
 import { useSearchParams, useRouter } from "next/navigation";
+import UserResendEmailModal from "../modals/userResendEmail";
+import UserPendingVerificationModal from "../modals/userPendingVerification";
 
 export default function UsersSignInForm() {
   const router = useRouter();
@@ -18,15 +23,24 @@ export default function UsersSignInForm() {
     email: "",
     password: "",
   });
+
+  const [isResendModalOpen, setIsResendModalOpen] = useState(false);
+  const [isSentModalOpen, setIsSentModalOpen] = useState(false);
+
   const searchParams = useSearchParams();
   const confirmedParam = searchParams.get("confirmed");
+  const emailParam = searchParams.get("email");
+  const errorCode = searchParams.get("error_code");
+
   const [showVerified, setShowVerified] = useState(false);
 
   useEffect(() => {
-    if (confirmedParam === "true") {
+    if (errorCode === "otp_expired") {
+      setIsResendModalOpen(true);
+    } else if (confirmedParam === "true") {
       setShowVerified(true);
     }
-  }, [confirmedParam]);
+  }, [errorCode, confirmedParam]);
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -54,60 +68,86 @@ export default function UsersSignInForm() {
       });
   };
 
-  return (
-    <div className="flex flex-col gap-6 items-center">
-      <Image src="/asm-logo.png" alt="ASM Logo" width={100} height={40} />
-      <form onSubmit={onSubmit} className="flex flex-col gap-8 w-full">
-        <div className="flex flex-col gap-1 text-center">
-          <h1>Welcome</h1>
-          <p className="text-gray-500">
-            Enter your credentials to access the digital herbarium
-          </p>
-        </div>
+  const onModalConfirm = () => {
+    if (emailParam)
+      userResendConfirmationEmail({ email: emailParam })
+        .then(({ error }) => {
+          if (error) throw error.message;
 
-        {showVerified ? (
-          <div className="bg-lime-700/20 text-xs rounded-sm p-2.5 px-4 text-lime-800 flex gap-2">
-            <BadgeCheck className="w-5 h-5" />
-            <div className="flex flex-col gap-1 mt-0.5">
-              <p className="font-semibold">Account successfully verified.</p>
-              <p>Please sign in to access the digital herbarium. Enjoy!</p>
+          setIsResendModalOpen(false);
+          setIsSentModalOpen(true);
+        })
+        .catch((error) => {
+          toast.error(error);
+        });
+  };
+
+  return (
+    <>
+      <div className="flex flex-col gap-6 items-center">
+        <Image src="/asm-logo.png" alt="ASM Logo" width={100} height={40} />
+        <form onSubmit={onSubmit} className="flex flex-col gap-8 w-full">
+          <div className="flex flex-col gap-1 text-center">
+            <h1>Welcome</h1>
+            <p className="text-gray-500">
+              Enter your credentials to access the digital herbarium
+            </p>
+          </div>
+
+          {showVerified ? (
+            <div className="bg-lime-700/20 text-xs rounded-sm p-2.5 px-4 text-lime-800 flex gap-2">
+              <BadgeCheck className="w-5 h-5" />
+              <div className="flex flex-col gap-1 mt-0.5">
+                <p className="font-semibold">Account successfully verified.</p>
+                <p>Please sign in to access the digital herbarium. Enjoy!</p>
+              </div>
+            </div>
+          ) : null}
+
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-2">
+              <label>Email</label>
+              <Input type="email" name="email" onChange={onInputChange} />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label>Password</label>
+              <Input type="password" name="password" onChange={onInputChange} />
+              <Link href={Pages.RESET_PASSWORD} className="mt-1 inline ml-auto">
+                <Button type="button" variant="link" size="sm">
+                  Forgot Password?
+                </Button>
+              </Link>
             </div>
           </div>
-        ) : null}
 
-        <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
-            <label>Email</label>
-            <Input type="email" name="email" onChange={onInputChange} />
+          <div className="flex flex-col gap-4 font-medium text-center">
+            <Button
+              type="submit"
+              disabled={
+                Object.values(formValues).some((value) => !value) || isLoading
+              }
+            >
+              {isLoading ? "Signing In" : "Sign In"}
+            </Button>
+            <p>
+              Don&apos;t have an account yet?&nbsp;
+              <Link href={Pages.SIGN_UP}>
+                <Button variant="link">Sign up here</Button>
+              </Link>
+            </p>
           </div>
-          <div className="flex flex-col gap-2">
-            <label>Password</label>
-            <Input type="password" name="password" onChange={onInputChange} />
-            <Link href={Pages.RESET_PASSWORD} className="mt-1 inline ml-auto">
-              <Button type="button" variant="link" size="sm">
-                Forgot Password?
-              </Button>
-            </Link>
-          </div>
-        </div>
+        </form>
+      </div>
 
-        <div className="flex flex-col gap-4 font-medium text-center">
-          <Button
-            type="submit"
-            disabled={
-              Object.values(formValues).some((value) => !value) || isLoading
-            }
-          >
-            {isLoading ? "Signing In" : "Sign In"}
-          </Button>
-          <p>
-            Don&apos;t have an account yet?&nbsp;
-            <Link href={Pages.SIGN_UP}>
-              <Button variant="link">Sign up here</Button>
-            </Link>
-          </p>
-        </div>
-      </form>
-    </div>
+      <UserResendEmailModal
+        open={isResendModalOpen}
+        onConfirm={onModalConfirm}
+      />
+
+      <UserPendingVerificationModal
+        open={isSentModalOpen}
+        onConfirm={() => setIsSentModalOpen(false)}
+      />
+    </>
   );
 }
