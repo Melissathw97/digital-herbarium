@@ -26,6 +26,7 @@ export default function UsersSignInForm() {
 
   const [isResendModalOpen, setIsResendModalOpen] = useState(false);
   const [isSentModalOpen, setIsSentModalOpen] = useState(false);
+  const [isLoadingResend, setIsLoadingResend] = useState(false);
 
   const searchParams = useSearchParams();
   const confirmedParam = searchParams.get("confirmed");
@@ -69,17 +70,28 @@ export default function UsersSignInForm() {
   };
 
   const onModalConfirm = () => {
-    if (emailParam)
+    if (emailParam) {
+      setIsLoadingResend(true);
       userResendConfirmationEmail({ email: emailParam })
         .then(({ error }) => {
           if (error) throw error.message;
 
           setIsResendModalOpen(false);
           setIsSentModalOpen(true);
+          setIsLoadingResend(false);
         })
         .catch((error) => {
-          toast.error(error);
+          setIsLoadingResend(false);
+          console.error("error", error);
+          toast.error(
+            error || "Request failed. Please try again in a few minutes."
+          );
         });
+    } else {
+      toast.error(
+        "Email not found. Please click on the link in your inbox again."
+      );
+    }
   };
 
   return (
@@ -141,6 +153,7 @@ export default function UsersSignInForm() {
 
       <UserResendEmailModal
         open={isResendModalOpen}
+        isLoading={isLoadingResend}
         onConfirm={onModalConfirm}
       />
 

@@ -11,9 +11,11 @@ import { ClockAlert } from "lucide-react";
 
 export default function UserResendEmailModal({
   open,
+  isLoading,
   onConfirm,
 }: {
   open: boolean;
+  isLoading: boolean;
   onConfirm: () => void;
 }) {
   return (
@@ -30,8 +32,10 @@ export default function UserResendEmailModal({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="!justify-center">
-          <AlertDialogAction onClick={onConfirm}>
-            Resend Confirmation Link
+          <AlertDialogAction onClick={onConfirm} disabled={isLoading}>
+            {isLoading
+              ? "Re-sending Confirmation Link"
+              : "Re-send Confirmation Link"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
