@@ -36,7 +36,10 @@ export default function UsersSignInForm() {
   const [showVerified, setShowVerified] = useState(false);
 
   useEffect(() => {
-    if (errorCode === "otp_expired") {
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const hashErrorCode = hashParams.get("error_code");
+
+    if (errorCode === "otp_expired" || hashErrorCode === "otp_expired") {
       setIsResendModalOpen(true);
     } else if (confirmedParam === "true") {
       setShowVerified(true);
