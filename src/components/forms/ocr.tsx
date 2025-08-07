@@ -1,6 +1,13 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import Cropper from "../cropper";
@@ -117,6 +124,15 @@ export default function OcrForm({
       });
   };
 
+  const isSubmitButtonDisabled = useMemo(() => {
+    const requiredFields = ["family", "species"];
+    return (
+      Object.keys(formValues)
+        .filter((field) => requiredFields.includes(field))
+        .some((value) => !value) || !image
+    );
+  }, [formValues, image]);
+
   useEffect(() => {
     if (update && initialValues) {
       const family = {
@@ -192,7 +208,10 @@ export default function OcrForm({
           className="bg-white border rounded-sm h-full flex-1 p-4 shadow-sm flex flex-col gap-5 items-end"
         >
           <div className="flex flex-col gap-2 w-full">
-            <label>Family</label>
+            <label>
+              Family
+              <span className="text-red-600 ml-0.5">*</span>
+            </label>
 
             <CreatableSelect
               isClearable
@@ -210,7 +229,10 @@ export default function OcrForm({
             />
           </div>
           <div className="flex flex-col gap-1 w-full">
-            <label>Species</label>
+            <label>
+              Species
+              <span className="text-red-600 ml-0.5">*</span>
+            </label>
 
             <div className="flex gap-2">
               <Input
@@ -331,12 +353,7 @@ export default function OcrForm({
               onChange={onInputChange}
             />
           </div>
-          <Button
-            type="submit"
-            disabled={
-              Object.values(formValues).some((value) => !value) || !image
-            }
-          >
+          <Button type="submit" disabled={isSubmitButtonDisabled}>
             Submit
           </Button>
         </form>

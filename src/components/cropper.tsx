@@ -21,6 +21,7 @@ export default function Cropper({
   const resetFile = () => {
     handleSetSelectedFile();
     handleSetImgSrc("");
+    setPreviewUrl("");
   };
 
   const onSelectFile = (files: File[]) => {
