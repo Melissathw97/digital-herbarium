@@ -18,6 +18,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/predict",
+        destination: "https://plant-detection.pbd-cairo.my/predict",
+      },
+    ];
+  },
   async redirects() {
     return [
       // Basic redirect

@@ -43,7 +43,7 @@ export async function postAiDetection({ image }: { image: string }) {
     throw new Error("Not authenticated");
   }
 
-  const response = await fetch("http://161.139.153.153:55002/predict", {
+  const response = await fetch("/api/predict", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${session.access_token}`,
