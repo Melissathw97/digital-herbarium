@@ -180,12 +180,18 @@ export default function AiDetectionForm({
         updatePlantImage({
           id: initialValues?.id || "",
           image: data.image,
-        }).then((response) => {
-          toast.success("Plant updated succesfully");
-          router.push(`${Pages.PLANTS}/${response.id}`);
-        });
+        })
+          .then((response) => {
+            toast.success("Plant updated succesfully");
+            router.push(`${Pages.PLANTS}/${response.id}`);
+          })
+          .catch((error) => {
+            toast.error(error);
+            setIsSubmitting(false);
+          });
       })
-      .catch(() => {
+      .catch((error) => {
+        toast.error(error);
         setIsSubmitting(false);
       });
   };
@@ -340,7 +346,7 @@ export default function AiDetectionForm({
                     onClick={onSubmitClick}
                     disabled={isSubmitting}
                   >
-                    Submit Results
+                    {isSubmitting ? <Spinner /> : "Submit Results"}
                   </Button>
                 )}
               </div>
@@ -460,14 +466,9 @@ export default function AiDetectionForm({
               <Button
                 type="submit"
                 className="ml-auto"
-                disabled={
-                  !image ||
-                  !isComplete ||
-                  isSubmitting ||
-                  Object.values(formValues).some((value) => !value)
-                }
+                disabled={!image || !isComplete || isSubmitting}
               >
-                Submit
+                {isSubmitting ? <Spinner /> : "Submit"}
               </Button>
             </form>
           )}
