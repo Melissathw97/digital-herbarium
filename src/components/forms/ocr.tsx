@@ -64,8 +64,8 @@ export default function OcrForm({
   const router = useRouter();
 
   const [image, setImage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File>();
   const [showScanButton, setShowScanButton] = useState(false);
 
@@ -96,7 +96,7 @@ export default function OcrForm({
 
   const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsSubmitting(true);
 
     // For create
     if (!update && selectedFile)
@@ -108,11 +108,10 @@ export default function OcrForm({
         .then((data) => {
           toast.success("Plant created successfully");
           router.push(`${Pages.PLANTS}/${data.id}`);
-          setIsLoading(false);
         })
         .catch((error) => {
           toast.error(error);
-          setIsLoading(false);
+          setIsSubmitting(false);
         });
 
     // For update
@@ -131,16 +130,15 @@ export default function OcrForm({
             .then(() => {
               toast.success("Plant updated successfully");
               router.push(`${Pages.PLANTS}/${data.id}`);
-              setIsLoading(false);
             })
             .catch((error) => {
               toast.error(error);
-              setIsLoading(false);
+              setIsSubmitting(false);
             });
         })
         .catch((error) => {
           toast.error(error);
-          setIsLoading(false);
+          setIsSubmitting(false);
         });
   };
 
@@ -155,9 +153,9 @@ export default function OcrForm({
           return value === "";
         }) ||
       !image ||
-      isLoading
+      isSubmitting
     );
-  }, [formValues, image, isLoading]);
+  }, [formValues, image, isSubmitting]);
 
   useEffect(() => {
     if (update && initialValues) {
@@ -380,7 +378,7 @@ export default function OcrForm({
             />
           </div>
           <Button type="submit" disabled={isSubmitButtonDisabled}>
-            {isLoading ? <Spinner /> : "Submit"}
+            {isSubmitting ? <Spinner /> : "Submit"}
           </Button>
         </form>
       </div>
