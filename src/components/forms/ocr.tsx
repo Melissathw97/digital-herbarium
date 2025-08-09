@@ -10,6 +10,7 @@ import {
 } from "react";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
+import Spinner from "../spinner";
 import Cropper from "../cropper";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -63,6 +64,7 @@ export default function OcrForm({
   const router = useRouter();
 
   const [image, setImage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File>();
   const [showScanButton, setShowScanButton] = useState(false);
@@ -94,6 +96,7 @@ export default function OcrForm({
 
   const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
     // For create
     if (!update && selectedFile)
@@ -101,10 +104,16 @@ export default function OcrForm({
         ...formValues,
         family: formValues.family.value,
         image: selectedFile,
-      }).then((data) => {
-        toast.success("Plant created successfully");
-        router.push(`${Pages.PLANTS}/${data.id}`);
-      });
+      })
+        .then((data) => {
+          toast.success("Plant created successfully");
+          router.push(`${Pages.PLANTS}/${data.id}`);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          toast.error(error);
+          setIsLoading(false);
+        });
 
     // For update
     if (update)
@@ -113,25 +122,42 @@ export default function OcrForm({
         id: initialValues?.id || "",
         actionType: ActionType.OCR,
         family: formValues.family.value,
-      }).then((data) => {
-        updatePlantImage({
-          id: initialValues?.id || "",
-          image: selectedFile,
-        }).then(() => {
-          toast.success("Plant updated successfully");
-          router.push(`${Pages.PLANTS}/${data.id}`);
+      })
+        .then((data) => {
+          updatePlantImage({
+            id: initialValues?.id || "",
+            image: selectedFile,
+          })
+            .then(() => {
+              toast.success("Plant updated successfully");
+              router.push(`${Pages.PLANTS}/${data.id}`);
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              toast.error(error);
+              setIsLoading(false);
+            });
+        })
+        .catch((error) => {
+          toast.error(error);
+          setIsLoading(false);
         });
-      });
   };
 
   const isSubmitButtonDisabled = useMemo(() => {
     const requiredFields = ["family", "species"];
+
     return (
-      Object.keys(formValues)
-        .filter((field) => requiredFields.includes(field))
-        .some((value) => !value) || !image
+      Object.entries(formValues)
+        .filter(([field]) => requiredFields.includes(field))
+        .some(([, value]) => {
+          if (typeof value === "object") return !value?.value;
+          return value === "";
+        }) ||
+      !image ||
+      isLoading
     );
-  }, [formValues, image]);
+  }, [formValues, image, isLoading]);
 
   useEffect(() => {
     if (update && initialValues) {
@@ -354,7 +380,7 @@ export default function OcrForm({
             />
           </div>
           <Button type="submit" disabled={isSubmitButtonDisabled}>
-            Submit
+            {isLoading ? <Spinner /> : "Submit"}
           </Button>
         </form>
       </div>
