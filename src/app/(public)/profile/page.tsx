@@ -131,7 +131,7 @@ export default function MembersPage() {
 
       <div className="flex flex-col sm:flex-row gap-4 items-start">
         {/* User Details Card */}
-        <div className="bg-white shadow-sm rounded-sm px-6 sm:px-10 py-5 border flex sm:flex-col gap-5 items-center text-center w-full sm:w-[280px]">
+        <div className="bg-white shadow-sm rounded-sm px-6 sm:px-10 py-5 border flex sm:flex-col gap-5 items-center sm:text-center w-full sm:w-[280px]">
           <div className="bg-gray-200 text-lg size-12 sm:size-16 rounded-full grid place-items-center font-semibold text-gray-500 uppercase shrink-0">
             {user?.firstName?.substring(0, 1)}
           </div>
@@ -145,7 +145,7 @@ export default function MembersPage() {
               </>
             ) : (
               <>
-                <p className="sm:text-[16px] font-semibold">
+                <p className="sm:text-[16px] font-semibold line-clamp-2">
                   {user?.firstName} {user?.lastName}
                 </p>
                 <p className="text-xs font-medium mb-1 sm:mb-3">
