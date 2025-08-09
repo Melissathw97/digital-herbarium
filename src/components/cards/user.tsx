@@ -107,12 +107,14 @@ export default function UserCard({
 
           <div className="flex flex-col gap-2 mt-2 text-xs text-gray-500">
             <div className="flex gap-2 items-center">
-              <Mail className="h-3.5 w-3.5" />
-              <p className="font-medium">{user.email}</p>
+              <Mail className="size-3.5 shrink-0" />
+              <p className="font-medium overflow-hidden overflow-ellipsis">
+                {user.email}
+              </p>
             </div>
             <div className="flex gap-2 items-center">
-              <Calendar className="h-3.5 w-3.5" />
-              <p className="font-medium">
+              <Calendar className="size-3.5 shrink-0" />
+              <p className="font-medium overflow-hidden overflow-ellipsis">
                 Joined {user.joinedAt ? formatDate(user.joinedAt) : "-"}
               </p>
             </div>
