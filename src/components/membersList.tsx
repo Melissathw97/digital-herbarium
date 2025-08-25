@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { User, UserRole } from "@/types/user";
+import SearchField from "./searchField";
 import Spinner from "@/components/spinner";
 import { Pagination } from "@/types/plant";
-import { Input } from "@/components/ui/input";
 import UserCard from "@/components/cards/user";
 import { Button } from "@/components/ui/button";
 import AppPagination from "@/components/pagination";
@@ -28,7 +28,6 @@ export default function MembersList() {
     totalPages: 0,
   });
 
-  const [search, setSearch] = useState("");
   const [currentUser, setCurrentUser] = useState<User>();
   const [selectedUser, setSelectedUser] = useState<User>();
   const [selectedUsers, setSelectedUsers] = useState<Set<User>>(new Set());
@@ -55,8 +54,6 @@ export default function MembersList() {
       limit: Number(limit) || 12,
     };
 
-    if (search) setSearch(search);
-
     getUsers(queryParams)
       .then(async (data) => {
         setUsers(data.data);
@@ -82,15 +79,9 @@ export default function MembersList() {
 
       currentParams.set("page", page.toString());
 
-      if (search) {
-        currentParams.set("search", search);
-      } else {
-        currentParams.delete("search");
-      }
-
       router.push(`?${currentParams.toString()}`);
     },
-    [router, searchParams, search]
+    [router, searchParams]
   );
 
   const onEditClick = (user: User) => {
@@ -126,36 +117,9 @@ export default function MembersList() {
   }, []);
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      const newParams = new URLSearchParams(searchParams.toString());
-      newParams.set("page", "1"); // Reset page to 1
-
-      if (search) {
-        newParams.set("search", search);
-      } else {
-        newParams.delete("search"); // Remove search param if search is empty
-      }
-
-      router.replace(`?${newParams.toString()}`);
-    }, 500);
-
-    return () => {
-      clearTimeout(handler);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]);
-
-  useEffect(() => {
     fetchUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
-
-  const onInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearch(e.target.value);
-    },
-    []
-  );
 
   return (
     <>
@@ -172,13 +136,8 @@ export default function MembersList() {
               Delete Users ({selectedUsers.size})
             </Button>
           ) : null}
-          <Input
-            name="search"
-            value={search}
-            onChange={onInputChange}
-            className="bg-white shadow-sm min-w-[220px]"
-            placeholder="Search..."
-          />
+
+          <SearchField />
         </div>
       </div>
 

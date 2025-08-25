@@ -14,11 +14,11 @@ export default function Alert({
   toggleExpand?: () => void;
 }) {
   return (
-    <div className="flex gap-2 items-start bg-blue-50 p-2 px-4 text-blue-500 rounded-sm mb-5">
+    <div className="flex gap-2 items-start bg-blue-50 border border-blue-100 p-2 px-4 text-blue-500 rounded-sm mb-5">
       <Info className="w-4" />
       <div className="flex flex-col w-full">
         <p
-          className="font-semibold mt-0.5 cursor-pointer"
+          className={`font-semibold mt-0.5 ${expand ? "cursor-pointer" : ""}`}
           onClick={toggleExpand}
         >
           {title}

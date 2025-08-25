@@ -12,20 +12,29 @@ import {
   generateTimestampedFilename,
 } from "@/utils/fileDownload";
 
-export async function getPlants({
-  page,
-  limit,
-}: {
+export async function getPlants(queryParams: {
   page?: number;
   limit?: number;
+  organization?: string | null;
+  family?: string | null;
+  action?: string | null;
 }): Promise<{
   data: Plant[];
   pagination: Pagination;
 }> {
   const supabase = createClient();
 
+  // Convert object → URLSearchParams
+  const params = new URLSearchParams();
+
+  Object.entries(queryParams).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      params.append(key, String(value));
+    }
+  });
+
   return supabase.functions
-    .invoke(`plant-data?page=${page}&limit=${limit}`, {
+    .invoke(`plant-data?${params.toString()}`, {
       method: "GET",
     })
     .then(({ data, error }) => {
@@ -48,6 +57,8 @@ export async function getPlants({
           vernacularName: plant.vernacular,
           actionType: plant.action_type,
           confidenceLevel: plant.confidence_level,
+          creatorFirstName: plant.creator_first_name,
+          creatorLastName: plant.creator_last_name,
         })),
         pagination: data.pagination,
       };
