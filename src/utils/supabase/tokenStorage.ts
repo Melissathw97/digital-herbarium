@@ -2,16 +2,21 @@ const KEYS = {
   TOKEN: "access_token",
   EXPIRES: "token_expires_at",
   ROLE: "user_role",
+  ORGANIZATION: "organization",        
+  ORGANIZATION_ID: "organization_id",
 } as const;
 
 interface JwtAppMetadata {
-  user_role?: string; // Define the user_role property
-  // Add other app_metadata properties if they exist
+  user_role?: string;
+  organization?: string;     
+  organization_id?: string;    
 }
 
 interface JwtPayload {
   app_metadata?: JwtAppMetadata;
   role: string;
+  organization?: string;     
+  organization_id?: string;
 }
 
 const safeStorage = {
@@ -54,7 +59,9 @@ export class TokenStorage {
   static setToken(
     accessToken: string,
     expiresAt?: number,
-    userRole?: string
+    userRole?: string,
+    organization?: string | null,      
+    organizationId?: string | null
   ): void {
     safeStorage.set(KEYS.TOKEN, accessToken);
 
@@ -62,22 +69,79 @@ export class TokenStorage {
       safeStorage.set(KEYS.EXPIRES, expiresAt.toString());
     }
 
-    // Extract role from JWT instead of relying on passed userRole
+    // Extract role and organization from JWT
     const decoded = decodeJWT(accessToken);
     const jwtRole = decoded?.role;
     const appMetadataRole = decoded?.app_metadata?.user_role;
+    
+    const jwtOrganization = decoded?.organization;
+    const appMetadataOrganization = decoded?.app_metadata?.organization;
+    const jwtOrganizationId = decoded?.organization_id;
+    const appMetadataOrganizationId = decoded?.app_metadata?.organization_id;
 
-    // Use JWT role first, then app_metadata role, then fallback to passed userRole
     const finalRole =
       jwtRole && jwtRole !== "authenticated"
         ? jwtRole
         : appMetadataRole || userRole || "member";
 
     safeStorage.set(KEYS.ROLE, finalRole);
+    
+    const finalOrganization = jwtOrganization || appMetadataOrganization;
+    const finalOrganizationId = jwtOrganizationId || appMetadataOrganizationId;
+    
+    if (finalOrganization) {
+      safeStorage.set(KEYS.ORGANIZATION, finalOrganization);
+    } else {
+      safeStorage.remove(KEYS.ORGANIZATION);
+    }
+    
+    if (finalOrganizationId) {
+      safeStorage.set(KEYS.ORGANIZATION_ID, finalOrganizationId);
+    } else {
+      safeStorage.remove(KEYS.ORGANIZATION_ID);
+    }
   }
 
   static getToken(): string | null {
     return safeStorage.get(KEYS.TOKEN);
+  }
+
+  static getOrganization(): string | null {
+    const token = this.getToken();
+    if (token) {
+      const decoded = decodeJWT(token);
+      const jwtOrganization = decoded?.organization;
+      const appMetadataOrganization = decoded?.app_metadata?.organization;
+
+      if (jwtOrganization) return jwtOrganization;
+      if (appMetadataOrganization) return appMetadataOrganization;
+    }
+
+    return safeStorage.get(KEYS.ORGANIZATION);
+  }
+
+  static getOrganizationId(): string | null {
+    const token = this.getToken();
+    if (token) {
+      const decoded = decodeJWT(token);
+      const jwtOrganizationId = decoded?.organization_id;
+      const appMetadataOrganizationId = decoded?.app_metadata?.organization_id;
+
+      if (jwtOrganizationId) return jwtOrganizationId;
+      if (appMetadataOrganizationId) return appMetadataOrganizationId;
+    }
+
+    return safeStorage.get(KEYS.ORGANIZATION_ID);
+  }
+
+  static getAllUserData() {
+    return {
+      token: this.getToken(),
+      role: this.getUserRole(),
+      organization: this.getOrganization(),
+      organizationId: this.getOrganizationId(),
+      isExpired: this.isTokenExpired(),
+    };
   }
 
   static getUserRole(): string {
@@ -113,37 +177,62 @@ export class TokenStorage {
     Object.values(KEYS).forEach((key) => safeStorage.remove(key));
   }
 
-  static getTokenInfo() {
-    const token = this.getToken();
-    const role = this.getUserRole();
-    const isExpired = this.isTokenExpired();
+static getTokenInfo() {
+  const token = this.getToken();
+  const role = this.getUserRole();
+  const organization = this.getOrganization();       
+  const organizationId = this.getOrganizationId();    
+  const isExpired = this.isTokenExpired();
 
-    return {
-      token,
-      role,
-      isExpired,
-      isAuthenticated: !isExpired && !!token,
-      isSuperAdmin: role === "super_admin",
-      isMember: role === "member",
-    };
-  }
+  return {
+    token,
+    role,
+    organization,       
+    organizationId,     
+    isExpired,
+    isAuthenticated: !isExpired && !!token,
+    isSuperAdmin: role === "super_admin",
+    isMember: role === "member",
+  };
+}
 
-  static refreshRoleFromToken(): string {
+  static refreshRoleFromToken(): { role: string; organization: string | null; organizationId: string | null } {
     const token = this.getToken();
     if (token) {
       const decoded = decodeJWT(token);
       const jwtRole = decoded?.role;
       const appMetadataRole = decoded?.app_metadata?.user_role;
+      
+      const jwtOrganization = decoded?.organization;
+      const appMetadataOrganization = decoded?.app_metadata?.organization;
+      const jwtOrganizationId = decoded?.organization_id;
+      const appMetadataOrganizationId = decoded?.app_metadata?.organization_id;
 
       const finalRole =
         jwtRole && jwtRole !== "authenticated"
           ? jwtRole
           : appMetadataRole || "member";
 
+      const finalOrganization = jwtOrganization || appMetadataOrganization || null;
+      const finalOrganizationId = jwtOrganizationId || appMetadataOrganizationId || null;
+
       safeStorage.set(KEYS.ROLE, finalRole);
-      return finalRole;
+      
+      if (finalOrganization) {
+        safeStorage.set(KEYS.ORGANIZATION, finalOrganization);
+      } else {
+        safeStorage.remove(KEYS.ORGANIZATION);
+      }
+      
+      if (finalOrganizationId) {
+        safeStorage.set(KEYS.ORGANIZATION_ID, finalOrganizationId);
+      } else {
+        safeStorage.remove(KEYS.ORGANIZATION_ID);
+      }
+
+      return { role: finalRole, organization: finalOrganization, organizationId: finalOrganizationId };
     }
-    return "member";
+    return { role: "member", organization: null, organizationId: null };
   }
 }
 
@@ -155,10 +244,15 @@ export const useAuth = () => {
     logout: TokenStorage.clearToken,
     refreshRole: () => {
       safeStorage.remove(KEYS.ROLE);
+      safeStorage.remove(KEYS.ORGANIZATION);      
+      safeStorage.remove(KEYS.ORGANIZATION_ID);   
       return TokenStorage.getUserRole();
     },
     forceRefreshRole: () => {
       return TokenStorage.refreshRoleFromToken();
     },
+    getOrganization: () => TokenStorage.getOrganization(),
+    getOrganizationId: () => TokenStorage.getOrganizationId(),
+    getAllUserData: () => TokenStorage.getAllUserData(),
   };
 };
