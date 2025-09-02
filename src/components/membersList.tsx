@@ -36,7 +36,9 @@ export default function MembersList() {
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
 
   const isAdmin = useMemo(
-    () => currentUser?.role === UserRole.ADMIN,
+    () =>
+      currentUser?.role === UserRole.ADMIN ||
+      currentUser?.role === UserRole.SUPER_ADMIN,
     [currentUser]
   );
 
@@ -158,12 +160,16 @@ export default function MembersList() {
                 currentUser={user.id === currentUser?.id}
                 onEdit={isAdmin ? () => onEditClick(user) : undefined}
                 onDelete={
-                  isAdmin && user.role !== UserRole.ADMIN
+                  isAdmin &&
+                  user.role !== UserRole.ADMIN &&
+                  user.role !== UserRole.SUPER_ADMIN
                     ? () => onDeleteClick(user)
                     : undefined
                 }
                 onSelect={
-                  isAdmin && user.role !== UserRole.ADMIN
+                  isAdmin &&
+                  user.role !== UserRole.ADMIN &&
+                  user.role !== UserRole.SUPER_ADMIN
                     ? () => onSelect(user)
                     : undefined
                 }

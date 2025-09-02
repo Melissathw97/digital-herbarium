@@ -4,27 +4,20 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { toast } from "sonner";
-import { User, UserRole } from "@/types/user";
+import { User } from "@/types/user";
 import { Pages } from "@/types/pages";
 import { Button } from "@/components/ui/button";
 import { userSignOut } from "@/services/authServices";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  Crown,
-  Home,
-  Sprout,
-  UserCircle,
-  UsersRound,
-  User as UserIcon,
-} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import UserRoleBadge from "@/components/userRoleBadge";
 import { getUserProfile } from "@/services/userServices";
-import Badge from "@/components/badge";
+import { Home, Sprout, UserCircle, UsersRound } from "lucide-react";
 
 export default function Navbar() {
   const router = useRouter();
@@ -89,19 +82,8 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className="flex gap-4">
-          {user &&
-            (user.role === UserRole.ADMIN ? (
-              <Badge variant="purple">
-                <Crown />
-                Admin
-              </Badge>
-            ) : (
-              <Badge>
-                <UserIcon />
-                Member
-              </Badge>
-            ))}
+        <div className="flex gap-4 shrink-0">
+          {user && <UserRoleBadge user={user} />}
           <DropdownMenu>
             <DropdownMenuTrigger>
               <UserCircle />

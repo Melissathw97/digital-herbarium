@@ -1,16 +1,8 @@
 import { Button } from "../ui/button";
-import Badge from "@/components/badge";
 import formatDate from "@/utils/formatDate";
-import { User, UserRole } from "@/types/user";
-import {
-  Calendar,
-  CircleCheck,
-  Crown,
-  Mail,
-  Pen,
-  Trash,
-  User as UserIcon,
-} from "lucide-react";
+import { User } from "@/types/user";
+import UserRoleBadge from "../userRoleBadge";
+import { Calendar, CircleCheck, Mail, Pen, Trash } from "lucide-react";
 
 export default function UserCard({
   user,
@@ -49,17 +41,7 @@ export default function UserCard({
           >
             {fullName}
           </p>
-          {user.role === UserRole.ADMIN ? (
-            <Badge variant="purple">
-              <Crown />
-              Admin
-            </Badge>
-          ) : (
-            <Badge>
-              <UserIcon />
-              Member
-            </Badge>
-          )}
+          <UserRoleBadge user={user} />
         </div>
 
         <div className="flex gap-1 ml-auto shrink-0 items-start">

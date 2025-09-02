@@ -68,7 +68,9 @@ export default function UserRoleUpdateModal({
                 <SelectContent>
                   <SelectGroup>
                     {[
+                      { label: "Super Admin", value: UserRole.SUPER_ADMIN },
                       { label: "Admin", value: UserRole.ADMIN },
+                      { label: "Expert", value: UserRole.EXPERT },
                       { label: "Member", value: UserRole.MEMBER },
                     ].map(({ label, value }) => (
                       <SelectItem key={value} value={value}>

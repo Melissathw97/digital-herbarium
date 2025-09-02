@@ -2,19 +2,19 @@
 
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import Badge from "@/components/badge";
+import { User } from "@/types/user";
+import { Check, X } from "lucide-react";
 import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
-import { User, UserRole } from "@/types/user";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { userUpdatePassword } from "@/services/authServices";
-import { Check, Crown, User as UserIcon, X } from "lucide-react";
 import { getUserProfile, updateUserProfile } from "@/services/userServices";
 import {
   passwordValidationMessage,
   validatePassword,
 } from "@/utils/passwordValidation";
+import UserRoleBadge from "@/components/userRoleBadge";
 import { PasswordValidationResult } from "@/types/password";
 
 export default function MembersPage() {
@@ -151,18 +151,7 @@ export default function MembersPage() {
                 <p className="text-xs font-medium mb-1 sm:mb-3">
                   {user?.email}
                 </p>
-                {user &&
-                  (user?.role === UserRole.ADMIN ? (
-                    <Badge variant="purple">
-                      <Crown />
-                      Admin
-                    </Badge>
-                  ) : (
-                    <Badge>
-                      <UserIcon />
-                      Member
-                    </Badge>
-                  ))}
+                {user && <UserRoleBadge user={user} />}
               </>
             )}
           </div>

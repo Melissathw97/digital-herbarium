@@ -17,6 +17,8 @@ export interface UserApi {
 }
 
 export enum UserRole {
-  ADMIN = "super_admin",
+  SUPER_ADMIN = "super_admin",
+  ADMIN = "admin",
+  EXPERT = "expert",
   MEMBER = "member",
 }
