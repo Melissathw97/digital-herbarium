@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -11,20 +11,33 @@ import { Check, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { userSignUp } from "@/services/authServices";
 import { PasswordValidationResult } from "@/types/password";
+import { getOrganizations } from "@/services/organizationServices";
 import UserPendingVerificationModal from "@/components/modals/userPendingVerification";
 import {
   passwordValidationMessage,
   validatePassword,
 } from "@/utils/passwordValidation";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function UsersSignUp() {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [organizations, setOrganizations] = useState<
+    { value: string; label: string }[]
+  >([]);
   const [formValues, setFormValues] = useState({
     firstName: "",
     lastName: "",
     email: "",
+    organization: "",
     password: "",
     confirmPassword: "",
   });
@@ -65,9 +78,9 @@ export default function UsersSignUp() {
     setIsLoading(true);
     e.preventDefault();
 
-    const { firstName, lastName, email, password } = formValues;
+    const { firstName, lastName, email, password, organization } = formValues;
 
-    userSignUp({ email, password, firstName, lastName })
+    userSignUp({ email, password, firstName, lastName, organization })
       .then(({ error }) => {
         setIsLoading(false);
 
@@ -78,6 +91,14 @@ export default function UsersSignUp() {
         toast.error("Failed to sign up. Please try again later.");
       });
   };
+
+  useEffect(() => {
+    getOrganizations().then((data) => {
+      setOrganizations(
+        data.map(({ id, name }) => ({ value: id, label: name }))
+      );
+    });
+  }, []);
 
   return (
     <>
@@ -103,6 +124,29 @@ export default function UsersSignUp() {
               <label>Email</label>
               <Input type="email" name="email" onChange={onInputChange} />
             </div>
+            <div className="flex flex-col gap-2">
+              <label>Organization</label>
+              <Select
+                value={formValues.organization ?? ""}
+                onValueChange={(value) =>
+                  setFormValues({ ...formValues, organization: value })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select an organization" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {organizations.map(({ label, value }) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="flex flex-col gap-2">
               <label>Password</label>
               <Input type="password" name="password" onChange={onInputChange} />
