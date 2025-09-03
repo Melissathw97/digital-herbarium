@@ -5,17 +5,18 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { Pages } from "@/types/pages";
 import Badge from "@/components/badge";
-import { Pen, Trash, X } from "lucide-react";
 import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
 import { User, UserRole } from "@/types/user";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import TablePagination from "@/components/pagination";
+import PlantPublishModal from "../modals/plantPublish";
 import { getUserProfile } from "@/services/userServices";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Plant, ActionType, Pagination } from "@/types/plant";
+import { BookOpen, BookX, Pen, Trash, X } from "lucide-react";
 import PlantDeleteModal from "@/components/modals/plantDelete";
+import { Plant, ActionType, Pagination, Status } from "@/types/plant";
 import { getPlants, postPlantsExport } from "@/services/plantServices";
 import PlantBulkDeleteModal from "@/components/modals/plantBulkDelete";
 
@@ -35,12 +36,14 @@ export default function PlantsList() {
 
   const [selectedPlant, setSelectedPlant] = useState<Plant>();
   const [selectedPlants, setSelectedPlants] = useState<Plant[]>([]);
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
 
   const headers: { label: string; dataKey: keyof Plant }[] = [
     { label: "Date Collected", dataKey: "date" },
     { label: "Action Type", dataKey: "actionType" },
+    { label: "Status", dataKey: "status" },
     { label: "Family", dataKey: "family" },
     { label: "Species", dataKey: "species" },
     { label: "Vernacular Name", dataKey: "vernacularName" },
@@ -54,7 +57,9 @@ export default function PlantsList() {
   ];
 
   const isAdmin = useMemo(
-    () => currentUser?.role === UserRole.ADMIN,
+    () =>
+      currentUser?.role === UserRole.ADMIN ||
+      currentUser?.role === UserRole.SUPER_ADMIN,
     [currentUser]
   );
 
@@ -66,6 +71,7 @@ export default function PlantsList() {
     const limit = searchParams.get("limit");
 
     const queryParams = {
+      ispublished: false,
       page: Number(page) || 1,
       limit: Number(limit) || 10,
     };
@@ -92,8 +98,15 @@ export default function PlantsList() {
     router.push(`?page=${page.toString()}`);
   };
 
-  const getBadgeVariant = (action: ActionType) => {
-    switch (action) {
+  const getBadgeVariant = (text: ActionType | Status) => {
+    switch (text) {
+      case ActionType.HERBARIUM:
+      case Status.APPROVED:
+        return "success";
+      case Status.PENDING_APPROVAL:
+        return "warning";
+      case Status.REJECTED:
+        return "danger";
       case ActionType.AI_DETECTION:
         return "purple";
       case ActionType.OCR:
@@ -141,6 +154,11 @@ export default function PlantsList() {
 
   const onEditClick = (plant: Plant) => {
     router.push(`/plants/${plant.id}`);
+  };
+
+  const onPublishClick = (plant: Plant) => {
+    setSelectedPlant(plant);
+    setIsPublishModalOpen(true);
   };
 
   const onDeleteClick = (plant: Plant) => {
@@ -246,7 +264,7 @@ export default function PlantsList() {
                       onChange={() => onCheckboxClick(plant)}
                     />
                   </td>
-                  {headers.map(({ dataKey }) => (
+                  {headers.map(({ dataKey }: { dataKey: string }) => (
                     <td
                       key={dataKey}
                       className="p-4 whitespace-nowrap max-w-[220px] overflow-hidden overflow-ellipsis"
@@ -257,12 +275,12 @@ export default function PlantsList() {
                         ) : (
                           "-"
                         )
-                      ) : dataKey === "actionType" ? (
+                      ) : dataKey === "actionType" || dataKey === "status" ? (
                         <Badge
                           variant={getBadgeVariant(plant[dataKey])}
                           bordered
                         >
-                          {plant[dataKey]}
+                          {plant[dataKey] || "-"}
                         </Badge>
                       ) : (
                         plant[dataKey] || "-"
@@ -274,6 +292,14 @@ export default function PlantsList() {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex gap-1">
+                      <Button
+                        size="xs"
+                        variant="outline"
+                        className="hover:text-lime-700"
+                        onClick={() => onPublishClick(plant)}
+                      >
+                        {plant.isPublished ? <BookX /> : <BookOpen />}
+                      </Button>
                       <Link href={`/plants/${plant.id}/edit`}>
                         <Button
                           size="xs"
@@ -303,6 +329,13 @@ export default function PlantsList() {
       </div>
 
       <TablePagination pagination={pagination} onPageClick={onPageClick} />
+
+      <PlantPublishModal
+        open={isPublishModalOpen}
+        plant={selectedPlant}
+        toggle={() => setIsPublishModalOpen(false)}
+        onPublishSuccess={() => {}}
+      />
 
       <PlantDeleteModal
         open={isDeleteModalOpen}

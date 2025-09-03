@@ -14,6 +14,10 @@ const badgeVariants = cva(
         warning: "bg-yellow-100 text-yellow-800 border-yellow-700/30",
         danger: "bg-red-100 text-red-800 border-red-700/30",
       },
+      size: {
+        md: "",
+        lg: "text-[12px] gap-1.5 px-2",
+      },
     },
     defaultVariants: {
       variant: "default",
@@ -34,14 +38,16 @@ export default function Badge({
   children,
   variant,
   bordered = false,
+  size = "md",
 }: {
   children: React.ReactNode;
   variant?: BadgeVariants;
   bordered?: boolean;
+  size?: "md" | "lg";
 }) {
   return (
     <div
-      className={`${cn(badgeVariants({ variant }))} ${bordered ? "border" : ""}`}
+      className={`${cn(badgeVariants({ variant, size }))} ${bordered ? "border" : ""}`}
     >
       {children}
     </div>

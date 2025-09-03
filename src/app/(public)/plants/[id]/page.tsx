@@ -1,20 +1,27 @@
 "use client";
 
 import { Fragment, ReactElement, useEffect, useMemo, useState } from "react";
-import { ActionType, Plant } from "@/types/plant";
+import { ActionType, Plant, Status } from "@/types/plant";
 import Link from "next/link";
 import Image from "next/image";
 import { Pages } from "@/types/pages";
-import Badge from "@/components/badge";
 import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
 import { User, UserRole } from "@/types/user";
 import { Button } from "@/components/ui/button";
 import { useParams, useRouter } from "next/navigation";
 import { getUserProfile } from "@/services/userServices";
+import Badge, { BadgeVariants } from "@/components/badge";
 import PlantDeleteModal from "@/components/modals/plantDelete";
 import { getPlantById, getPlantImage } from "@/services/plantServices";
-import { ChevronLeftIcon, Gauge, ScanText, Sparkles } from "lucide-react";
+import {
+  CheckCircle,
+  ChevronLeftIcon,
+  Gauge,
+  ScanText,
+  Sparkles,
+  Sprout,
+} from "lucide-react";
 
 export default function PlantDetailsPage() {
   const params = useParams();
@@ -28,7 +35,7 @@ export default function PlantDetailsPage() {
   const getBadge = (
     action: ActionType
   ): {
-    variant: "purple" | "default";
+    variant: BadgeVariants;
     icon: ReactElement;
   } => {
     switch (action) {
@@ -36,6 +43,11 @@ export default function PlantDetailsPage() {
         return {
           variant: "purple",
           icon: <Sparkles />,
+        };
+      case ActionType.HERBARIUM:
+        return {
+          variant: "success",
+          icon: <Sprout />,
         };
       case ActionType.OCR:
       default:
@@ -48,6 +60,7 @@ export default function PlantDetailsPage() {
 
   const displayData = useMemo(() => {
     return [
+      { label: "Status", value: plant?.status },
       { label: "Family", value: plant?.family },
       { label: "Species", value: plant?.species },
       { label: "Vernacular Name", value: plant?.vernacularName },
@@ -59,13 +72,31 @@ export default function PlantDetailsPage() {
       { label: "State", value: plant?.state },
       { label: "District", value: plant?.district },
       { label: "Location", value: plant?.location },
+      { label: "Latitude", value: plant?.latitude },
+      { label: "Longitude", value: plant?.longitude },
+      { label: "Elevation", value: plant?.elevation },
+      { label: "Remarks", value: plant?.remarks },
+      { label: "Additional Notes", value: plant?.additionalNotes },
     ];
   }, [plant]);
 
   const isAdmin = useMemo(
-    () => currentUser?.role === UserRole.ADMIN,
+    () =>
+      currentUser?.role === UserRole.ADMIN ||
+      currentUser?.role === UserRole.SUPER_ADMIN,
     [currentUser]
   );
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case Status.PENDING_APPROVAL:
+        return "text-yellow-600";
+      case Status.APPROVED:
+        return "text-green-700";
+      case Status.REJECTED:
+        return "text-red-700";
+    }
+  };
 
   useEffect(() => {
     getPlantById({ id: params.id?.toString() || "" })
@@ -97,7 +128,7 @@ export default function PlantDetailsPage() {
     <>
       <div className="flex gap-2 items-center">
         <button
-          onClick={() => router.push(Pages.PLANTS)}
+          onClick={() => router.back()}
           className="hover:bg-gray-200 p-1 rounded-full"
         >
           <ChevronLeftIcon className="w-5 h-5" />
@@ -105,22 +136,32 @@ export default function PlantDetailsPage() {
 
         {isLoading || !plant ? null : (
           <>
-            <h2>{plant?.species}</h2>
-
-            <div className="ml-auto flex gap-2">
-              {isAdmin && (
-                <Button
-                  variant="outline"
-                  className="text-red-700 hover:text-red-900"
-                  onClick={onDeleteClick}
-                >
-                  Delete Plant
-                </Button>
+            <div className="flex gap-3 items-center">
+              <h2>{plant?.species}</h2>
+              {plant?.isPublished && (
+                <Badge variant="success" bordered size="lg">
+                  <CheckCircle />
+                  Published
+                </Badge>
               )}
-              <Link href={`/plants/${plant?.id}/edit`}>
-                <Button>Edit Plant</Button>
-              </Link>
             </div>
+
+            {currentUser?.organizations?.name === plant.organization?.name ? (
+              <div className="ml-auto flex gap-2">
+                {isAdmin && (
+                  <Button
+                    variant="outline"
+                    className="text-red-700 hover:text-red-900"
+                    onClick={onDeleteClick}
+                  >
+                    Delete Plant
+                  </Button>
+                )}
+                <Link href={`/plants/${plant?.id}/edit`}>
+                  <Button>Edit Plant</Button>
+                </Link>
+              </div>
+            ) : null}
           </>
         )}
       </div>
@@ -158,11 +199,13 @@ export default function PlantDetailsPage() {
               <div className="grid lg:grid-cols-[180px_auto] gap-2 lg:gap-3">
                 {displayData.map(({ label, value }) => (
                   <Fragment key={label}>
-                    <p className="text-lime-700 uppercase text-xs mt-0.5">
+                    <p className="text-lime-700 uppercase text-xs mt-0.5 font-bold">
                       {label}:
                     </p>
                     <div className="mb-4 lg:mb-0">
-                      {label === "Species" ? (
+                      {label === "Status" && value ? (
+                        <p className={getStatusColor(value)}>{value}</p>
+                      ) : label === "Species" ? (
                         <em>{value || "-"}</em>
                       ) : (
                         <p>{value || "-"}</p>
@@ -173,7 +216,7 @@ export default function PlantDetailsPage() {
               </div>
               <p className="text-gray-600 font-normal italic text-xs mt-6 -mb-2">
                 Record created by: {plant.creatorFirstName}{" "}
-                {plant.creatorLastName}
+                {plant.creatorLastName} ({plant.organization?.name})
               </p>
             </div>
           </div>

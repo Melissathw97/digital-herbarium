@@ -10,15 +10,24 @@ export interface Plant {
   state: string;
   district: string;
   location: string;
+  latitude: string;
+  longitude: string;
+  elevation: string;
   fileName?: string;
   imagePath: string;
+  imageUrl?: string;
   imgExists?: boolean;
   flippedImgExists?: boolean;
   vernacularName: string;
   actionType: ActionType;
+  status: Status;
   confidenceLevel: number;
   creatorFirstName?: string;
   creatorLastName?: string;
+  isPublished: boolean;
+  organization?: PlantOrganization;
+  remarks: string;
+  additionalNotes: string;
 }
 
 export interface PlantApi {
@@ -32,15 +41,24 @@ export interface PlantApi {
   state: string;
   district: string;
   location: string;
+  latitude: string;
+  longitude: string;
+  elevation: string;
   confidence_level: number;
   image_path: string;
+  image_url: string;
   collected_at: string;
   created_at: string;
   species_name: string;
+  status: string;
   family_name: string;
   creator_first_name: string;
   creator_last_name: string;
   creator_email: string;
+  is_published: boolean;
+  organizations?: PlantOrganization;
+  remarks: string;
+  additional_notes: string;
 }
 
 export interface Pagination {
@@ -53,6 +71,13 @@ export interface Pagination {
 export enum ActionType {
   OCR = "OCR",
   AI_DETECTION = "AI Detection",
+  HERBARIUM = "Herbarium",
+}
+
+export enum Status {
+  APPROVED = "Approved",
+  REJECTED = "Rejected",
+  PENDING_APPROVAL = "Pending Approval",
 }
 
 export interface PlantPayload {
@@ -91,4 +116,9 @@ export interface PlantUpdatePayload extends PlantPayload {
   id: string;
   actionType: ActionType;
   confidenceLevel?: number;
+}
+
+export interface PlantOrganization {
+  id: string;
+  name: string;
 }

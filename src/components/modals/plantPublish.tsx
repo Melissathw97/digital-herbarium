@@ -11,24 +11,24 @@ import { Button } from "../ui/button";
 import { Plant } from "@/types/plant";
 import { deletePlants } from "@/services/plantServices";
 
-export default function PlantDeleteModal({
+export default function PlantPublishModal({
   open,
   plant,
   toggle,
-  onDeleteSuccess,
+  onPublishSuccess,
 }: {
   open: boolean;
   plant?: Plant;
   toggle: () => void;
-  onDeleteSuccess: () => void;
+  onPublishSuccess: () => void;
 }) {
   const onConfirm = () => {
     if (plant) {
       deletePlants({ ids: [plant.id] })
         .then(() => {
           toggle();
-          onDeleteSuccess();
-          toast.success("Plant deleted successfully!");
+          onPublishSuccess();
+          toast.success("Plant published successfully!");
         })
         .catch((error) => {
           toggle();
@@ -42,11 +42,12 @@ export default function PlantDeleteModal({
       <AlertDialogContent className="!max-w-md gap-8 pt-8">
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Are you sure you wish to delete this plant?
+            {plant?.isPublished ? "Unpublish" : "Publish"} this plant record?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            This will permanently delete the plant&apos;s record from this
-            platform.
+            {plant?.isPublished
+              ? "This plant record will become visible only to members of your organization."
+              : "Once published, this plant record will become visible to members of all organizations. Don't worry—you can unpublish it whenever you like."}
           </AlertDialogDescription>
           <div className="mt-4">
             {plant && (
@@ -65,8 +66,8 @@ export default function PlantDeleteModal({
           <Button variant="outline" className="w-32" onClick={toggle}>
             Cancel
           </Button>
-          <Button variant="destructive" className="w-32" onClick={onConfirm}>
-            Delete
+          <Button className="w-32" onClick={onConfirm}>
+            {plant?.isPublished ? "Unpublish" : "Publish"}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

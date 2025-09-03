@@ -44,13 +44,16 @@ export default function PublishedList() {
     const organization = searchParams.get("organization");
     const family = searchParams.get("family");
     const action = searchParams.get("action");
+    const search = searchParams.get("search");
 
     const queryParams = {
+      ispublished: true,
       page: Number(page) || 1,
       limit: Number(limit) || 12,
       organization: organization,
       family: family,
-      action: action,
+      action_type: action,
+      search: search,
     };
 
     getPlants(queryParams)
@@ -81,7 +84,7 @@ export default function PublishedList() {
     action?: string;
   }) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.delete("page");
+    params.set("page", "1");
 
     if (organization) {
       setOrganization(organization);
@@ -215,15 +218,25 @@ export default function PublishedList() {
               <SearchField />
             </div>
           </div>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
-            {plants.map((plant) => (
-              <Link key={plant.id} href={`/plants/${plant?.id}`}>
-                <PlantCard plant={plant} />
-              </Link>
-            ))}
-          </div>
 
-          <TablePagination pagination={pagination} onPageClick={onPageClick} />
+          {!isLoading && plants.length === 0 ? (
+            <p className="py-10 text-center text-gray-500">No plants found.</p>
+          ) : (
+            <>
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
+                {plants.map((plant) => (
+                  <Link key={plant.id} href={`/plants/${plant?.id}`}>
+                    <PlantCard plant={plant} />
+                  </Link>
+                ))}
+              </div>
+
+              <TablePagination
+                pagination={pagination}
+                onPageClick={onPageClick}
+              />
+            </>
+          )}
         </div>
       )}
     </>
