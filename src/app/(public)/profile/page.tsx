@@ -135,7 +135,12 @@ export default function MembersPage() {
       <div className="flex flex-col sm:flex-row gap-4 items-start">
         {/* User Details Card */}
         <div className="bg-white shadow-sm rounded-sm px-6 sm:px-10 py-5 border flex sm:flex-col gap-5 items-center sm:text-center w-full sm:w-[280px]">
-          <div className="bg-gray-200 text-lg size-12 sm:size-16 rounded-full grid place-items-center font-semibold text-gray-500 uppercase shrink-0">
+          <div
+            className="text-lg size-12 sm:size-16 rounded-full grid place-items-center font-semibold text-gray-600 uppercase shrink-0 shadow-md"
+            style={{
+              backgroundColor: user?.organizations?.colourCode || "lightgrey",
+            }}
+          >
             {user?.firstName?.substring(0, 1)}
           </div>
 
@@ -144,15 +149,17 @@ export default function MembersPage() {
               <>
                 <div className="bg-gray-200 h-4 sm:h-6 w-full rounded-sm"></div>
                 <div className="bg-gray-200 h-4 w-full rounded-sm"></div>
-                <div className="bg-gray-200 h-4 w-14 rounded-sm mt-1 sm:mt-3"></div>
+                <div className="bg-gray-200 h-4 w-full rounded-sm"></div>
+                <div className="bg-gray-200 h-4 w-16 rounded-sm mt-1 sm:mt-3"></div>
               </>
             ) : (
               <>
                 <p className="sm:text-[16px] font-semibold line-clamp-2">
                   {user?.firstName} {user?.lastName}
                 </p>
+                <p className="text-xs font-medium">{user?.email}</p>
                 <p className="text-xs font-medium mb-1 sm:mb-3">
-                  {user?.email}
+                  {user?.organizations?.name}
                 </p>
                 {user && <UserRoleBadge user={user} />}
               </>

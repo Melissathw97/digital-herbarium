@@ -158,7 +158,13 @@ export default function MembersList() {
                 user={user}
                 isSelected={selectedUsers.has(user)}
                 currentUser={user.id === currentUser?.id}
-                onEdit={isAdmin ? () => onEditClick(user) : undefined}
+                onEdit={
+                  isAdmin &&
+                  user.role !== UserRole.ADMIN &&
+                  user.role !== UserRole.SUPER_ADMIN
+                    ? () => onEditClick(user)
+                    : undefined
+                }
                 onDelete={
                   isAdmin &&
                   user.role !== UserRole.ADMIN &&
