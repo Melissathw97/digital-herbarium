@@ -2,7 +2,14 @@ import { Button } from "../ui/button";
 import formatDate from "@/utils/formatDate";
 import { User } from "@/types/user";
 import UserRoleBadge from "../userRoleBadge";
-import { Calendar, CircleCheck, Mail, Pen, Trash } from "lucide-react";
+import {
+  Building2,
+  Calendar,
+  CircleCheck,
+  Mail,
+  Pen,
+  Trash,
+} from "lucide-react";
 
 export default function UserCard({
   user,
@@ -23,6 +30,7 @@ export default function UserCard({
 }) {
   const fullName = user.firstName + " " + user.lastName;
   const allowSelect = onSelect && !currentUser;
+  console.log("user", user);
 
   return (
     <div
@@ -92,6 +100,12 @@ export default function UserCard({
               <Mail className="size-3.5 shrink-0" />
               <p className="font-medium overflow-hidden overflow-ellipsis">
                 {user.email}
+              </p>
+            </div>
+            <div className="flex gap-2 items-center">
+              <Building2 className="size-3.5 shrink-0" />
+              <p className="font-medium overflow-hidden overflow-ellipsis">
+                {user.organization?.name}
               </p>
             </div>
             <div className="flex gap-2 items-center">

@@ -76,7 +76,10 @@ export default function MembersPage() {
     if (password && !confirmPassword) return true;
     if (!password && confirmPassword) return true;
     if (password !== confirmPassword) return true;
-    if (Object.values(passwordValidation).some((isFulfilled) => !isFulfilled))
+    if (
+      password &&
+      Object.values(passwordValidation).some((isFulfilled) => !isFulfilled)
+    )
       return true;
 
     return false;

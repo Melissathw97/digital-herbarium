@@ -89,14 +89,48 @@ export default function Navbar() {
               <UserCircle />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <div className="flex px-2 py-2 gap-3 w-56">
+                <div
+                  className="size-9 rounded-full text-gray-600 grid place-items-center font-bold shrink-0 shadow-sm"
+                  style={{
+                    backgroundColor:
+                      user?.organizations?.colourCode || "lightgrey",
+                  }}
+                >
+                  {user?.firstName.substring(0, 1)}
+                </div>
+
+                <div className="flex flex-col gap-0.5 overflow-hidden w-full">
+                  {user ? (
+                    <>
+                      <p className="font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis">
+                        {user?.firstName} {user?.lastName}
+                      </p>
+                      <p className="text-xs whitespace-nowrap overflow-hidden overflow-ellipsis">
+                        {user?.email}
+                      </p>
+                      <p className="text-xs whitespace-nowrap overflow-hidden overflow-ellipsis">
+                        {user?.organizations?.name}
+                      </p>
+                    </>
+                  ) : (
+                    <div className="flex flex-col gap-1.5">
+                      <div className="bg-gray-200 h-4.5 w-full rounded-sm"></div>
+                      <div className="bg-gray-200 h-3 w-full rounded-sm"></div>
+                      <div className="bg-gray-200 h-3 w-full rounded-sm"></div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <hr className="my-1" />
               <Link href={Pages.PROFILE}>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer px-3 py-2">
                   My Profile
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuItem
                 onClick={onLogOutClick}
-                className="text-red-800 cursor-pointer"
+                className="text-red-800 cursor-pointer px-3 py-2"
               >
                 Log Out
               </DropdownMenuItem>

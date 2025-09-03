@@ -5,6 +5,15 @@ export interface User {
   role: UserRole;
   email: string;
   joinedAt: string;
+  organization?: {
+    id: string;
+    name: string;
+  };
+  organizations?: {
+    id: string;
+    name: string;
+    colourCode: string;
+  };
 }
 
 export interface UserApi {
@@ -14,6 +23,15 @@ export interface UserApi {
   email: string;
   role: UserRole;
   created_at: string;
+  organization?: {
+    id: string;
+    name: string;
+  };
+  organizations?: {
+    id: string;
+    name: string;
+    colour_code: string;
+  };
 }
 
 export enum UserRole {

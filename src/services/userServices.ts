@@ -18,6 +18,10 @@ export function getUserProfile(): Promise<User> {
         lastName: data?.last_name,
         role: data?.role || "",
         email: data?.email,
+        organizations: {
+          ...data?.organizations,
+          colourCode: data?.organizations.colour_code,
+        },
         joinedAt: data?.created_at || "",
       };
     });
@@ -83,6 +87,7 @@ export function getUsers({
           lastName: user.last_name,
           role: user.role,
           email: user.email,
+          organization: user.organization,
           joinedAt: user.created_at,
         })),
         pagination: data.pagination,
