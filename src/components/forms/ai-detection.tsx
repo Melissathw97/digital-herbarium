@@ -76,6 +76,10 @@ export default function AiDetectionForm({
     state: "",
     district: "",
     location: "",
+    elevation: "",
+    latitude: "",
+    longitude: "",
+    additionalNotes: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -215,6 +219,10 @@ export default function AiDetectionForm({
         state: initialValues.state,
         district: initialValues.district || "",
         location: initialValues.location || "",
+        elevation: initialValues.elevation || "",
+        latitude: initialValues.latitude || "",
+        longitude: initialValues.longitude || "",
+        additionalNotes: initialValues.additionalNotes || "",
       });
     } else {
       setIsExpanded(true);
@@ -459,6 +467,40 @@ export default function AiDetectionForm({
                 <Input
                   name="location"
                   value={formValues.location}
+                  onChange={onInputChange}
+                />
+              </div>
+              <div className="flex flex-col gap-1 w-full">
+                <label>Elevation</label>
+                <Input
+                  name="elevation"
+                  value={formValues.elevation}
+                  onChange={onInputChange}
+                />
+              </div>
+              <div className="flex gap-3 w-full">
+                <div className="flex flex-col gap-1 w-full">
+                  <label>Latitude</label>
+                  <Input
+                    name="latitude"
+                    value={formValues.latitude}
+                    onChange={onInputChange}
+                  />
+                </div>
+                <div className="flex flex-col gap-1 w-full">
+                  <label>Longitude</label>
+                  <Input
+                    name="longitude"
+                    value={formValues.longitude}
+                    onChange={onInputChange}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col gap-1 w-full">
+                <label>Additional Notes</label>
+                <Input
+                  name="additionalNotes"
+                  value={formValues.additionalNotes}
                   onChange={onInputChange}
                 />
               </div>
