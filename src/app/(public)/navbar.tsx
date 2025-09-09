@@ -102,7 +102,7 @@ export default function Navbar() {
             <DropdownMenuContent align="end">
               <div className="flex px-2 py-2 gap-3 w-56">
                 <div
-                  className="size-9 rounded-full text-gray-600 grid place-items-center font-bold shrink-0 shadow-sm"
+                  className="size-9 rounded-full text-gray-600 grid place-items-center font-semibold shrink-0 shadow-sm"
                   style={{
                     backgroundColor:
                       user?.organizations?.colourCode || "lightgrey",
