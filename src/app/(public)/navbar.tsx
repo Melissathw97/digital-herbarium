@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import UserRoleBadge from "@/components/userRoleBadge";
 import { getUserProfile } from "@/services/userServices";
-import { Home, Sprout, UserCircle, UsersRound } from "lucide-react";
+import { FileClock, Home, Sprout, UserCircle, UsersRound } from "lucide-react";
 
 export default function Navbar() {
   const router = useRouter();
@@ -69,6 +69,17 @@ export default function Navbar() {
             >
               <Sprout />
               Plants
+            </Button>
+          </Link>
+          <Link href={Pages.APPROVALS}>
+            <Button
+              variant={
+                pathname.startsWith(Pages.APPROVALS) ? "secondary" : "ghost"
+              }
+              size="sm"
+            >
+              <FileClock />
+              Approvals
             </Button>
           </Link>
           <Link href={Pages.MEMBERS}>

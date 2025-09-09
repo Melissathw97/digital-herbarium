@@ -19,7 +19,7 @@ import States from "@/constants/states.json";
 import { DatePicker } from "../ui/datepicker";
 import { FormValues, Option } from "@/types/form";
 import { CSSObjectWithLabel } from "react-select";
-import { ActionType, Plant } from "@/types/plant";
+import { ActionType, Plant, Status } from "@/types/plant";
 import {
   Select,
   SelectContent,
@@ -30,12 +30,15 @@ import {
 } from "../ui/select";
 import Alert from "../alert";
 import { Pages } from "@/types/pages";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   postPlantOCR,
   updatePlant,
   updatePlantImage,
 } from "@/services/plantServices";
+import { useAuth } from "@/utils/supabase/tokenStorage";
+import PlantRejectModal from "../modals/plantReject";
+import { Locate } from "lucide-react";
 
 const CreatableSelect = dynamic(() => import("react-select/creatable"), {
   ssr: false,
@@ -62,12 +65,16 @@ export default function OcrForm({
   initialValues?: Plant;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const { isMember } = useAuth();
 
   const [image, setImage] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File>();
   const [showScanButton, setShowScanButton] = useState(false);
+
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
   const previewRef = useRef<HTMLImageElement>(null);
 
@@ -82,9 +89,9 @@ export default function OcrForm({
     state: "",
     district: "",
     location: "",
-    elevation: "",
-    latitude: "",
-    longitude: "",
+    elevation: undefined,
+    latitude: undefined,
+    longitude: undefined,
     vernacularName: "",
     additionalNotes: "",
   });
@@ -96,6 +103,39 @@ export default function OcrForm({
       ...formValues,
       [name]: value,
     });
+  };
+
+  const getCoordinates = () => {
+    const successCallback = (position: GeolocationPosition) => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      setFormValues({
+        ...formValues,
+        latitude,
+        longitude,
+      });
+    };
+
+    const errorCallback = (error: GeolocationPositionError) => {
+      console.warn(`ERROR(${error.code}): ${error.message}`);
+    };
+
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000, // 5 seconds
+      maximumAge: 0, // No cached position
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        successCallback,
+        errorCallback,
+        options
+      );
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+    }
   };
 
   const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -146,8 +186,75 @@ export default function OcrForm({
         });
   };
 
+  const approvePlant = () => {
+    setIsSubmitting(true);
+
+    updatePlant({
+      ...formValues,
+      id: initialValues?.id || "",
+      actionType: ActionType.OCR,
+      family: formValues.family.value,
+      status: "Approved",
+    })
+      .then(() => {
+        updatePlantImage({
+          id: initialValues?.id || "",
+          image: selectedFile,
+        })
+          .then(() => {
+            toast.success("Plant approved successfully");
+            router.push(Pages.APPROVALS);
+          })
+          .catch((error) => {
+            toast.error(error);
+            setIsSubmitting(false);
+          });
+      })
+      .catch((error) => {
+        toast.error(error);
+        setIsSubmitting(false);
+      });
+  };
+
+  const rejectPlant = (remarks: string) => {
+    setIsSubmitting(true);
+
+    updatePlant({
+      ...formValues,
+      id: initialValues?.id || "",
+      actionType: ActionType.OCR,
+      family: formValues.family.value,
+      status: "Rejected",
+      remarks,
+    })
+      .then(() => {
+        updatePlantImage({
+          id: initialValues?.id || "",
+          image: selectedFile,
+        })
+          .then(() => {
+            toast.success("Plant rejected successfully");
+            router.push(Pages.APPROVALS);
+          })
+          .catch((error) => {
+            toast.error(error);
+            setIsSubmitting(false);
+          });
+      })
+      .catch((error) => {
+        toast.error(error);
+        setIsSubmitting(false);
+      });
+  };
+
   const isSubmitButtonDisabled = useMemo(() => {
-    const requiredFields = ["family", "species"];
+    const requiredFields = [
+      "family",
+      "species",
+      "state",
+      "district",
+      "location",
+    ];
 
     return (
       Object.entries(formValues)
@@ -193,9 +300,9 @@ export default function OcrForm({
         state,
         district: initialValues.district,
         location: initialValues.location,
-        elevation: initialValues.elevation || "",
-        latitude: initialValues.latitude || "",
-        longitude: initialValues.longitude || "",
+        elevation: initialValues.elevation,
+        latitude: initialValues.latitude,
+        longitude: initialValues.longitude,
         vernacularName: initialValues.vernacularName,
         additionalNotes: initialValues.additionalNotes || "",
       });
@@ -346,7 +453,10 @@ export default function OcrForm({
             />
           </div>
           <div className="flex flex-col gap-1 w-full">
-            <label>State</label>
+            <label>
+              State
+              <span className="text-red-600 ml-0.5">*</span>
+            </label>
             {(!update || formValues.state) && (
               <Select
                 value={formValues.state ?? ""}
@@ -370,7 +480,10 @@ export default function OcrForm({
             )}
           </div>
           <div className="flex flex-col gap-1 w-full">
-            <label>District</label>
+            <label>
+              District
+              <span className="text-red-600 ml-0.5">*</span>
+            </label>
             <Input
               name="district"
               value={formValues.district}
@@ -378,7 +491,10 @@ export default function OcrForm({
             />
           </div>
           <div className="flex flex-col gap-1 w-full">
-            <label>Location</label>
+            <label>
+              Location
+              <span className="text-red-600 ml-0.5">*</span>
+            </label>
             <Input
               name="location"
               value={formValues.location}
@@ -389,6 +505,7 @@ export default function OcrForm({
             <label>Elevation</label>
             <Input
               name="elevation"
+              type="number"
               value={formValues.elevation}
               onChange={onInputChange}
             />
@@ -398,6 +515,7 @@ export default function OcrForm({
               <label>Latitude</label>
               <Input
                 name="latitude"
+                type="number"
                 value={formValues.latitude}
                 onChange={onInputChange}
               />
@@ -406,10 +524,15 @@ export default function OcrForm({
               <label>Longitude</label>
               <Input
                 name="longitude"
+                type="number"
                 value={formValues.longitude}
                 onChange={onInputChange}
               />
             </div>
+
+            <Button type="button" onClick={getCoordinates} className="mt-auto">
+              <Locate />
+            </Button>
           </div>
           <div className="flex flex-col gap-1 w-full">
             <label>Additional Notes</label>
@@ -419,11 +542,56 @@ export default function OcrForm({
               onChange={onInputChange}
             />
           </div>
-          <Button type="submit" disabled={isSubmitButtonDisabled}>
-            {isSubmitting ? <Spinner /> : "Submit"}
-          </Button>
+
+          {pathname.includes("plants") && (
+            <Button type="submit" disabled={isSubmitButtonDisabled}>
+              {isSubmitting ? <Spinner /> : "Submit"}
+            </Button>
+          )}
+
+          {pathname.includes("approvals") && (
+            <>
+              {initialValues?.status === Status.REJECTED && (
+                <Button type="submit" disabled={isSubmitButtonDisabled}>
+                  {isSubmitting ? <Spinner /> : "Submit"}
+                </Button>
+              )}
+
+              {initialValues?.status === Status.PENDING_APPROVAL &&
+                (isMember ? (
+                  <p className="italic text-center text-xs text-gray-500 mt-5">
+                    This record is pending review from an Expert or Admin of
+                    your organization.
+                  </p>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      onClick={() => setIsRejectModalOpen(!isRejectModalOpen)}
+                      variant="outline_destructive"
+                    >
+                      Reject
+                    </Button>
+
+                    <Button
+                      type="button"
+                      onClick={approvePlant}
+                      disabled={isSubmitButtonDisabled}
+                    >
+                      Approve
+                    </Button>
+                  </div>
+                ))}
+            </>
+          )}
         </form>
       </div>
+
+      <PlantRejectModal
+        open={isRejectModalOpen}
+        toggle={() => setIsRejectModalOpen(!isRejectModalOpen)}
+        onReject={rejectPlant}
+      />
     </>
   );
 }

@@ -14,9 +14,25 @@ export interface FormValues {
   state: string;
   district: string;
   location: string;
-  elevation: string;
-  latitude: string;
-  longitude: string;
+  elevation?: number;
+  latitude?: number;
+  longitude?: number;
+  vernacularName: string;
+  additionalNotes: string;
+}
+
+export interface AiFormValues {
+  barcode: string;
+  prefix: string;
+  number: string;
+  collector: string;
+  date: Date;
+  state: string;
+  district: string;
+  location: string;
+  elevation?: number;
+  latitude?: number;
+  longitude?: number;
   vernacularName: string;
   additionalNotes: string;
 }

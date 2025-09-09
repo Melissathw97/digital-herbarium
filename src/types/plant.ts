@@ -10,9 +10,9 @@ export interface Plant {
   state: string;
   district: string;
   location: string;
-  latitude: string;
-  longitude: string;
-  elevation: string;
+  latitude?: number;
+  longitude?: number;
+  elevation?: number;
   fileName?: string;
   imagePath: string;
   imageUrl?: string;
@@ -41,9 +41,9 @@ export interface PlantApi {
   state: string;
   district: string;
   location: string;
-  latitude: string;
-  longitude: string;
-  elevation: string;
+  latitude?: number;
+  longitude?: number;
+  elevation?: number;
   confidence_level: number;
   image_path: string;
   image_url: string;
@@ -91,6 +91,10 @@ export interface PlantPayload {
   state: string;
   district: string;
   location: string;
+  elevation?: number;
+  latitude?: number;
+  longitude?: number;
+  additionalNotes: string;
   vernacularName: string;
 }
 
@@ -116,6 +120,8 @@ export interface PlantUpdatePayload extends PlantPayload {
   id: string;
   actionType: ActionType;
   confidenceLevel?: number;
+  status?: string;
+  remarks?: string;
 }
 
 export interface PlantOrganization {

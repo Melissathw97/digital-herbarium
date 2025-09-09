@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import Alert from "../alert";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -8,14 +8,21 @@ import Spinner from "../spinner";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Pages } from "@/types/pages";
-import { Sparkles, X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { AiFormValues } from "@/types/form";
 import States from "@/constants/states.json";
 import ImageUploader from "../imageUploader";
 import { DatePicker } from "../ui/datepicker";
+import { Locate, Sparkles, X } from "lucide-react";
+import { useAuth } from "@/utils/supabase/tokenStorage";
+import { usePathname, useRouter } from "next/navigation";
 import { ChartConfig, ChartContainer } from "../ui/chart";
 import { postAiDetection, postImageToBase64 } from "@/services/aiServices";
-import { ActionType, Plant, PlantAiDetectionPayload } from "@/types/plant";
+import {
+  ActionType,
+  Plant,
+  PlantAiDetectionPayload,
+  Status,
+} from "@/types/plant";
 import {
   postPlantAiDetection,
   updatePlant,
@@ -38,6 +45,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import PlantRejectModal from "../modals/plantReject";
 
 const chartData = [
   { browser: "confidence", confidence: 80, fill: "var(--color-confidence)" },
@@ -58,6 +66,8 @@ export default function AiDetectionForm({
   initialValues?: Plant;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const { isMember } = useAuth();
 
   const [image, setImage] = useState("");
   const [data, setData] = useState<PlantAiDetectionPayload>({
@@ -66,7 +76,7 @@ export default function AiDetectionForm({
     species: "",
     confidenceLevel: 0,
   });
-  const [formValues, setFormValues] = useState({
+  const [formValues, setFormValues] = useState<AiFormValues>({
     vernacularName: "",
     barcode: "",
     prefix: "",
@@ -76,15 +86,17 @@ export default function AiDetectionForm({
     state: "",
     district: "",
     location: "",
-    elevation: "",
-    latitude: "",
-    longitude: "",
+    elevation: undefined,
+    latitude: undefined,
+    longitude: undefined,
     additionalNotes: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
   const onSelectFile = (files: File[]) => {
     if (files?.length) {
@@ -152,6 +164,39 @@ export default function AiDetectionForm({
     });
   };
 
+  const getCoordinates = () => {
+    const successCallback = (position: GeolocationPosition) => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      setFormValues({
+        ...formValues,
+        latitude,
+        longitude,
+      });
+    };
+
+    const errorCallback = (error: GeolocationPositionError) => {
+      console.warn(`ERROR(${error.code}): ${error.message}`);
+    };
+
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000, // 5 seconds
+      maximumAge: 0, // No cached position
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        successCallback,
+        errorCallback,
+        options
+      );
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+    }
+  };
+
   const onSubmitClick = () => {
     setIsSubmitting(true);
 
@@ -200,6 +245,75 @@ export default function AiDetectionForm({
       });
   };
 
+  const approvePlant = () => {
+    setIsSubmitting(true);
+
+    updatePlant({
+      ...formValues,
+      id: initialValues?.id || "",
+      actionType: ActionType.AI_DETECTION,
+      family: data.family,
+      species: data.species,
+      confidenceLevel: data.confidenceLevel,
+      status: "Approved",
+    })
+      .then(() => {
+        updatePlantImage({
+          id: initialValues?.id || "",
+          image: data.image,
+        })
+          .then(() => {
+            toast.success("Plant approved successfully");
+            router.push(Pages.APPROVALS);
+          })
+          .catch((error) => {
+            toast.error(error);
+            setIsSubmitting(false);
+          });
+      })
+      .catch((error) => {
+        toast.error(error);
+        setIsSubmitting(false);
+      });
+  };
+
+  const rejectPlant = (remarks: string) => {
+    setIsSubmitting(true);
+
+    updatePlant({
+      ...formValues,
+      id: initialValues?.id || "",
+      actionType: ActionType.AI_DETECTION,
+      family: data.family,
+      species: data.species,
+      confidenceLevel: data.confidenceLevel,
+      status: "Rejected",
+      remarks,
+    })
+      .then(() => {
+        updatePlantImage({
+          id: initialValues?.id || "",
+          image: data.image,
+        })
+          .then(() => {
+            toast.success("Plant rejected successfully");
+            router.push(Pages.APPROVALS);
+          })
+          .catch((error) => {
+            toast.error(error);
+            setIsSubmitting(false);
+          });
+      })
+      .catch((error) => {
+        toast.error(error);
+        setIsSubmitting(false);
+      });
+  };
+
+  const isSubmitButtonDisabled = useMemo(() => {
+    return !image || !isComplete || isSubmitting;
+  }, [image, isComplete, isSubmitting]);
+
   useEffect(() => {
     if (update && initialValues) {
       setIsComplete(true);
@@ -219,9 +333,9 @@ export default function AiDetectionForm({
         state: initialValues.state,
         district: initialValues.district || "",
         location: initialValues.location || "",
-        elevation: initialValues.elevation || "",
-        latitude: initialValues.latitude || "",
-        longitude: initialValues.longitude || "",
+        elevation: initialValues.elevation,
+        latitude: initialValues.latitude,
+        longitude: initialValues.longitude,
         additionalNotes: initialValues.additionalNotes || "",
       });
     } else {
@@ -375,7 +489,7 @@ export default function AiDetectionForm({
           {update && (
             <form
               onSubmit={onFormSubmit}
-              className={`border shadow-sm rounded-sm p-6 flex flex-col gap-4`}
+              className={`border shadow-sm rounded-sm p-6 flex flex-col gap-4 items-end`}
             >
               <div className="flex flex-col gap-1 w-full">
                 <label>Vernacular Name</label>
@@ -431,7 +545,10 @@ export default function AiDetectionForm({
                 />
               </div>
               <div className="flex flex-col gap-1 w-full">
-                <label>State</label>
+                <label>
+                  State
+                  <span className="text-red-600 ml-0.5">*</span>
+                </label>
                 {(!update || !initialValues?.state || formValues.state) && (
                   <Select
                     value={formValues.state ?? ""}
@@ -455,7 +572,10 @@ export default function AiDetectionForm({
                 )}
               </div>
               <div className="flex flex-col gap-1 w-full">
-                <label>District</label>
+                <label>
+                  District
+                  <span className="text-red-600 ml-0.5">*</span>
+                </label>
                 <Input
                   name="district"
                   value={formValues.district}
@@ -463,7 +583,10 @@ export default function AiDetectionForm({
                 />
               </div>
               <div className="flex flex-col gap-1 w-full">
-                <label>Location</label>
+                <label>
+                  Location
+                  <span className="text-red-600 ml-0.5">*</span>
+                </label>
                 <Input
                   name="location"
                   value={formValues.location}
@@ -495,6 +618,14 @@ export default function AiDetectionForm({
                     onChange={onInputChange}
                   />
                 </div>
+
+                <Button
+                  type="button"
+                  onClick={getCoordinates}
+                  className="mt-auto"
+                >
+                  <Locate />
+                </Button>
               </div>
               <div className="flex flex-col gap-1 w-full">
                 <label>Additional Notes</label>
@@ -505,16 +636,64 @@ export default function AiDetectionForm({
                 />
               </div>
 
-              <Button
-                type="submit"
-                className="ml-auto"
-                disabled={!image || !isComplete || isSubmitting}
-              >
-                {isSubmitting ? <Spinner /> : "Submit"}
-              </Button>
+              {pathname.includes("plants") && (
+                <Button
+                  type="submit"
+                  className="ml-auto"
+                  disabled={isSubmitButtonDisabled}
+                >
+                  {isSubmitting ? <Spinner /> : "Submit"}
+                </Button>
+              )}
+
+              {pathname.includes("approvals") && (
+                <>
+                  {initialValues?.status === Status.REJECTED && (
+                    <Button type="submit" disabled={isSubmitButtonDisabled}>
+                      {isSubmitting ? <Spinner /> : "Submit"}
+                    </Button>
+                  )}
+
+                  {initialValues?.status === Status.PENDING_APPROVAL &&
+                    (isMember ? (
+                      <p className="italic text-center text-xs text-gray-500 mt-5">
+                        This record is pending review from an Expert or Admin of
+                        your organization.
+                      </p>
+                    ) : (
+                      initialValues?.status === Status.PENDING_APPROVAL && (
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            onClick={() =>
+                              setIsRejectModalOpen(!isRejectModalOpen)
+                            }
+                            variant="outline_destructive"
+                          >
+                            Reject
+                          </Button>
+
+                          <Button
+                            type="button"
+                            onClick={approvePlant}
+                            disabled={isSubmitButtonDisabled}
+                          >
+                            Approve
+                          </Button>
+                        </div>
+                      )
+                    ))}
+                </>
+              )}
             </form>
           )}
         </div>
+
+        <PlantRejectModal
+          open={isRejectModalOpen}
+          toggle={() => setIsRejectModalOpen(!isRejectModalOpen)}
+          onReject={rejectPlant}
+        />
       </div>
     </>
   );

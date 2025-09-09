@@ -282,6 +282,12 @@ export async function updatePlant({
   confidenceLevel,
   species,
   family,
+  elevation,
+  latitude,
+  longitude,
+  additionalNotes,
+  status,
+  remarks,
 }: PlantUpdatePayload): Promise<Plant> {
   const supabase = createClient();
 
@@ -295,6 +301,10 @@ export async function updatePlant({
     state,
     district,
     location,
+    elevation,
+    latitude,
+    longitude,
+    additional_notes: additionalNotes,
     family_name: family,
     species_name: species,
     collected_at: date.toLocaleDateString("en-CA", {
@@ -303,6 +313,8 @@ export async function updatePlant({
       day: "2-digit",
     }),
     ...(confidenceLevel ? { confidence_level: confidenceLevel } : {}),
+    ...(status ? { status } : {}),
+    ...(remarks ? { remarks } : {}),
   };
 
   return supabase.functions

@@ -7,5 +7,6 @@ export enum Pages {
   PLANTS = "/plants",
   PLANTS_NEW = "/plants/new",
   MEMBERS = "/members",
+  APPROVALS = "/approvals",
   PROFILE = "/profile",
 }
