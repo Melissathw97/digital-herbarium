@@ -145,6 +145,15 @@ export default function UsersSignUp() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+
+              {organizations.find(({ label }) => label === "Others")?.value ===
+                formValues.organization && (
+                <Link href={Pages.SUPPORT}>
+                  <p className="text-xs text-lime-700 px-1 hover:underline">
+                    Can&apos;t find your organization? Let us know.
+                  </p>
+                </Link>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">

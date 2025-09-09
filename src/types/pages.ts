@@ -9,4 +9,5 @@ export enum Pages {
   MEMBERS = "/members",
   APPROVALS = "/approvals",
   PROFILE = "/profile",
+  SUPPORT = "/support",
 }
