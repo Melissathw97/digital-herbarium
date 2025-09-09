@@ -71,7 +71,7 @@ export default function PlantsList() {
     const limit = searchParams.get("limit");
 
     const queryParams = {
-      ispublished: false,
+      ispublished: "all",
       page: Number(page) || 1,
       limit: Number(limit) || 10,
     };
@@ -172,7 +172,7 @@ export default function PlantsList() {
   }, [searchParams]);
 
   return (
-    <div className="bg-white shadow-sm rounded-sm px-4 py-5 border flex flex-col gap-4">
+    <div className="bg-white shadow-sm rounded-lg px-4 py-5 border flex flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
         <div>
           {selectedPlants.length ? (
@@ -292,14 +292,6 @@ export default function PlantsList() {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex gap-1">
-                      <Button
-                        size="xs"
-                        variant="outline"
-                        className="hover:text-lime-700"
-                        onClick={() => onPublishClick(plant)}
-                      >
-                        {plant.isPublished ? <BookX /> : <BookOpen />}
-                      </Button>
                       <Link href={`/plants/${plant.id}/edit`}>
                         <Button
                           size="xs"
@@ -309,6 +301,16 @@ export default function PlantsList() {
                           <Pen />
                         </Button>
                       </Link>
+                      {plant.status === Status.APPROVED && (
+                        <Button
+                          size="xs"
+                          variant="outline"
+                          className="hover:text-lime-700"
+                          onClick={() => onPublishClick(plant)}
+                        >
+                          {plant.isPublished ? <BookX /> : <BookOpen />}
+                        </Button>
+                      )}
                       {isAdmin && (
                         <Button
                           size="xs"

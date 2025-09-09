@@ -17,6 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { getOrganizations } from "@/services/organizationServices";
+import { Organization } from "@/types/organization";
 
 export default function PublishedList() {
   const router = useRouter();
@@ -24,6 +26,12 @@ export default function PublishedList() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [plants, setPlants] = useState<Plant[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([
+    {
+      id: "All Organizations",
+      name: "All Organizations",
+    },
+  ]);
   const [pagination, setPagination] = useState<Pagination>({
     limit: 0,
     page: 0,
@@ -121,6 +129,19 @@ export default function PublishedList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    getOrganizations()
+      .then((data) => {
+        const org = [...organizations, ...data];
+        setOrganizations(org);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        throw new Error(error);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <Alert
@@ -144,15 +165,15 @@ export default function PublishedList() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {["All Organizations", "My Organization"].map((label) => {
+                {organizations.map((org) => {
                   return (
                     <SelectItem
-                      key={label}
-                      value={label}
+                      key={org.id}
+                      value={org.id}
                       className="rounded-lg [&_span]:flex"
                     >
                       <div className="flex items-center gap-2 text-xs">
-                        {label}
+                        {org.name}
                       </div>
                     </SelectItem>
                   );
