@@ -3,15 +3,16 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { User } from "@/types/user";
 import { Pages } from "@/types/pages";
 import Badge from "@/components/badge";
 import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
-import { User, UserRole } from "@/types/user";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import TablePagination from "@/components/pagination";
 import PlantPublishModal from "../modals/plantPublish";
+import { useAuth } from "@/utils/supabase/tokenStorage";
 import { getUserProfile } from "@/services/userServices";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BookOpen, BookX, Pen, Trash, X } from "lucide-react";
@@ -23,6 +24,7 @@ import PlantBulkDeleteModal from "@/components/modals/plantBulkDelete";
 export default function PlantsList() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isExpert, isAdmin } = useAuth();
 
   const [isLoading, setIsLoading] = useState(true);
   const [plants, setPlants] = useState<Plant[]>([]);
@@ -40,28 +42,25 @@ export default function PlantsList() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
 
-  const headers: { label: string; dataKey: keyof Plant }[] = [
-    { label: "Date Collected", dataKey: "date" },
-    { label: "Action Type", dataKey: "actionType" },
-    { label: "Status", dataKey: "status" },
-    { label: "Family", dataKey: "family" },
-    { label: "Species", dataKey: "species" },
-    { label: "Vernacular Name", dataKey: "vernacularName" },
-    { label: "Barcode", dataKey: "barcode" },
-    // { label: "Prefix", dataKey: "prefix" },
-    // { label: "Number", dataKey: "number" },
-    { label: "Collector", dataKey: "collector" },
-    { label: "State", dataKey: "state" },
-    { label: "District", dataKey: "district" },
-    { label: "Location", dataKey: "location" },
-  ];
-
-  const isAdmin = useMemo(
-    () =>
-      currentUser?.role === UserRole.ADMIN ||
-      currentUser?.role === UserRole.SUPER_ADMIN,
-    [currentUser]
-  );
+  const headers: { label: string; dataKey: keyof Plant }[] = useMemo(() => {
+    return [
+      { label: "Date Collected", dataKey: "date" },
+      { label: "Action Type", dataKey: "actionType" },
+      { label: "Status", dataKey: "status" },
+      { label: "Family", dataKey: "family" },
+      { label: "Species", dataKey: "species" },
+      { label: "Vernacular Name", dataKey: "vernacularName" },
+      { label: "Barcode", dataKey: "barcode" },
+      // { label: "Prefix", dataKey: "prefix" },
+      // { label: "Number", dataKey: "number" },
+      { label: "Collector", dataKey: "collector" },
+      { label: "State", dataKey: "state" },
+      { label: "District", dataKey: "district" },
+      ...(isExpert || isAdmin
+        ? [{ label: "Location", dataKey: "location" as keyof Plant }]
+        : []),
+    ];
+  }, [isExpert, isAdmin]);
 
   const fetchPlants = () => {
     setIsLoading(true);
