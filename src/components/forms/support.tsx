@@ -92,7 +92,7 @@ export default function ContactSupportForm() {
     <div className="flex flex-col gap-6 items-center">
       <button
         onClick={() => router.back()}
-        className="hover:bg-gray-200 -mt-1 p-1 pr-2 rounded-full flex gap-1 text-xs text-lime-700 mr-auto -mb-3"
+        className="hover:bg-gray-200 -ml-2 -mt-1 p-1 pr-2 rounded-full flex gap-1 text-xs text-lime-700 mr-auto -mb-3"
       >
         <ChevronLeftIcon className="w-4 h-4" />
         Back
