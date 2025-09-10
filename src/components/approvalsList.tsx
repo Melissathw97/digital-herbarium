@@ -135,7 +135,7 @@ export default function ApprovalsList() {
                   colSpan={headers.length}
                   className="p-3 text-center text-gray-500"
                 >
-                  No plants found.
+                  No approvals found.
                 </td>
               </tr>
             ) : (
