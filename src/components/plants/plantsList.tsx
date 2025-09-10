@@ -54,10 +54,12 @@ export default function PlantsList() {
       // { label: "Prefix", dataKey: "prefix" },
       // { label: "Number", dataKey: "number" },
       { label: "Collector", dataKey: "collector" },
-      { label: "State", dataKey: "state" },
-      { label: "District", dataKey: "district" },
       ...(isExpert || isAdmin
-        ? [{ label: "Location", dataKey: "location" as keyof Plant }]
+        ? [
+            { label: "State", dataKey: "state" as keyof Plant },
+            { label: "District", dataKey: "district" as keyof Plant },
+            { label: "Location", dataKey: "location" as keyof Plant },
+          ]
         : []),
     ];
   }, [isExpert, isAdmin]);

@@ -42,9 +42,13 @@ export default function ApprovalsList() {
     // { label: "Prefix", dataKey: "prefix" },
     // { label: "Number", dataKey: "number" },
     { label: "Collector", dataKey: "collector" },
-    { label: "State", dataKey: "state" },
-    { label: "District", dataKey: "district" },
-    { label: "Location", dataKey: "location" },
+    ...(isExpert || isAdmin
+      ? [
+          { label: "State", dataKey: "state" as keyof Plant },
+          { label: "District", dataKey: "district" as keyof Plant },
+          { label: "Location", dataKey: "location" as keyof Plant },
+        ]
+      : []),
   ];
 
   const fetchPlants = () => {
