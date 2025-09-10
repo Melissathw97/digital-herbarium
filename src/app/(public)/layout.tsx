@@ -19,7 +19,7 @@ export default function PublicLayout({
           {children}
         </div>
 
-        <div className="absolute bottom-8 right-8">
+        <div className="fixed bottom-8 right-8">
           <Link href={Pages.SUPPORT}>
             <button className="bg-indigo-600 hover:bg-indigo-700 hover:scale-[110%] rounded-full p-3 text-white transition">
               <MessageCircleQuestionMark />
