@@ -157,9 +157,11 @@ export default function PlantDetailsPage() {
                     Delete Plant
                   </Button>
                 )}
-                <Link href={`/plants/${plant?.id}/edit`}>
-                  <Button>Edit Plant</Button>
-                </Link>
+                {plant.status !== Status.APPROVED && (
+                  <Link href={`/plants/${plant?.id}/edit`}>
+                    <Button>Edit Plant</Button>
+                  </Link>
+                )}
               </div>
             ) : null}
           </>
