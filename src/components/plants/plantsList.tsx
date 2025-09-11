@@ -20,6 +20,12 @@ import PlantDeleteModal from "@/components/modals/plantDelete";
 import { Plant, ActionType, Pagination, Status } from "@/types/plant";
 import { getPlants, postPlantsExport } from "@/services/plantServices";
 import PlantBulkDeleteModal from "@/components/modals/plantBulkDelete";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 export default function PlantsList() {
   const router = useRouter();
@@ -207,9 +213,30 @@ export default function PlantsList() {
               {selectedPlants.length ? `(${selectedPlants.length})` : null}
             </Button>
           )}
-          <Link href={Pages.PLANTS_NEW}>
-            <Button size="sm">Add Plant</Button>
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] rounded-sm">
+              <div className="bg-lime-800 text-white shadow-xs hover:bg-lime-900 inline-flex items-center justify-center font-semibold transition-all cursor-pointer h-8 rounded-sm gap-1.5 px-3 text-xs">
+                Add Plant
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <Link href={Pages.PLANTS_NEW_OCR}>
+                <DropdownMenuItem className="cursor-pointer px-3 py-2">
+                  Scan with OCR
+                </DropdownMenuItem>
+              </Link>
+              <Link href={Pages.PLANTS_NEW_AI}>
+                <DropdownMenuItem className="cursor-pointer px-3 py-2">
+                  AI Detection
+                </DropdownMenuItem>
+              </Link>
+              <Link href={Pages.PLANTS_NEW_IMPORT}>
+                <DropdownMenuItem className="cursor-pointer px-3 py-2">
+                  Import Data
+                </DropdownMenuItem>
+              </Link>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

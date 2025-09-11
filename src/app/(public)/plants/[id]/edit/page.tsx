@@ -46,28 +46,16 @@ export default function UpdatePlantPage() {
         <h2>Edit Plant</h2>
       </div>
 
-      <div className="bg-white shadow-sm rounded-sm px-4 py-5 border flex flex-col gap-5">
+      <div className="bg-white shadow-sm rounded-sm px-4 py-5 border flex flex-col">
         {isLoading ? (
           <Spinner />
         ) : (
           <>
-            <Tabs defaultValue={plant?.actionType}>
-              <TabsList>
-                <TabsTrigger value={ActionType.OCR} disabled>
-                  <ScanText /> Scan with OCR
-                </TabsTrigger>
-                <TabsTrigger value={ActionType.AI_DETECTION} disabled>
-                  <Sparkles /> AI Detection
-                </TabsTrigger>
-              </TabsList>
-              <hr className="w-full" />
-              <TabsContent value={ActionType.OCR}>
-                <OcrForm update initialValues={plant} />
-              </TabsContent>
-              <TabsContent value={ActionType.AI_DETECTION}>
-                <AiDetectionForm update initialValues={plant} />
-              </TabsContent>
-            </Tabs>
+            {plant?.actionType === ActionType.OCR ? (
+              <OcrForm update initialValues={plant} />
+            ) : (
+              <AiDetectionForm update initialValues={plant} />
+            )}
           </>
         )}
       </div>

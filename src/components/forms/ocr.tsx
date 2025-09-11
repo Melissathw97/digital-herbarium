@@ -300,9 +300,9 @@ export default function OcrForm({
         state,
         district: initialValues.district,
         location: initialValues.location,
-        elevation: initialValues.elevation,
-        latitude: initialValues.latitude,
-        longitude: initialValues.longitude,
+        elevation: initialValues.elevation || undefined,
+        latitude: initialValues.latitude || undefined,
+        longitude: initialValues.longitude || undefined,
         vernacularName: initialValues.vernacularName,
         additionalNotes: initialValues.additionalNotes || "",
       });

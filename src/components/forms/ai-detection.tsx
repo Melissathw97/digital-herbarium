@@ -333,9 +333,9 @@ export default function AiDetectionForm({
         state: initialValues.state,
         district: initialValues.district || "",
         location: initialValues.location || "",
-        elevation: initialValues.elevation,
-        latitude: initialValues.latitude,
-        longitude: initialValues.longitude,
+        elevation: initialValues.elevation || undefined,
+        latitude: initialValues.latitude || undefined,
+        longitude: initialValues.longitude || undefined,
         additionalNotes: initialValues.additionalNotes || "",
       });
     } else {
@@ -362,7 +362,7 @@ export default function AiDetectionForm({
           <li>Submit the AI detection result</li>
         </ol>
       </Alert>
-      <div className="flex gap-4">
+      <div className="w-full flex gap-4">
         <div className="flex-1 min-h-[250px] max-w-[50%] flex flex-col gap-4">
           {image ? (
             <>
@@ -474,11 +474,18 @@ export default function AiDetectionForm({
               </div>
             ) : (
               <div className="flex flex-col gap-4 items-center p-12">
-                <p className="text-gray-600 text-center">
+                <p className="text-gray-800 text-center">
                   {image
                     ? "When you're ready, click on the button below to begin AI detection to identify the plant species."
                     : "Upload an image to begin AI detection"}
                 </p>
+                {image && (
+                  <Alert
+                    variant="warning"
+                    title="Optimized for Dipterocarpaceae and Burseraceae families
+                    at the moment."
+                  ></Alert>
+                )}
                 <Button disabled={!image} onClick={onBeginDetectionClick}>
                   <Sparkles /> Begin Detection
                 </Button>
