@@ -230,11 +230,13 @@ export default function PlantsList() {
                   AI Detection
                 </DropdownMenuItem>
               </Link>
-              <Link href={Pages.PLANTS_NEW_IMPORT}>
-                <DropdownMenuItem className="cursor-pointer px-3 py-2">
-                  Import Data
-                </DropdownMenuItem>
-              </Link>
+              {isAdmin && (
+                <Link href={Pages.PLANTS_NEW_IMPORT}>
+                  <DropdownMenuItem className="cursor-pointer px-3 py-2">
+                    Import Data
+                  </DropdownMenuItem>
+                </Link>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
