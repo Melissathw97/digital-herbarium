@@ -34,16 +34,24 @@ export default function ContactSupportForm() {
       value: "My organization is not registered in this system",
     },
     {
-      label: "Issue signing up or logging in",
-      value: "Issue signing up or logging in",
+      label: "My account is linked to the wrong organization",
+      value: "My account is linked to the wrong organization",
     },
     {
       label: "My role is incorrect for my organization",
       value: "My role is incorrect for my organization",
     },
     {
-      label: "Issue creating a new plant record",
-      value: "Issue creating a new plant record",
+      label: "Issue signing up or logging in",
+      value: "Issue signing up or logging in",
+    },
+    {
+      label: "Feedback on a feature in the system",
+      value: "Feedback on a feature in the system",
+    },
+    {
+      label: "Technical issue or bug in the system",
+      value: "Technical issue or bug in the system",
     },
     { label: "Others", value: "Others" },
   ];
