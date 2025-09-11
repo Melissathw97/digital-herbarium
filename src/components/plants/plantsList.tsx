@@ -33,7 +33,6 @@ export default function PlantsList() {
   const { isExpert, isAdmin } = useAuth();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isMounted, setIsMounted] = useState(false);
   const [plants, setPlants] = useState<Plant[]>([]);
   const [currentUser, setCurrentUser] = useState<User>();
   const [pagination, setPagination] = useState<Pagination>({
@@ -179,11 +178,6 @@ export default function PlantsList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  // To fix hydration error for headers
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   return (
     <div className="bg-white shadow-sm rounded-lg px-4 py-5 border flex flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
@@ -259,14 +253,16 @@ export default function PlantsList() {
                   />
                 )}
               </th>
-              {isMounted
-                ? headers.map(({ label }) => (
+              {isLoading
+                ? Array.from({ length: 8 }, (_, i) => i + 1).map((i) => (
+                    <th key={i} className="min-w-[100px]">
+                      -
+                    </th>
+                  ))
+                : headers.map(({ label }) => (
                     <th key={label} className="p-4 whitespace-nowrap">
                       {label}
                     </th>
-                  ))
-                : Array.from({ length: 8 }, (_, i) => i + 1).map((i) => (
-                    <th key={i} className="min-w-[100px]"></th>
                   ))}
               <th className="p-4 sticky right-0 z-2 bg-white">Action</th>
             </tr>
@@ -275,7 +271,7 @@ export default function PlantsList() {
             {isLoading ? (
               <tr>
                 <td
-                  colSpan={isMounted ? headers.length + 1 : 10}
+                  colSpan={isLoading ? 10 : headers.length + 1}
                   className="p-3 text-gray-500"
                 >
                   <Spinner />
