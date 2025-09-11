@@ -4,11 +4,10 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Spinner from "@/components/spinner";
 import OcrForm from "@/components/forms/ocr";
+import { ChevronLeftIcon } from "lucide-react";
 import { ActionType, Plant } from "@/types/plant";
 import AiDetectionForm from "@/components/forms/ai-detection";
-import { ChevronLeftIcon, ScanText, Sparkles } from "lucide-react";
 import { getPlantById, getPlantImage } from "@/services/plantServices";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function UpdatePlantPage() {
   const params = useParams();
