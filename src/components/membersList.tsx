@@ -8,6 +8,7 @@ import { Pagination } from "@/types/plant";
 import UserCard from "@/components/cards/user";
 import { Button } from "@/components/ui/button";
 import AppPagination from "@/components/pagination";
+import { useAuth } from "@/utils/supabase/tokenStorage";
 import { useRouter, useSearchParams } from "next/navigation";
 import UserDeleteModal from "@/components/modals/userDelete";
 import { getUserProfile, getUsers } from "@/services/userServices";
@@ -16,6 +17,7 @@ import UserBulkDeleteModal from "@/components/modals/userBulkDelete";
 
 export default function MembersList() {
   const router = useRouter();
+  const { isAdmin } = useAuth();
   const searchParams = useSearchParams();
 
   const [users, setUsers] = useState<User[]>([]);
@@ -34,13 +36,6 @@ export default function MembersList() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
-
-  const isAdmin = useMemo(
-    () =>
-      currentUser?.role === UserRole.ADMIN ||
-      currentUser?.role === UserRole.SUPER_ADMIN,
-    [currentUser]
-  );
 
   const fetchUsers = async () => {
     setIsLoading(true);
