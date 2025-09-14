@@ -15,7 +15,16 @@ import PlantPublishModal from "../modals/plantPublish";
 import { useAuth } from "@/utils/supabase/tokenStorage";
 import { getUserProfile } from "@/services/userServices";
 import { useRouter, useSearchParams } from "next/navigation";
-import { BookOpen, BookX, Pen, Trash, X } from "lucide-react";
+import {
+  BookOpen,
+  BookX,
+  Import,
+  Pen,
+  ScanText,
+  Sparkles,
+  Trash,
+  X,
+} from "lucide-react";
 import PlantDeleteModal from "@/components/modals/plantDelete";
 import { Plant, ActionType, Pagination, Status } from "@/types/plant";
 import { getPlants, postPlantsExport } from "@/services/plantServices";
@@ -222,17 +231,18 @@ export default function PlantsList() {
             <DropdownMenuContent align="end">
               <Link href={Pages.PLANTS_NEW_OCR}>
                 <DropdownMenuItem className="cursor-pointer px-3 py-2">
-                  Scan with OCR
+                  <ScanText /> Scan with OCR
                 </DropdownMenuItem>
               </Link>
               <Link href={Pages.PLANTS_NEW_AI}>
                 <DropdownMenuItem className="cursor-pointer px-3 py-2">
-                  AI Detection
+                  <Sparkles /> AI Detection
                 </DropdownMenuItem>
               </Link>
               {isAdmin && (
                 <Link href={Pages.PLANTS_NEW_IMPORT}>
                   <DropdownMenuItem className="cursor-pointer px-3 py-2">
+                    <Import />
                     Import Data
                   </DropdownMenuItem>
                 </Link>
