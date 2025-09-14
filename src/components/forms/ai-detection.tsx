@@ -1,6 +1,13 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Alert from "../alert";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -8,34 +15,20 @@ import Spinner from "../spinner";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Pages } from "@/types/pages";
-import { AiFormValues } from "@/types/form";
 import States from "@/constants/states.json";
 import ImageUploader from "../imageUploader";
 import { DatePicker } from "../ui/datepicker";
 import { Locate, Sparkles, X } from "lucide-react";
+import { AiFormValues, Option, PlantAiData } from "@/types/form";
 import { useAuth } from "@/utils/supabase/tokenStorage";
 import { usePathname, useRouter } from "next/navigation";
-import { ChartConfig, ChartContainer } from "../ui/chart";
 import { postAiDetection, postImageToBase64 } from "@/services/aiServices";
-import {
-  ActionType,
-  Plant,
-  PlantAiDetectionPayload,
-  Status,
-} from "@/types/plant";
+import { ActionType, AiResult, Plant, Status } from "@/types/plant";
 import {
   postPlantAiDetection,
   updatePlant,
   updatePlantImage,
 } from "@/services/plantServices";
-
-import {
-  Label,
-  PolarGrid,
-  PolarRadiusAxis,
-  RadialBar,
-  RadialBarChart,
-} from "recharts";
 
 import {
   Select,
@@ -45,18 +38,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import ScanButton from "../scanButton";
+import AiResultCard from "../cards/aiResult";
 import PlantRejectModal from "../modals/plantReject";
-
-const chartData = [
-  { browser: "confidence", confidence: 80, fill: "var(--color-confidence)" },
-];
-
-const chartConfig = {
-  confidence: {
-    label: "Confidence",
-    color: "var(--chart-12)",
-  },
-} satisfies ChartConfig;
+import FamilySelectField from "../familySelectField";
 
 export default function AiDetectionForm({
   update = false,
@@ -70,9 +55,10 @@ export default function AiDetectionForm({
   const { isMember } = useAuth();
 
   const [image, setImage] = useState("");
-  const [data, setData] = useState<PlantAiDetectionPayload>({
+  const [aiResult, setAiResult] = useState<AiResult[]>([]);
+  const [data, setData] = useState<PlantAiData>({
     image: undefined,
-    family: "",
+    family: { label: "", value: "" },
     species: "",
     confidenceLevel: 0,
   });
@@ -86,17 +72,20 @@ export default function AiDetectionForm({
     state: "",
     district: "",
     location: "",
-    elevation: undefined,
-    latitude: undefined,
-    longitude: undefined,
+    elevation: "",
+    latitude: "",
+    longitude: "",
     additionalNotes: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showScanButton, setShowScanButton] = useState(false);
 
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+
+  const previewRef = useRef<HTMLImageElement>(null);
 
   const onSelectFile = (files: File[]) => {
     if (files?.length) {
@@ -130,16 +119,34 @@ export default function AiDetectionForm({
             image: base64.replace("data:image/jpeg;base64,", ""),
           })
             .then((response) => {
-              const { family, species, confidence } = response.final_result;
-
-              setData({
-                ...data,
-                family: capitalizeFirstLetter(family),
+              const results = response.final_result.map((result) => ({
+                family: capitalizeFirstLetter(result.family),
                 species: capitalizeFirstLetter(
-                  species.replace(family, "").trim()
+                  result.species.replace(result.family, "").trim()
                 ),
-                confidenceLevel: confidence,
-              });
+                confidenceLevel: result.confidence,
+              }));
+
+              if (results.length > 0) {
+                const bestResult = results.reduce(
+                  (max: AiResult, current: AiResult) =>
+                    current.confidenceLevel > max.confidenceLevel
+                      ? current
+                      : max
+                );
+
+                setAiResult(results);
+                setData({
+                  ...data,
+                  family: {
+                    label: bestResult.family,
+                    value: bestResult.family,
+                  },
+                  species: bestResult.species,
+                  confidenceLevel: bestResult.confidenceLevel,
+                });
+              }
+
               setIsLoading(false);
               setIsComplete(true);
             })
@@ -153,6 +160,15 @@ export default function AiDetectionForm({
         .catch((error) => {
           toast.error(error);
         });
+  };
+
+  const onDataInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setData({
+      ...data,
+      [name]: value,
+    });
   };
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -171,8 +187,8 @@ export default function AiDetectionForm({
 
       setFormValues({
         ...formValues,
-        latitude,
-        longitude,
+        latitude: latitude.toString(),
+        longitude: longitude.toString(),
       });
     };
 
@@ -197,52 +213,56 @@ export default function AiDetectionForm({
     }
   };
 
-  const onSubmitClick = () => {
-    setIsSubmitting(true);
-
-    postPlantAiDetection(data)
-      .then((data) => {
-        toast.success("Plant created successfully");
-        router.push(`${Pages.PLANTS}/${data.id}`);
-      })
-      .catch((error) => {
-        toast.error(error);
-        setIsSubmitting(false);
-      });
-  };
-
   const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Update Plant Details
-    updatePlant({
-      ...formValues,
-      id: initialValues?.id || "",
-      actionType: ActionType.AI_DETECTION,
-      family: data.family,
-      species: data.species,
-      confidenceLevel: data.confidenceLevel,
-    })
-      .then(() => {
-        // Update Plant Image
-        updatePlantImage({
-          id: initialValues?.id || "",
-          image: data.image,
-        })
-          .then((response) => {
-            toast.success("Plant updated succesfully");
-            router.push(`${Pages.PLANTS}/${response.id}`);
-          })
-          .catch((error) => {
-            toast.error(error);
-            setIsSubmitting(false);
-          });
+    if (!update) {
+      postPlantAiDetection({
+        ...formValues,
+        image: data.image,
+        family: data.family.value,
+        species: data.species,
+        confidenceLevel: data.confidenceLevel,
       })
-      .catch((error) => {
-        toast.error(error);
-        setIsSubmitting(false);
-      });
+        .then((data) => {
+          toast.success("Plant created successfully");
+          router.push(`${Pages.PLANTS}/${data.id}`);
+        })
+        .catch((error) => {
+          toast.error(error);
+          setIsSubmitting(false);
+        });
+    } else {
+      // Update Plant Details
+      updatePlant({
+        ...formValues,
+        id: initialValues?.id || "",
+        actionType: ActionType.AI_DETECTION,
+        family: data.family.value,
+        species: data.species,
+        confidenceLevel: data.confidenceLevel,
+      })
+        .then(() => {
+          // Update Plant Image
+          updatePlantImage({
+            id: initialValues?.id || "",
+            image: data.image,
+          })
+            .then((response) => {
+              toast.success("Plant updated succesfully");
+              router.push(`${Pages.PLANTS}/${response.id}`);
+            })
+            .catch((error) => {
+              toast.error(error);
+              setIsSubmitting(false);
+            });
+        })
+        .catch((error) => {
+          toast.error(error);
+          setIsSubmitting(false);
+        });
+    }
   };
 
   const approvePlant = () => {
@@ -252,7 +272,7 @@ export default function AiDetectionForm({
       ...formValues,
       id: initialValues?.id || "",
       actionType: ActionType.AI_DETECTION,
-      family: data.family,
+      family: data.family.value,
       species: data.species,
       confidenceLevel: data.confidenceLevel,
       status: "Approved",
@@ -284,7 +304,7 @@ export default function AiDetectionForm({
       ...formValues,
       id: initialValues?.id || "",
       actionType: ActionType.AI_DETECTION,
-      family: data.family,
+      family: data.family.value,
       species: data.species,
       confidenceLevel: data.confidenceLevel,
       status: "Rejected",
@@ -319,7 +339,10 @@ export default function AiDetectionForm({
       setIsComplete(true);
       setImage(initialValues.imagePath);
       setData({
-        family: initialValues.family,
+        family: {
+          label: initialValues.family,
+          value: initialValues.family,
+        },
         species: initialValues.species,
         confidenceLevel: initialValues.confidenceLevel,
       });
@@ -333,9 +356,9 @@ export default function AiDetectionForm({
         state: initialValues.state,
         district: initialValues.district || "",
         location: initialValues.location || "",
-        elevation: initialValues.elevation || undefined,
-        latitude: initialValues.latitude || undefined,
-        longitude: initialValues.longitude || undefined,
+        elevation: (initialValues.elevation || "").toString(),
+        latitude: (initialValues.latitude || "").toString(),
+        longitude: (initialValues.longitude || "").toString(),
         additionalNotes: initialValues.additionalNotes || "",
       });
     } else {
@@ -386,9 +409,7 @@ export default function AiDetectionForm({
           )}
         </div>
         <div className="flex-1 flex flex-col gap-3">
-          <div
-            className={`${update ? "" : "sticky top-[80px]"} border shadow-sm rounded-sm`}
-          >
+          <div className="border shadow-sm rounded-sm">
             {isLoading ? (
               <div className="flex flex-col gap-4 items-center p-12">
                 <p className="text-gray-600 text-center">
@@ -398,78 +419,61 @@ export default function AiDetectionForm({
               </div>
             ) : isComplete ? (
               <div className="p-6">
-                <div className="flex flex-col items-center gap-4">
-                  <p className="text-xs text-gray-500 uppercase">
-                    Confidence Level
-                  </p>
-                  <ChartContainer
-                    config={chartConfig}
-                    className="mx-auto aspect-square h-[140px]"
-                  >
-                    <RadialBarChart
-                      data={chartData}
-                      startAngle={90}
-                      endAngle={90 - 360 * data.confidenceLevel}
-                      innerRadius={63}
-                      outerRadius={90}
-                    >
-                      <PolarGrid
-                        gridType="circle"
-                        radialLines={false}
-                        stroke="none"
-                        className="first:fill-muted last:fill-background"
-                        polarRadius={[68, 57]}
+                <h2 className="text-sm font-bold text-gray-700 mb-4">
+                  {update ? (
+                    <>DETECTION RESULT</>
+                  ) : (
+                    <>
+                      DETECTION RESULTS{" "}
+                      <span className="font-normal text-gray-500">
+                        (choose the best match)
+                      </span>
+                    </>
+                  )}
+                </h2>
+                {update ? (
+                  <AiResultCard
+                    result={{
+                      family: initialValues?.family ?? "-",
+                      species: initialValues?.species ?? "-",
+                      confidenceLevel: initialValues?.confidenceLevel ?? 0,
+                    }}
+                    isSelected={true}
+                  />
+                ) : aiResult.length > 0 ? (
+                  <div className="grid lg:grid-cols-2 gap-5">
+                    {aiResult.map((result) => (
+                      <AiResultCard
+                        key={`${result.family} ${result.species} ${result.confidence}`}
+                        result={result}
+                        isSelected={
+                          result.family === data.family.value &&
+                          result.species === data.species &&
+                          result.confidenceLevel === data.confidenceLevel
+                        }
+                        onSelect={() =>
+                          setData({
+                            ...data,
+                            family: {
+                              label: result.family,
+                              value: result.family,
+                            },
+                            species: result.species,
+                            confidenceLevel: result.confidenceLevel,
+                          })
+                        }
                       />
-                      <RadialBar
-                        dataKey="confidence"
-                        background
-                        cornerRadius={10}
-                      />
-                      <PolarRadiusAxis
-                        tick={false}
-                        tickLine={false}
-                        axisLine={false}
-                      >
-                        <Label
-                          content={({ viewBox }) => {
-                            if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                              return (
-                                <text
-                                  x={viewBox.cx}
-                                  y={viewBox.cy}
-                                  textAnchor="middle"
-                                  dominantBaseline="middle"
-                                >
-                                  <tspan
-                                    x={viewBox.cx}
-                                    y={viewBox.cy}
-                                    className="fill-foreground text-4xl font-bold"
-                                  >
-                                    {Math.round(data.confidenceLevel * 100)}%
-                                  </tspan>
-                                </text>
-                              );
-                            }
-                          }}
-                        />
-                      </PolarRadiusAxis>
-                    </RadialBarChart>
-                  </ChartContainer>
-                  <div className="grid grid-cols-[80px_auto] mt-2 gap-y-1 font-semibold">
-                    <p className="text-lime-700">Family:</p>
-                    <span>{data.family}</span>
-                    <p className="text-lime-700">Species:</p>
-                    <em>{data.species}</em>
+                    ))}
                   </div>
-                </div>
-                {!update && (
-                  <Button
-                    className="w-full mt-8"
-                    onClick={onSubmitClick}
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? <Spinner /> : "Submit Results"}
-                  </Button>
+                ) : (
+                  <div className="w-full rounded-lg border border-gray-200 bg-gray-50 p-4 text-center shadow-sm">
+                    <p className="text-gray-700 font-medium">
+                      No detection results found.
+                    </p>
+                    <p className="text-gray-500 text-sm mt-1">
+                      Please fill in the form manually or try using OCR.
+                    </p>
+                  </div>
                 )}
               </div>
             ) : (
@@ -493,11 +497,38 @@ export default function AiDetectionForm({
             )}
           </div>
 
-          {update && (
+          {isComplete && (
             <form
               onSubmit={onFormSubmit}
               className={`border shadow-sm rounded-sm p-6 flex flex-col gap-4 items-end`}
             >
+              <FamilySelectField
+                family={data.family}
+                setValue={(val) => setData({ ...data, family: val as Option })}
+              />
+
+              <div className="flex flex-col gap-1 w-full">
+                <label>
+                  Species
+                  <span className="text-red-600 ml-0.5">*</span>
+                </label>
+
+                <div className="flex gap-2">
+                  <Input
+                    name="species"
+                    value={data.species}
+                    onChange={onDataInputChange}
+                  />
+
+                  {showScanButton && (
+                    <ScanButton
+                      previewRef={previewRef}
+                      onSubmit={(value) => setData({ ...data, species: value })}
+                    />
+                  )}
+                </div>
+              </div>
+
               <div className="flex flex-col gap-1 w-full">
                 <label>Vernacular Name</label>
                 <Input
@@ -515,6 +546,16 @@ export default function AiDetectionForm({
                     value={formValues.barcode}
                     onChange={onInputChange}
                   />
+
+                  {showScanButton && (
+                    <ScanButton
+                      isBarcode
+                      previewRef={previewRef}
+                      onSubmit={(value) =>
+                        setFormValues({ ...formValues, barcode: value })
+                      }
+                    />
+                  )}
                 </div>
               </div>
               <div className="flex gap-3 w-full">

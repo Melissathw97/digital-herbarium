@@ -3,6 +3,13 @@ export interface Option {
   value: string;
 }
 
+export interface PlantAiData {
+  image?: File;
+  family: Option;
+  species: string;
+  confidenceLevel: number;
+}
+
 export interface FormValues {
   family: Option;
   species: string;
@@ -30,9 +37,9 @@ export interface AiFormValues {
   state: string;
   district: string;
   location: string;
-  elevation?: number;
-  latitude?: number;
-  longitude?: number;
+  elevation?: string;
+  latitude?: string;
+  longitude?: string;
   vernacularName: string;
   additionalNotes: string;
 }

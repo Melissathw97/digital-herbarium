@@ -102,10 +102,8 @@ export interface PlantOCRPayload extends PlantPayload {
   image: File;
 }
 
-export interface PlantAiDetectionPayload {
+export interface PlantAiDetectionPayload extends PlantPayload {
   image?: File;
-  family: string;
-  species: string;
   confidenceLevel: number;
 }
 
@@ -135,4 +133,10 @@ export interface FileResponse {
   success: boolean;
   successful_inserts: number;
   total_processed: number;
+}
+
+export interface AiResult {
+  family: string;
+  species: string;
+  confidenceLevel: number;
 }

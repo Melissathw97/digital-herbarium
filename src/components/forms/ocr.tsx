@@ -112,8 +112,8 @@ export default function OcrForm({
 
       setFormValues({
         ...formValues,
-        latitude,
-        longitude,
+        latitude: latitude.toString(),
+        longitude: longitude.toString(),
       });
     };
 

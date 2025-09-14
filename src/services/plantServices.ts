@@ -246,6 +246,19 @@ export async function postPlantAiDetection({
   family,
   species,
   confidenceLevel,
+  barcode,
+  prefix,
+  number,
+  collector,
+  date,
+  state,
+  district,
+  location,
+  elevation,
+  latitude,
+  longitude,
+  vernacularName,
+  additionalNotes,
 }: PlantAiDetectionPayload): Promise<Plant> {
   const supabase = createClient();
 
@@ -254,6 +267,23 @@ export async function postPlantAiDetection({
     family,
     species,
     confidence_level: confidenceLevel,
+    vernacular: vernacularName,
+    barcode,
+    prefix,
+    number,
+    collector,
+    state,
+    district,
+    location,
+    elevation,
+    latitude,
+    longitude,
+    additionalNotes,
+    collected_at: date.toLocaleDateString("en-CA", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }),
   };
 
   const formData = new FormData();
