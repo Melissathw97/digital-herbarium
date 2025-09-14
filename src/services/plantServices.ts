@@ -5,6 +5,7 @@ import {
   PlantOCRPayload,
   PlantUpdatePayload,
   PlantAiDetectionPayload,
+  FileResponse,
 } from "@/types/plant";
 import { createClient } from "@/utils/supabase/client";
 import {
@@ -373,6 +374,49 @@ export async function deletePlants({ ids }: { ids: string[] }): Promise<Plant> {
       if (response?.ok === false) {
         const resp = await response?.json();
         throw resp.error;
+      }
+
+      return data;
+    });
+}
+
+export async function getTemplate() {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke("import-excel/template", {
+      method: "GET",
+    })
+    .then(({ data, error }) => {
+      if (error) throw error;
+
+      return {
+        data: data.files,
+      };
+    });
+}
+
+export async function postImport(file: File): Promise<FileResponse> {
+  const supabase = createClient();
+
+  const payload = {
+    file,
+  };
+
+  const formData = new FormData();
+
+  Object.entries(payload).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+
+  return supabase.functions
+    .invoke("import-excel", {
+      body: formData,
+    })
+    .then(async ({ data, response }) => {
+      if (response?.ok === false) {
+        const resp = await response?.json();
+        throw resp;
       }
 
       return data;

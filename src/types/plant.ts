@@ -128,3 +128,11 @@ export interface PlantOrganization {
   id: string;
   name: string;
 }
+
+export interface FileResponse {
+  inserted_ids: string[];
+  message: string;
+  success: boolean;
+  successful_inserts: number;
+  total_processed: number;
+}
