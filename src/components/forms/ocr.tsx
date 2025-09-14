@@ -176,7 +176,7 @@ export default function OcrForm({
           })
             .then(() => {
               toast.success("Plant updated successfully");
-              router.push(`${Pages.PLANTS}/${data.id}`);
+              router.replace(`${Pages.PLANTS}/${data.id}`);
             })
             .catch((error) => {
               toast.error(error);
