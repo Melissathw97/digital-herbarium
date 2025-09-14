@@ -72,9 +72,9 @@ export default function PlantDetailsPage() {
       { label: "State", value: plant?.state },
       { label: "District", value: plant?.district },
       { label: "Location", value: plant?.location },
+      { label: "Elevation", value: plant?.elevation },
       { label: "Latitude", value: plant?.latitude },
       { label: "Longitude", value: plant?.longitude },
-      { label: "Elevation", value: plant?.elevation },
       { label: "Remarks", value: plant?.remarks },
       { label: "Additional Notes", value: plant?.additionalNotes },
     ];

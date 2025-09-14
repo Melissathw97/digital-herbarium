@@ -91,9 +91,9 @@ export interface PlantPayload {
   state: string;
   district: string;
   location: string;
-  elevation?: number;
-  latitude?: number;
-  longitude?: number;
+  elevation?: string;
+  latitude?: string;
+  longitude?: string;
   additionalNotes: string;
   vernacularName: string;
 }

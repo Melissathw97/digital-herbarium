@@ -14,9 +14,9 @@ export interface FormValues {
   state: string;
   district: string;
   location: string;
-  elevation?: number;
-  latitude?: number;
-  longitude?: number;
+  elevation?: string;
+  latitude?: string;
+  longitude?: string;
   vernacularName: string;
   additionalNotes: string;
 }

@@ -190,7 +190,11 @@ export async function postPlantOCR({
   state,
   district,
   location,
+  elevation,
+  latitude,
+  longitude,
   vernacularName,
+  additionalNotes,
 }: PlantOCRPayload): Promise<Plant> {
   const supabase = createClient();
 
@@ -206,6 +210,10 @@ export async function postPlantOCR({
     state,
     district,
     location,
+    elevation,
+    latitude,
+    longitude,
+    additionalNotes,
     collected_at: date.toLocaleDateString("en-CA", {
       year: "numeric",
       month: "2-digit",

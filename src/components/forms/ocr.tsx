@@ -142,11 +142,15 @@ export default function OcrForm({
     e.preventDefault();
     setIsSubmitting(true);
 
+    const payload = {
+      ...formValues,
+      family: formValues.family.value,
+    };
+
     // For create
     if (!update && selectedFile)
       postPlantOCR({
-        ...formValues,
-        family: formValues.family.value,
+        ...payload,
         image: selectedFile,
       })
         .then((data) => {
@@ -161,10 +165,9 @@ export default function OcrForm({
     // For update
     if (update)
       updatePlant({
-        ...formValues,
+        ...payload,
         id: initialValues?.id || "",
         actionType: ActionType.OCR,
-        family: formValues.family.value,
       })
         .then((data) => {
           updatePlantImage({
@@ -300,9 +303,9 @@ export default function OcrForm({
         state,
         district: initialValues.district,
         location: initialValues.location,
-        elevation: initialValues.elevation || undefined,
-        latitude: initialValues.latitude || undefined,
-        longitude: initialValues.longitude || undefined,
+        elevation: (initialValues.elevation || "").toString(),
+        latitude: (initialValues.latitude || "").toString(),
+        longitude: (initialValues.longitude || "").toString(),
         vernacularName: initialValues.vernacularName,
         additionalNotes: initialValues.additionalNotes || "",
       });
