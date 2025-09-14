@@ -4,12 +4,13 @@ import { Fragment, ReactElement, useEffect, useMemo, useState } from "react";
 import { ActionType, Plant, Status } from "@/types/plant";
 import Link from "next/link";
 import Image from "next/image";
+import { User } from "@/types/user";
 import { Pages } from "@/types/pages";
 import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
-import { User, UserRole } from "@/types/user";
 import { Button } from "@/components/ui/button";
 import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "@/utils/supabase/tokenStorage";
 import { getUserProfile } from "@/services/userServices";
 import Badge, { BadgeVariants } from "@/components/badge";
 import PlantDeleteModal from "@/components/modals/plantDelete";
@@ -26,6 +27,7 @@ import {
 export default function PlantDetailsPage() {
   const params = useParams();
   const router = useRouter();
+  const { isAdmin } = useAuth();
 
   const [plant, setPlant] = useState<Plant>();
   const [isLoading, setIsLoading] = useState(true);
@@ -75,17 +77,12 @@ export default function PlantDetailsPage() {
       { label: "Elevation", value: plant?.elevation },
       { label: "Latitude", value: plant?.latitude },
       { label: "Longitude", value: plant?.longitude },
-      { label: "Remarks", value: plant?.remarks },
       { label: "Additional Notes", value: plant?.additionalNotes },
+      ...(plant?.status === Status.REJECTED
+        ? [{ label: "Remarks", value: plant?.remarks }]
+        : []),
     ];
   }, [plant]);
-
-  const isAdmin = useMemo(
-    () =>
-      currentUser?.role === UserRole.ADMIN ||
-      currentUser?.role === UserRole.SUPER_ADMIN,
-    [currentUser]
-  );
 
   const getStatusColor = (status: string) => {
     switch (status) {
