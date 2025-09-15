@@ -63,6 +63,9 @@ export default function PlantDetailsPage() {
   const displayData = useMemo(() => {
     return [
       { label: "Status", value: plant?.status },
+      ...(plant?.status === Status.REJECTED
+        ? [{ label: "Reason", value: plant?.remarks }]
+        : []),
       { label: "Family", value: plant?.family },
       { label: "Species", value: plant?.species },
       { label: "Vernacular Name", value: plant?.vernacularName },
@@ -78,9 +81,6 @@ export default function PlantDetailsPage() {
       { label: "Latitude", value: plant?.latitude },
       { label: "Longitude", value: plant?.longitude },
       { label: "Additional Notes", value: plant?.additionalNotes },
-      ...(plant?.status === Status.REJECTED
-        ? [{ label: "Remarks", value: plant?.remarks }]
-        : []),
     ];
   }, [plant]);
 
@@ -206,6 +206,8 @@ export default function PlantDetailsPage() {
                         <p className={getStatusColor(value)}>{value}</p>
                       ) : label === "Species" ? (
                         <em>{value || "-"}</em>
+                      ) : label === "Reason" ? (
+                        <p className="text-red-700">{value || "-"}</p>
                       ) : (
                         <p>{value || "-"}</p>
                       )}

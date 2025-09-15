@@ -1,6 +1,6 @@
-import { ChevronDown, Info, TriangleAlert } from "lucide-react";
+import { ChevronDown, CircleX, Info, TriangleAlert } from "lucide-react";
 
-type AlertVariant = "warning" | "info";
+type AlertVariant = "danger" | "warning" | "info";
 
 export default function Alert({
   children,
@@ -19,9 +19,11 @@ export default function Alert({
 }) {
   return (
     <div
-      className={`flex gap-2 items-start border p-2 px-4 rounded-sm mb-5 w-full ${variant === "info" ? "bg-blue-50 border-blue-100 text-blue-600" : ""} ${variant === "warning" ? "bg-orange-50 border-orange-200 text-orange-700" : ""}`}
+      className={`flex gap-2 items-start border p-2 px-4 rounded-sm mb-5 w-full ${variant === "info" ? "bg-blue-50 border-blue-100 text-blue-600" : ""} ${variant === "warning" ? "bg-orange-50 border-orange-200 text-orange-700" : ""} ${variant === "danger" ? "bg-red-50 border-red-200 text-red-700" : ""}`}
     >
-      {variant === "warning" ? (
+      {variant === "danger" ? (
+        <CircleX className="w-4" />
+      ) : variant === "warning" ? (
         <TriangleAlert className="w-4" />
       ) : (
         <Info className="w-4" />

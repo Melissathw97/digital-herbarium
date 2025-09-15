@@ -318,23 +318,30 @@ export default function OcrForm({
 
   return (
     <>
-      <Alert
-        title="How does it work?"
-        expand
-        isExpanded={isExpanded}
-        toggleExpand={() => setIsExpanded(!isExpanded)}
-      >
-        <ol className="text-xs list-decimal ml-4 mt-1 leading-5">
-          <li>Upload an unflipped image</li>
-          <li>Crop any part of the image</li>
-          <li>
-            Scan the text within the cropped image for the Species or Barcode
-            fields
-          </li>
-          <li>Fill in all other plant details</li>
-          <li>Submit the form</li>
-        </ol>
-      </Alert>
+      {initialValues && initialValues.status === Status.REJECTED ? (
+        <Alert variant="danger" title="Specimen has been rejected">
+          <p className="text-xs mt-1">Reason: {initialValues.remarks}</p>
+        </Alert>
+      ) : (
+        <Alert
+          title="How does it work?"
+          expand
+          isExpanded={isExpanded}
+          toggleExpand={() => setIsExpanded(!isExpanded)}
+        >
+          <ol className="text-xs list-decimal ml-4 mt-1 leading-5">
+            <li>Upload an unflipped image</li>
+            <li>Crop any part of the image</li>
+            <li>
+              Scan the text within the cropped image for the Species or Barcode
+              fields
+            </li>
+            <li>Fill in all other plant details</li>
+            <li>Submit the form</li>
+          </ol>
+        </Alert>
+      )}
+
       <div className="flex w-full gap-4 mb-6">
         <div className="flex-1 max-w-[50%]">
           <Cropper

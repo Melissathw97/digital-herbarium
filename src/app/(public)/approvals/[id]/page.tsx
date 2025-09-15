@@ -61,6 +61,9 @@ export default function ApprovalDetailsPage() {
   const displayData = useMemo(() => {
     return [
       { label: "Status", value: plant?.status },
+      ...(plant?.status === Status.REJECTED
+        ? [{ label: "Reason", value: plant?.remarks }]
+        : []),
       { label: "Family", value: plant?.family },
       { label: "Species", value: plant?.species },
       { label: "Vernacular Name", value: plant?.vernacularName },
@@ -72,10 +75,9 @@ export default function ApprovalDetailsPage() {
       { label: "State", value: plant?.state },
       { label: "District", value: plant?.district },
       { label: "Location", value: plant?.location },
+      { label: "Elevation", value: plant?.elevation },
       { label: "Latitude", value: plant?.latitude },
       { label: "Longitude", value: plant?.longitude },
-      { label: "Elevation", value: plant?.elevation },
-      { label: "Remarks", value: plant?.remarks },
       { label: "Additional Notes", value: plant?.additionalNotes },
     ];
   }, [plant]);
@@ -207,6 +209,8 @@ export default function ApprovalDetailsPage() {
                         <p className={getStatusColor(value)}>{value}</p>
                       ) : label === "Species" ? (
                         <em>{value || "-"}</em>
+                      ) : label === "Reason" ? (
+                        <p className="text-red-700">{value || "-"}</p>
                       ) : (
                         <p>{value || "-"}</p>
                       )}
