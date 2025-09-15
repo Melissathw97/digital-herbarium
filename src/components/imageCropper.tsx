@@ -1,138 +1,138 @@
-import React, { useState, useCallback, useRef } from "react";
 import { Button } from "./ui/button";
-import Cropper from "react-easy-crop";
-import type { Area } from "react-easy-crop";
-import { getCroppedImg } from "@/utils/croppedImage";
-import { Crop, RotateCcw, RotateCw, X, ZoomIn, ZoomOut } from "lucide-react";
+import React, { useRef, useState } from "react";
+import "react-mobile-cropper/dist/style.css";
+import { Crop, Home, Trash2 } from "lucide-react";
+import { Cropper, CropperRef } from "react-mobile-cropper";
 
 interface Props {
   imageSrc: string;
-  resetFile: () => void;
   onCropCompleteImage: (croppedImage: Blob) => void;
+  onResetImage: () => void;
 }
 
-const ImageCropper = ({ imageSrc, resetFile, onCropCompleteImage }: Props) => {
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+const ImageCropper = ({
+  imageSrc,
+  onCropCompleteImage,
+  onResetImage,
+}: Props) => {
+  const cropperRef = useRef<CropperRef>(null);
+  const [isCropped, setIsCropped] = useState(false);
 
-  const [scale, setScale] = useState(1);
-  const [rotation, setRotation] = useState(0);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const getCroppedCanvas = (): HTMLCanvasElement | null => {
+    if (!cropperRef.current) return null;
 
-  const onCropComplete = useCallback(
-    (_croppedArea: Area, croppedAreaPixels: Area) => {
-      setCroppedAreaPixels(croppedAreaPixels);
-    },
-    []
-  );
+    try {
+      // Get the cropped canvas from react-mobile-cropper
+      return cropperRef.current.getCanvas({
+        width: 800,
+        height: 600,
+        imageSmoothingEnabled: true,
+        imageSmoothingQuality: "high",
+      });
+    } catch (error) {
+      console.error("Error getting cropped canvas:", error);
+      return null;
+    }
+  };
 
-  const showCroppedImage = async () => {
-    if (croppedAreaPixels)
-      try {
-        const croppedImage = await getCroppedImg(
-          imageSrc,
-          croppedAreaPixels,
-          rotation
-        );
-        onCropCompleteImage(croppedImage);
-      } catch (e) {
-        console.error("Crop failed", e);
+  const getCroppedBlob = (): Promise<Blob | null> => {
+    return new Promise((resolve) => {
+      const canvas = getCroppedCanvas();
+      if (!canvas) {
+        resolve(null);
+        return;
       }
+
+      canvas.toBlob(
+        (blob) => {
+          resolve(blob);
+        },
+        "image/jpeg",
+        0.95
+      );
+    });
   };
 
-  const startHold = (callback: () => void) => {
-    // Prevent multiple intervals if already holding
-    if (intervalRef.current) return;
-
-    intervalRef.current = setInterval(() => {
-      callback();
-    }, 100); // Execute every 100ms
+  const handleCropAndExtract = async () => {
+    try {
+      const croppedBlob = await getCroppedBlob();
+      if (!croppedBlob) {
+        throw new Error("Failed to get cropped image");
+      }
+      onCropCompleteImage(croppedBlob);
+      setIsCropped(true);
+    } catch (error) {
+      console.error("Crop Error:", error);
+    }
   };
 
-  const stopHold = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
+  const resetCropPosition = () => {
+    if (cropperRef.current) {
+      // Reset the cropper to its initial state
+      cropperRef.current.reset();
+      setIsCropped(false);
+    }
+  };
+
+  // New handler to detect any changes in the cropper's position or zoom
+  const handleCropperChange = () => {
+    if (isCropped) {
+      setIsCropped(false);
     }
   };
 
   return (
-    <div className="w-full">
-      <div className="mb-4">
-        <div className="flex border rounded-md p-1 justify-between">
-          <Button variant="ghost" onClick={resetFile}>
-            <X />
-          </Button>
-          <div>
-            <Button
-              variant="ghost"
-              onClick={() => setRotation(rotation - 1)}
-              onMouseDown={() =>
-                startHold(() => setRotation((prev) => prev - 1))
-              }
-              onMouseUp={stopHold}
-              onMouseLeave={stopHold}
-            >
-              <RotateCcw />
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => setRotation(rotation + 1)}
-              onMouseDown={() =>
-                startHold(() => setRotation((prev) => prev + 1))
-              }
-              onMouseUp={stopHold}
-              onMouseLeave={stopHold}
-            >
-              <RotateCw />
-            </Button>
-            <Button
-              variant="ghost"
-              disabled={scale <= 1}
-              onClick={() => setScale(scale - 0.1)}
-              onMouseDown={() =>
-                startHold(() => setScale((prev) => prev - 0.1))
-              }
-              onMouseUp={stopHold}
-              onMouseLeave={stopHold}
-            >
-              <ZoomOut />
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => setScale(scale + 0.1)}
-              onMouseDown={() =>
-                startHold(() => setScale((prev) => prev + 0.1))
-              }
-              onMouseUp={stopHold}
-              onMouseLeave={stopHold}
-            >
-              <ZoomIn />
-            </Button>
-          </div>
-        </div>
+    <div className="w-full flex flex-col gap-4">
+      <div className="flex justify-between items-center">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onResetImage}
+          className="flex items-center gap-2 whitespace-nowrap"
+          title="Remove current image"
+        >
+          <Trash2 /> Remove Image
+        </Button>
+
+        {isCropped && (
+          <p className="text-green-600 text-xs font-medium">
+            ✓ Will use cropped area
+          </p>
+        )}
       </div>
 
-      <div className="relative w-full h-[450px] bg-gray-200 rounded-md overflow-hidden flex justify-center">
+      <div className="relative w-full h-[505px] bg-gray-200 rounded-md overflow-hidden">
         <Cropper
-          image={imageSrc}
-          crop={crop}
-          zoom={scale}
-          rotation={rotation}
-          aspect={undefined}
-          onCropChange={setCrop}
-          onZoomChange={setScale}
-          onRotationChange={setRotation}
-          onCropComplete={onCropComplete}
+          ref={cropperRef}
+          src={imageSrc}
+          className="w-full h-full"
+          stencilProps={{
+            grid: true,
+            aspectRatio: undefined,
+          }}
+          onChange={handleCropperChange}
         />
+      </div>
 
+      <div className="flex justify-center gap-4 w-full">
         <Button
-          variant="white"
-          onClick={showCroppedImage}
-          className="absolute bottom-8 z-10"
+          variant="secondary"
+          size="sm"
+          onClick={resetCropPosition}
+          className="flex items-center gap-2 whitespace-nowrap"
+          title="Reset to original position and zoom"
+        >
+          <Home className="h-4 w-4" />
+          Reset View
+        </Button>
+        <Button
+          size="sm"
+          onClick={handleCropAndExtract}
+          className="flex items-center gap-2 whitespace-nowrap"
+          title="Extract cropped area"
         >
           <Crop />
-          Crop
+          Extract Crop
         </Button>
       </div>
     </div>

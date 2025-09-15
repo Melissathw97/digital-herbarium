@@ -72,11 +72,15 @@ export default function OcrForm({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File>();
-  const [showScanButton, setShowScanButton] = useState(false);
 
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
-  const previewRef = useRef<HTMLImageElement>(null);
+  const previewRef = useRef<HTMLCanvasElement>(null);
+  const [croppedImage, setCroppedImage] = useState<Blob | null>(null);
+
+  const handleCroppedImageReady = (blob: Blob) => {
+    setCroppedImage(blob);
+  };
 
   const [formValues, setFormValues] = useState<FormValues>({
     family: { label: "", value: "" },
@@ -345,11 +349,11 @@ export default function OcrForm({
       <div className="flex w-full gap-4 mb-6">
         <div className="flex-1 max-w-[50%]">
           <Cropper
-            imgSrc={image}
-            previewRef={previewRef}
             handleSetImgSrc={(image) => setImage(image)}
-            showScanButton={() => setShowScanButton(true)}
+            imgSrc={image}
+            previewCanvasRef={previewRef}
             handleSetSelectedFile={(file) => setSelectedFile(file)}
+            onCroppedImageReady={handleCroppedImageReady}
           />
         </div>
         <form
@@ -390,14 +394,12 @@ export default function OcrForm({
                 onChange={onInputChange}
               />
 
-              {showScanButton && (
-                <ScanButton
-                  previewRef={previewRef}
-                  onSubmit={(value) =>
-                    setFormValues({ ...formValues, species: value })
-                  }
-                />
-              )}
+              <ScanButton
+                croppedImage={croppedImage}
+                onSubmit={(value) =>
+                  setFormValues({ ...formValues, species: value })
+                }
+              />
             </div>
           </div>
           <div className="flex flex-col gap-1 w-full">
@@ -418,15 +420,13 @@ export default function OcrForm({
                 onChange={onInputChange}
               />
 
-              {showScanButton && (
-                <ScanButton
-                  isBarcode
-                  previewRef={previewRef}
-                  onSubmit={(value) =>
-                    setFormValues({ ...formValues, barcode: value })
-                  }
-                />
-              )}
+              <ScanButton
+                isBarcode
+                croppedImage={croppedImage}
+                onSubmit={(value) =>
+                  setFormValues({ ...formValues, barcode: value })
+                }
+              />
             </div>
           </div>
           <div className="flex gap-3 w-full">
