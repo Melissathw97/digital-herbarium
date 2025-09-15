@@ -89,9 +89,9 @@ export default function OcrForm({
     state: "",
     district: "",
     location: "",
-    elevation: undefined,
-    latitude: undefined,
-    longitude: undefined,
+    elevation: "",
+    latitude: "",
+    longitude: "",
     vernacularName: "",
     additionalNotes: "",
   });
