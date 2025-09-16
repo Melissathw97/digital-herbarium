@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { User, UserRole } from "@/types/user";
+import { Pages } from "@/types/pages";
 import SearchField from "./searchField";
 import Spinner from "@/components/spinner";
 import { Pagination } from "@/types/plant";
@@ -14,12 +15,21 @@ import UserDeleteModal from "@/components/modals/userDelete";
 import { getUserProfile, getUsers } from "@/services/userServices";
 import UserRoleUpdateModal from "@/components/modals/userRoleUpdate";
 import UserBulkDeleteModal from "@/components/modals/userBulkDelete";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 export default function MembersList() {
   const router = useRouter();
   const { isAdmin } = useAuth();
   const searchParams = useSearchParams();
 
+  const [role, setRole] = useState("all");
   const [users, setUsers] = useState<User[]>([]);
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,11 +52,13 @@ export default function MembersList() {
     setHasError(false);
 
     const page = searchParams.get("page");
+    const role = searchParams.get("role");
     const limit = searchParams.get("limit");
     const search = searchParams.get("search");
 
     const queryParams = {
       search: search || "",
+      role: role || "",
       page: Number(page) || 1,
       limit: Number(limit) || 12,
     };
@@ -68,6 +80,15 @@ export default function MembersList() {
         setHasError(true);
         setIsLoading(false);
       });
+  };
+
+  const onRoleSelect = (value: string) => {
+    setRole(value);
+
+    const currentParams = new URLSearchParams(searchParams.toString());
+    currentParams.set("role", value);
+
+    router.push(`?${currentParams.toString()}`);
   };
 
   const onPageClick = useCallback(
@@ -95,6 +116,10 @@ export default function MembersList() {
     setIsBulkDeleteModalOpen(true);
   };
 
+  const onViewDetailsClick = (userId: string, profileId: string) => {
+    router.push(`${Pages.MEMBERS}/${userId}?profileId=${profileId}`);
+  };
+
   const onSelect = useCallback((user: User) => {
     setSelectedUsers((prevSelectedUsers) => {
       const newSelection = new Set(prevSelectedUsers);
@@ -120,21 +145,52 @@ export default function MembersList() {
 
   return (
     <>
-      <div className="flex justify-between">
+      <div className="flex flex-col gap-4">
         <h1>Users</h1>
 
-        <div className="ml-auto flex gap-2">
-          {selectedUsers.size && isAdmin ? (
-            <Button
-              variant="outline"
-              onClick={onBulkDeleteClick}
-              className="text-red-700 hover:text-red-900"
-            >
-              Delete Users ({selectedUsers.size})
-            </Button>
-          ) : null}
+        <div className="flex justify-between">
+          <div className="flex gap-3 items-center flex-wrap">
+            <p className="font-semibold">Filters</p>
 
-          <SearchField />
+            {/* Role Filter */}
+            <Select value={role} onValueChange={onRoleSelect}>
+              <SelectTrigger className="w-full sm:w-36">
+                <SelectValue placeholder="Select role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {[
+                    { label: "All Roles", value: "all" },
+                    { label: "Super Admin", value: UserRole.SUPER_ADMIN },
+                    { label: "Admin", value: UserRole.ADMIN },
+                    { label: "Expert", value: UserRole.EXPERT },
+                    { label: "Member", value: UserRole.MEMBER },
+                  ].map(({ label, value }) => (
+                    <SelectItem
+                      key={value}
+                      value={value}
+                      className="rounded-lg [&_span]:flex"
+                    >
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="ml-auto flex gap-2">
+            {selectedUsers.size && isAdmin ? (
+              <Button
+                variant="outline"
+                onClick={onBulkDeleteClick}
+                className="text-red-700 hover:text-red-900"
+              >
+                Delete Users ({selectedUsers.size})
+              </Button>
+            ) : null}
+
+            <SearchField />
+          </div>
         </div>
       </div>
 
@@ -153,6 +209,11 @@ export default function MembersList() {
                 user={user}
                 isSelected={selectedUsers.has(user)}
                 currentUser={user.id === currentUser?.id}
+                onViewDetails={
+                  isAdmin
+                    ? () => onViewDetailsClick(user.id, user.profileId)
+                    : undefined
+                }
                 onEdit={
                   isAdmin &&
                   user.role !== UserRole.ADMIN &&

@@ -6,10 +6,18 @@ import {
   Building2,
   Calendar,
   CircleCheck,
+  EllipsisVertical,
+  Eye,
   Mail,
   Pen,
-  Trash,
+  Trash2,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 export default function UserCard({
   user,
@@ -18,6 +26,7 @@ export default function UserCard({
   onEdit,
   onDelete,
   onSelect,
+  onViewDetails,
   fullDetails = true,
 }: {
   user: User;
@@ -26,11 +35,12 @@ export default function UserCard({
   onEdit?: () => void;
   onDelete?: () => void;
   onSelect?: () => void;
+  onViewDetails?: () => void;
   fullDetails?: boolean;
 }) {
   const fullName = user.firstName + " " + user.lastName;
   const allowSelect = onSelect && !currentUser;
-  console.log("user", user);
+  const showActionDropdown = onViewDetails || onEdit || onDelete;
 
   return (
     <div
@@ -38,7 +48,12 @@ export default function UserCard({
       onClick={allowSelect ? () => onSelect() : undefined}
     >
       <div className="flex gap-2">
-        <div className="bg-gray-200 h-10 w-10 rounded-full grid place-items-center font-semibold text-gray-500 uppercase shrink-0">
+        <div
+          className="h-10 w-10 rounded-full grid place-items-center font-semibold text-gray-600 uppercase shrink-0"
+          style={{
+            backgroundColor: user?.organization?.colourCode || "lightgrey",
+          }}
+        >
           {user.firstName.substring(0, 1)}
         </div>
 
@@ -60,33 +75,52 @@ export default function UserCard({
           ) : isSelected ? (
             <CircleCheck className="size-5 text-white bg-lime-700 rounded-full" />
           ) : (
-            <>
-              {onEdit && (
-                <Button
-                  variant="outline"
-                  size="xs"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit();
-                  }}
-                >
-                  <Pen />
-                </Button>
-              )}
-              {onDelete && (
-                <Button
-                  variant="outline"
-                  size="xs"
-                  className="text-red-700 hover:text-red-700"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete();
-                  }}
-                >
-                  <Trash />
-                </Button>
-              )}
-            </>
+            showActionDropdown && (
+              <>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" variant="ghost" className="!px-2">
+                      <EllipsisVertical className="text-gray-500" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    {onViewDetails && (
+                      <DropdownMenuItem
+                        className="text-xs"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onViewDetails();
+                        }}
+                      >
+                        <Eye className="!w-3.5 !h-3.5" /> View Details
+                      </DropdownMenuItem>
+                    )}
+                    {onEdit && (
+                      <DropdownMenuItem
+                        className="text-xs"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEdit();
+                        }}
+                      >
+                        <Pen className="!w-3.5 !h-3.5" /> Edit Role
+                      </DropdownMenuItem>
+                    )}
+                    {onDelete && (
+                      <DropdownMenuItem
+                        className="text-xs"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete();
+                        }}
+                      >
+                        <Trash2 className="!w-3.5 !h-3.5" /> Delete User
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            )
           )}
         </div>
       </div>
@@ -98,19 +132,19 @@ export default function UserCard({
           <div className="flex flex-col gap-2 mt-2 text-xs text-gray-500">
             <div className="flex gap-2 items-center">
               <Mail className="size-3.5 shrink-0" />
-              <p className="font-medium overflow-hidden overflow-ellipsis">
+              <p className="font-medium whitespace-nowrap overflow-hidden overflow-ellipsis">
                 {user.email}
               </p>
             </div>
             <div className="flex gap-2 items-center">
               <Building2 className="size-3.5 shrink-0" />
-              <p className="font-medium overflow-hidden overflow-ellipsis">
-                {user.organization?.name}
+              <p className="font-medium whitespace-nowrap overflow-hidden overflow-ellipsis">
+                {user.organization?.nid}
               </p>
             </div>
             <div className="flex gap-2 items-center">
               <Calendar className="size-3.5 shrink-0" />
-              <p className="font-medium overflow-hidden overflow-ellipsis">
+              <p className="font-medium whitespace-nowrap overflow-hidden overflow-ellipsis">
                 Joined {user.joinedAt ? formatDate(user.joinedAt) : "-"}
               </p>
             </div>
