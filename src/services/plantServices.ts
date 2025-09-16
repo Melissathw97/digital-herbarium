@@ -244,7 +244,7 @@ export async function postPlantOCR({
     .then(async ({ data, response }) => {
       if (response?.ok === false) {
         const resp = await response?.json();
-        throw resp.error;
+        throw resp.details;
       }
 
       return data.data;
@@ -309,7 +309,7 @@ export async function postPlantAiDetection({
     .then(async ({ data, response }) => {
       if (response?.ok === false) {
         const resp = await response?.json();
-        throw resp.error;
+        throw resp.details;
       }
 
       return data.data;
