@@ -1,19 +1,21 @@
 import { Button } from "./ui/button";
-import React, { useRef, useState } from "react";
+import React, { ReactElement, useRef, useState } from "react";
 import "react-mobile-cropper/dist/style.css";
 import { Crop, Home, Trash2 } from "lucide-react";
 import { Cropper, CropperRef } from "react-mobile-cropper";
 
 interface Props {
   imageSrc: string;
-  onCropCompleteImage: (croppedImage: Blob) => void;
+  onCropCompleteImage: (croppedImage: Blob | null) => void;
   onResetImage: () => void;
+  children?: ReactElement;
 }
 
 const ImageCropper = ({
   imageSrc,
   onCropCompleteImage,
   onResetImage,
+  children,
 }: Props) => {
   const cropperRef = useRef<CropperRef>(null);
   const [isCropped, setIsCropped] = useState(false);
@@ -70,6 +72,7 @@ const ImageCropper = ({
     if (cropperRef.current) {
       // Reset the cropper to its initial state
       cropperRef.current.reset();
+      onCropCompleteImage(null);
       setIsCropped(false);
     }
   };
@@ -83,7 +86,8 @@ const ImageCropper = ({
 
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center gap-1">
+        {children}
         <Button
           variant="ghost"
           size="sm"
@@ -95,7 +99,7 @@ const ImageCropper = ({
         </Button>
 
         {isCropped && (
-          <p className="text-green-600 text-xs font-medium">
+          <p className="text-green-600 text-xs font-medium ml-auto">
             ✓ Will use cropped area
           </p>
         )}

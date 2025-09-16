@@ -36,7 +36,6 @@ export default function ScanButton({
 
       if (!text) {
         toast.error("No text found");
-        return;
       } else {
         if (isBarcode) onSubmit(cleanedText.match(/([0-9])+/)?.[0] || "");
         else onSubmit(cleanedText);

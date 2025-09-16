@@ -114,6 +114,14 @@ export interface PlantImageToBase64Api {
   type: string;
 }
 
+export interface PlantAiDetectionResult {
+  final_result: {
+    family: string;
+    species: string;
+    confidence: number;
+  }[];
+}
+
 export interface PlantUpdatePayload extends PlantPayload {
   id: string;
   actionType: ActionType;

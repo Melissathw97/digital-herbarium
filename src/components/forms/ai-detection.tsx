@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  ChangeEvent,
-  FormEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import Alert from "../alert";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -16,14 +9,13 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Pages } from "@/types/pages";
 import States from "@/constants/states.json";
-import ImageUploader from "../imageUploader";
 import { DatePicker } from "../ui/datepicker";
-import { Locate, Sparkles, X } from "lucide-react";
-import { AiFormValues, Option, PlantAiData } from "@/types/form";
 import { useAuth } from "@/utils/supabase/tokenStorage";
 import { usePathname, useRouter } from "next/navigation";
-import { postAiDetection, postImageToBase64 } from "@/services/aiServices";
+import { AiFormValues, Option, PlantAiData } from "@/types/form";
+import { Locate, RotateCcw, Sparkles, Trash2 } from "lucide-react";
 import { ActionType, AiResult, Plant, Status } from "@/types/plant";
+import { postAiDetection, postImageToBase64 } from "@/services/aiServices";
 import {
   postPlantAiDetection,
   updatePlant,
@@ -42,6 +34,7 @@ import ScanButton from "../scanButton";
 import AiResultCard from "../cards/aiResult";
 import PlantRejectModal from "../modals/plantReject";
 import FamilySelectField from "../familySelectField";
+import Cropper from "../cropper";
 
 export default function AiDetectionForm({
   update = false,
@@ -81,37 +74,58 @@ export default function AiDetectionForm({
   const [isComplete, setIsComplete] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showScanButton, setShowScanButton] = useState(false);
+
+  // Crop & OCR
+  const [showCropper, setShowCropper] = useState(false);
+  const [croppedImage, setCroppedImage] = useState<Blob | null>(null);
 
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
-  const previewRef = useRef<HTMLImageElement>(null);
-
-  const onSelectFile = (files: File[]) => {
-    if (files?.length) {
-      setData({ ...data, image: files[0] });
+  const onSelectFile = (file?: File) => {
+    if (file) {
+      setData({ ...data, image: file });
       const reader = new FileReader();
       reader.addEventListener("load", () =>
         setImage(reader.result?.toString() || "")
       );
-      reader.readAsDataURL(files[0]);
+      reader.readAsDataURL(file);
     }
   };
 
   const resetImage = () => {
     setImage("");
+    setShowCropper(false);
     setIsComplete(false);
+  };
+
+  const handleCroppedImageReady = (blob: Blob | null) => {
+    setCroppedImage(blob);
   };
 
   const capitalizeFirstLetter = (string: string) => {
     return string.substring(0, 1).toUpperCase() + string.substring(1);
   };
 
+  const resetDetection = () => {
+    setIsComplete(false);
+    setIsLoading(false);
+    // Keep the image and cropped data, just reset the results, to cater for detect again
+    setData({
+      ...data,
+      family: { label: "", value: "" },
+      species: "",
+      confidenceLevel: 0,
+    });
+  };
+
   const onBeginDetectionClick = () => {
     setIsLoading(true);
 
-    if (data.image)
-      postImageToBase64({ image: data.image })
+    if (data.image) {
+      let image = data.image;
+      if (croppedImage) image = new File([croppedImage], data.image.name);
+
+      postImageToBase64({ image })
         .then((resp) => {
           const { base64 } = resp;
 
@@ -135,7 +149,6 @@ export default function AiDetectionForm({
                       : max
                 );
 
-                setAiResult(results);
                 setData({
                   ...data,
                   family: {
@@ -147,6 +160,7 @@ export default function AiDetectionForm({
                 });
               }
 
+              setAiResult(results);
               setIsLoading(false);
               setIsComplete(true);
             })
@@ -160,6 +174,7 @@ export default function AiDetectionForm({
         .catch((error) => {
           toast.error(error);
         });
+    }
   };
 
   const onDataInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -370,42 +385,96 @@ export default function AiDetectionForm({
 
   return (
     <>
-      <Alert
-        title="How does it work?"
-        expand
-        isExpanded={isExpanded}
-        toggleExpand={() => setIsExpanded(!isExpanded)}
-      >
-        <ol className="text-xs list-decimal ml-4 mt-1 leading-5">
-          <li>
-            Upload a flipped image, ensuring the leaves are visible and not
-            blocked by notes
-          </li>
-          <li>Begin detection to identify the plant species</li>
-          <li>Submit the AI detection result</li>
-        </ol>
-      </Alert>
+      {initialValues && initialValues.status === Status.REJECTED ? (
+        <Alert variant="danger" title="Plant has been rejected">
+          <p className="text-xs mt-1">Reason: {initialValues.remarks}</p>
+        </Alert>
+      ) : (
+        <Alert
+          title="How does it work?"
+          expand
+          isExpanded={isExpanded}
+          toggleExpand={() => setIsExpanded(!isExpanded)}
+        >
+          <ol className="text-xs list-decimal ml-4 mt-1 leading-5">
+            <li>
+              Upload a flipped image, ensuring the leaves are visible and not
+              blocked by notes
+            </li>
+            <li>
+              <strong>Optional:</strong> Use{" "}
+              <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">
+                Show Cropper
+              </code>{" "}
+              to focus on the plant for better accuracy
+            </li>
+            <li>Begin detection to identify the plant species</li>
+            <li>Select the most accurate result from the detection</li>
+            <li>
+              Should the AI detection result require modification, you may edit
+              the values in the fields below
+            </li>
+          </ol>
+        </Alert>
+      )}
       <div className="w-full flex gap-4">
         <div className="flex-1 min-h-[250px] max-w-[50%] flex flex-col gap-4">
-          {image ? (
-            <>
-              <div className="flex border rounded-sm p-0.5 justify-between">
-                <Button variant="ghost" onClick={resetImage}>
-                  <X />
+          {!image || showCropper ? (
+            <Cropper
+              handleSetImgSrc={(image) => {
+                if (image === "") resetImage();
+                else setImage(image);
+              }}
+              imgSrc={image}
+              handleSetSelectedFile={onSelectFile}
+              onCroppedImageReady={handleCroppedImageReady}
+            >
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setShowCropper(!showCropper);
+                  setCroppedImage(null);
+                }}
+                className="text-xs"
+                disabled={isLoading}
+              >
+                Hide Cropper
+              </Button>
+            </Cropper>
+          ) : (
+            <div className="flex flex-col gap-4">
+              <div className="flex gap-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowCropper(!showCropper)}
+                  className="text-xs"
+                  disabled={isLoading}
+                >
+                  Show Cropper
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={resetImage}
+                  className="flex items-center gap-2 whitespace-nowrap"
+                  title="Remove current image"
+                >
+                  <Trash2 /> Remove Image
                 </Button>
               </div>
-              <div className="bg-gray-100 rounded-sm">
+
+              <div className="bg-gray-200 rounded-md w-full">
                 <Image
                   alt={data.species}
                   src={image}
                   width={500}
-                  height={200}
-                  className="w-full"
+                  height={500}
+                  className="h-[500px] object-contain"
                 />
               </div>
-            </>
-          ) : (
-            <ImageUploader handleFiles={onSelectFile} />
+            </div>
           )}
         </div>
         <div className="flex-1 flex flex-col gap-3">
@@ -466,13 +535,28 @@ export default function AiDetectionForm({
                     ))}
                   </div>
                 ) : (
-                  <div className="w-full rounded-lg border border-gray-200 bg-gray-50 p-4 text-center shadow-sm">
-                    <p className="text-gray-700 font-medium">
+                  <div className="w-full py-6 text-center">
+                    <p className="text-gray-500 font-medium">
                       No detection results found.
                     </p>
-                    <p className="text-gray-500 text-sm mt-1">
+                    <p className="text-gray-500 text-xs mt-1">
                       Please fill in the form manually or try using OCR.
                     </p>
+                  </div>
+                )}
+
+                {/* Action buttons section */}
+                {!update && (
+                  <div className="flex gap-2 mt-4">
+                    <Button
+                      variant="outline"
+                      className="flex-1"
+                      onClick={resetDetection}
+                      disabled={isSubmitting}
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                      Detect Again
+                    </Button>
                   </div>
                 )}
               </div>
@@ -520,9 +604,9 @@ export default function AiDetectionForm({
                     onChange={onDataInputChange}
                   />
 
-                  {showScanButton && (
+                  {showCropper && (
                     <ScanButton
-                      previewRef={previewRef}
+                      croppedImage={croppedImage}
                       onSubmit={(value) => setData({ ...data, species: value })}
                     />
                   )}
@@ -547,10 +631,10 @@ export default function AiDetectionForm({
                     onChange={onInputChange}
                   />
 
-                  {showScanButton && (
+                  {showCropper && (
                     <ScanButton
                       isBarcode
-                      previewRef={previewRef}
+                      croppedImage={croppedImage}
                       onSubmit={(value) =>
                         setFormValues({ ...formValues, barcode: value })
                       }

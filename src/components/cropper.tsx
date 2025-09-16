@@ -1,18 +1,19 @@
-import ImageUploader from "./imageUploader";
+import React, { ReactElement } from "react";
 import ImageCropper from "./imageCropper";
-import React, { RefObject } from "react";
+import ImageUploader from "./imageUploader";
 
 export default function Cropper({
   imgSrc,
   handleSetImgSrc,
   handleSetSelectedFile,
   onCroppedImageReady,
+  children,
 }: {
   imgSrc: string;
-  previewCanvasRef: RefObject<HTMLCanvasElement | null>;
   handleSetImgSrc: (src: string) => void;
   handleSetSelectedFile: (files?: File) => void;
-  onCroppedImageReady: (blob: Blob) => void;
+  onCroppedImageReady: (blob: Blob | null) => void;
+  children?: ReactElement;
 }) {
   const resetFile = () => {
     handleSetSelectedFile();
@@ -39,7 +40,9 @@ export default function Cropper({
           imageSrc={imgSrc}
           onCropCompleteImage={onCroppedImageReady}
           onResetImage={resetFile}
-        />
+        >
+          {children}
+        </ImageCropper>
       )}
     </div>
   );

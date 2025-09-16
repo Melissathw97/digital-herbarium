@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  ChangeEvent,
-  FormEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import Spinner from "../spinner";
@@ -75,10 +68,9 @@ export default function OcrForm({
 
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
-  const previewRef = useRef<HTMLCanvasElement>(null);
   const [croppedImage, setCroppedImage] = useState<Blob | null>(null);
 
-  const handleCroppedImageReady = (blob: Blob) => {
+  const handleCroppedImageReady = (blob: Blob | null) => {
     setCroppedImage(blob);
   };
 
@@ -323,7 +315,7 @@ export default function OcrForm({
   return (
     <>
       {initialValues && initialValues.status === Status.REJECTED ? (
-        <Alert variant="danger" title="Specimen has been rejected">
+        <Alert variant="danger" title="Plant has been rejected">
           <p className="text-xs mt-1">Reason: {initialValues.remarks}</p>
         </Alert>
       ) : (
@@ -351,7 +343,6 @@ export default function OcrForm({
           <Cropper
             handleSetImgSrc={(image) => setImage(image)}
             imgSrc={image}
-            previewCanvasRef={previewRef}
             handleSetSelectedFile={(file) => setSelectedFile(file)}
             onCroppedImageReady={handleCroppedImageReady}
           />

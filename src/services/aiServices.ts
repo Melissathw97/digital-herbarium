@@ -1,4 +1,4 @@
-import { PlantImageToBase64Api } from "@/types/plant";
+import { PlantAiDetectionResult, PlantImageToBase64Api } from "@/types/plant";
 import { createClient } from "@/utils/supabase/client";
 
 export async function postImageToBase64({
@@ -32,7 +32,11 @@ export async function postImageToBase64({
     });
 }
 
-export async function postAiDetection({ image }: { image: string }) {
+export async function postAiDetection({
+  image,
+}: {
+  image: string;
+}): Promise<PlantAiDetectionResult> {
   const supabase = createClient();
 
   const {
