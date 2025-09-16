@@ -191,12 +191,14 @@ export default function ApprovalDetailsPage() {
                   {getBadge(plant.actionType).icon}
                   {plant.actionType}
                 </Badge>
-                {plant.actionType === ActionType.AI_DETECTION && (
-                  <Badge variant="info" bordered>
-                    <Gauge />
-                    Confidence Level: {Math.round(plant.confidenceLevel * 100)}%
-                  </Badge>
-                )}
+                {plant.actionType === ActionType.AI_DETECTION &&
+                  plant.confidenceLevel && (
+                    <Badge variant="info" bordered>
+                      <Gauge />
+                      Confidence Level:{" "}
+                      {Math.round(plant.confidenceLevel * 100)}%
+                    </Badge>
+                  )}
               </div>
               <div className="grid lg:grid-cols-[180px_auto] gap-2 lg:gap-3">
                 {displayData.map(({ label, value }) => (

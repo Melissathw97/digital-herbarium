@@ -11,6 +11,7 @@ export interface User {
   };
   organizations?: {
     id: string;
+    nid: string;
     name: string;
     colourCode: string;
   };

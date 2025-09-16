@@ -121,7 +121,7 @@ export default function Navbar() {
                         {user?.email}
                       </p>
                       <p className="text-xs whitespace-nowrap overflow-hidden overflow-ellipsis">
-                        {user?.organizations?.name}
+                        {user?.organizations?.nid}
                       </p>
                     </>
                   ) : (

@@ -23,6 +23,7 @@ import {
   Sparkles,
   Sprout,
 } from "lucide-react";
+import PlantPublishModal from "@/components/modals/plantPublish";
 
 export default function PlantDetailsPage() {
   const params = useParams();
@@ -32,6 +33,8 @@ export default function PlantDetailsPage() {
   const [plant, setPlant] = useState<Plant>();
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<User>();
+
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const getBadge = (
@@ -117,6 +120,10 @@ export default function PlantDetailsPage() {
       });
   }, [params.id]);
 
+  const onPublishClick = () => {
+    setIsPublishModalOpen(true);
+  };
+
   const onDeleteClick = () => {
     setIsDeleteModalOpen(true);
   };
@@ -146,19 +153,33 @@ export default function PlantDetailsPage() {
             {currentUser?.organizations?.name === plant.organization?.name ? (
               <div className="ml-auto flex gap-2">
                 {isAdmin && (
-                  <Button
-                    variant="outline"
-                    className="text-red-700 hover:text-red-900"
-                    onClick={onDeleteClick}
-                  >
-                    Delete Plant
-                  </Button>
+                  <>
+                    <Button
+                      variant="outline"
+                      className="text-red-700 hover:text-red-900"
+                      onClick={onDeleteClick}
+                    >
+                      Delete Plant
+                    </Button>
+                    {plant.status === Status.APPROVED && (
+                      <Button
+                        variant="outline"
+                        className="hover:text-lime-700"
+                        onClick={onPublishClick}
+                      >
+                        {plant.isPublished
+                          ? "Unpublish Plant"
+                          : "Publish Plant"}
+                      </Button>
+                    )}
+                  </>
                 )}
-                {plant.status !== Status.APPROVED && (
-                  <Link href={`/plants/${plant?.id}/edit`}>
-                    <Button>Edit Plant</Button>
-                  </Link>
-                )}
+                {plant.status !== Status.APPROVED &&
+                  plant.creatorEmail === currentUser?.email && (
+                    <Link href={`/plants/${plant?.id}/edit`}>
+                      <Button>Edit Plant</Button>
+                    </Link>
+                  )}
               </div>
             ) : null}
           </>
@@ -188,12 +209,14 @@ export default function PlantDetailsPage() {
                   {getBadge(plant.actionType).icon}
                   {plant.actionType}
                 </Badge>
-                {plant.actionType === ActionType.AI_DETECTION && (
-                  <Badge variant="info" bordered>
-                    <Gauge />
-                    Confidence Level: {Math.round(plant.confidenceLevel * 100)}%
-                  </Badge>
-                )}
+                {plant.actionType === ActionType.AI_DETECTION &&
+                  plant.confidenceLevel && (
+                    <Badge variant="info" bordered>
+                      <Gauge />
+                      Confidence Level:{" "}
+                      {Math.round(plant.confidenceLevel * 100)}%
+                    </Badge>
+                  )}
               </div>
               <div className="grid lg:grid-cols-[180px_auto] gap-2 lg:gap-3">
                 {displayData.map(({ label, value }) => (
@@ -223,6 +246,13 @@ export default function PlantDetailsPage() {
           </div>
         )}
       </div>
+
+      <PlantPublishModal
+        open={isPublishModalOpen}
+        plant={plant}
+        toggle={() => setIsPublishModalOpen(false)}
+        onPublishSuccess={() => router.refresh()}
+      />
 
       <PlantDeleteModal
         open={isDeleteModalOpen}

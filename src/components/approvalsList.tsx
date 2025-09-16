@@ -59,7 +59,7 @@ export default function ApprovalsList() {
 
     const queryParams = {
       ispublished: false,
-      status: "pending approval",
+      status: ["pending approval", "rejected"],
       page: Number(page) || 1,
       limit: Number(limit) || 10,
     };

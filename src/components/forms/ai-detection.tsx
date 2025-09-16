@@ -233,16 +233,24 @@ export default function AiDetectionForm({
     setIsSubmitting(true);
 
     if (!update) {
+      const selectedResult = aiResult.find((result) => {
+        return (
+          result.family === data.family.value && result.species === data.species
+        );
+      });
+
       postPlantAiDetection({
         ...formValues,
         image: data.image,
         family: data.family.value,
         species: data.species,
-        confidenceLevel: data.confidenceLevel,
+        ...(selectedResult
+          ? { confidenceLevel: selectedResult.confidenceLevel }
+          : {}),
       })
         .then((data) => {
           toast.success("Plant created successfully");
-          router.push(`${Pages.PLANTS}/${data.id}`);
+          router.replace(`${Pages.PLANTS}/${data.id}`);
         })
         .catch((error) => {
           toast.error(error);
@@ -266,7 +274,7 @@ export default function AiDetectionForm({
           })
             .then((response) => {
               toast.success("Plant updated succesfully");
-              router.push(`${Pages.PLANTS}/${response.id}`);
+              router.replace(`${Pages.PLANTS}/${response.id}`);
             })
             .catch((error) => {
               toast.error(error);
@@ -478,108 +486,110 @@ export default function AiDetectionForm({
           )}
         </div>
         <div className="flex-1 flex flex-col gap-3">
-          <div className="border shadow-sm rounded-sm">
-            {isLoading ? (
-              <div className="flex flex-col gap-4 items-center p-12">
-                <p className="text-gray-600 text-center">
-                  Detecting plant species...
-                </p>
-                <Spinner />
-              </div>
-            ) : isComplete ? (
-              <div className="p-6">
-                <h2 className="text-sm font-bold text-gray-700 mb-4">
+          {update && !initialValues?.confidenceLevel ? null : (
+            <div className="border shadow-sm rounded-sm">
+              {isLoading ? (
+                <div className="flex flex-col gap-4 items-center p-12">
+                  <p className="text-gray-600 text-center">
+                    Detecting plant species...
+                  </p>
+                  <Spinner />
+                </div>
+              ) : isComplete ? (
+                <div className="p-6">
+                  <h2 className="text-sm font-bold text-gray-700 mb-4">
+                    {update ? (
+                      <>DETECTION RESULT</>
+                    ) : (
+                      <>
+                        DETECTION RESULTS{" "}
+                        <span className="font-normal text-gray-500">
+                          (choose the best match)
+                        </span>
+                      </>
+                    )}
+                  </h2>
                   {update ? (
-                    <>DETECTION RESULT</>
+                    <AiResultCard
+                      result={{
+                        family: initialValues?.family ?? "-",
+                        species: initialValues?.species ?? "-",
+                        confidenceLevel: initialValues?.confidenceLevel ?? 0,
+                      }}
+                      isSelected={true}
+                    />
+                  ) : aiResult.length > 0 ? (
+                    <div className="grid lg:grid-cols-2 gap-5">
+                      {aiResult.map((result) => (
+                        <AiResultCard
+                          key={`${result.family} ${result.species} ${result.confidence}`}
+                          result={result}
+                          isSelected={
+                            result.family === data.family.value &&
+                            result.species === data.species &&
+                            result.confidenceLevel === data.confidenceLevel
+                          }
+                          onSelect={() =>
+                            setData({
+                              ...data,
+                              family: {
+                                label: result.family,
+                                value: result.family,
+                              },
+                              species: result.species,
+                              confidenceLevel: result.confidenceLevel,
+                            })
+                          }
+                        />
+                      ))}
+                    </div>
                   ) : (
-                    <>
-                      DETECTION RESULTS{" "}
-                      <span className="font-normal text-gray-500">
-                        (choose the best match)
-                      </span>
-                    </>
+                    <div className="w-full py-6 text-center">
+                      <p className="text-gray-500 font-medium">
+                        No detection results found.
+                      </p>
+                      <p className="text-gray-500 text-xs mt-1">
+                        Please fill in the form manually or try using OCR.
+                      </p>
+                    </div>
                   )}
-                </h2>
-                {update ? (
-                  <AiResultCard
-                    result={{
-                      family: initialValues?.family ?? "-",
-                      species: initialValues?.species ?? "-",
-                      confidenceLevel: initialValues?.confidenceLevel ?? 0,
-                    }}
-                    isSelected={true}
-                  />
-                ) : aiResult.length > 0 ? (
-                  <div className="grid lg:grid-cols-2 gap-5">
-                    {aiResult.map((result) => (
-                      <AiResultCard
-                        key={`${result.family} ${result.species} ${result.confidence}`}
-                        result={result}
-                        isSelected={
-                          result.family === data.family.value &&
-                          result.species === data.species &&
-                          result.confidenceLevel === data.confidenceLevel
-                        }
-                        onSelect={() =>
-                          setData({
-                            ...data,
-                            family: {
-                              label: result.family,
-                              value: result.family,
-                            },
-                            species: result.species,
-                            confidenceLevel: result.confidenceLevel,
-                          })
-                        }
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="w-full py-6 text-center">
-                    <p className="text-gray-500 font-medium">
-                      No detection results found.
-                    </p>
-                    <p className="text-gray-500 text-xs mt-1">
-                      Please fill in the form manually or try using OCR.
-                    </p>
-                  </div>
-                )}
 
-                {/* Action buttons section */}
-                {!update && (
-                  <div className="flex gap-2 mt-4">
-                    <Button
-                      variant="outline"
-                      className="flex-1"
-                      onClick={resetDetection}
-                      disabled={isSubmitting}
-                    >
-                      <RotateCcw className="h-4 w-4" />
-                      Detect Again
-                    </Button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="flex flex-col gap-4 items-center p-12">
-                <p className="text-gray-800 text-center">
-                  {image
-                    ? "When you're ready, click on the button below to begin AI detection to identify the plant species."
-                    : "Upload an image to begin AI detection"}
-                </p>
-                {image && (
-                  <Alert
-                    variant="warning"
-                    title="Optimized for Dipterocarpaceae and Burseraceae families
+                  {/* Action buttons section */}
+                  {!update && (
+                    <div className="flex gap-2 mt-4">
+                      <Button
+                        variant="outline"
+                        className="flex-1"
+                        onClick={resetDetection}
+                        disabled={isSubmitting}
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                        Detect Again
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4 items-center p-12">
+                  <p className="text-gray-800 text-center">
+                    {image
+                      ? "When you're ready, click on the button below to begin AI detection to identify the plant species."
+                      : "Upload an image to begin AI detection"}
+                  </p>
+                  {image && (
+                    <Alert
+                      variant="warning"
+                      title="Optimized for Dipterocarpaceae and Burseraceae families
                     at the moment."
-                  ></Alert>
-                )}
-                <Button disabled={!image} onClick={onBeginDetectionClick}>
-                  <Sparkles /> Begin Detection
-                </Button>
-              </div>
-            )}
-          </div>
+                    ></Alert>
+                  )}
+                  <Button disabled={!image} onClick={onBeginDetectionClick}>
+                    <Sparkles /> Begin Detection
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
 
           {isComplete && (
             <form

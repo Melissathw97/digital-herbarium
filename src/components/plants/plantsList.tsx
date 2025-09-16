@@ -341,35 +341,39 @@ export default function PlantsList() {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex gap-1">
-                      {plant.status === Status.APPROVED ? (
-                        <Button
-                          size="xs"
-                          variant="outline"
-                          className="hover:text-lime-700"
-                          onClick={() => onPublishClick(plant)}
-                        >
-                          {plant.isPublished ? <BookX /> : <BookOpen />}
-                        </Button>
-                      ) : (
-                        <Link href={`/plants/${plant.id}/edit`}>
+                      {plant.status !== Status.APPROVED &&
+                        plant.creatorEmail === currentUser?.email && (
+                          <Link href={`/plants/${plant.id}/edit`}>
+                            <Button
+                              size="xs"
+                              variant="outline"
+                              className="hover:text-lime-700"
+                            >
+                              <Pen />
+                            </Button>
+                          </Link>
+                        )}
+                      {isAdmin && (
+                        <>
+                          {plant.status === Status.APPROVED && (
+                            <Button
+                              size="xs"
+                              variant="outline"
+                              className="hover:text-lime-700"
+                              onClick={() => onPublishClick(plant)}
+                            >
+                              {plant.isPublished ? <BookX /> : <BookOpen />}
+                            </Button>
+                          )}
                           <Button
                             size="xs"
                             variant="outline"
-                            className="hover:text-lime-700"
+                            className="text-red-700 hover:text-red-700"
+                            onClick={() => onDeleteClick(plant)}
                           >
-                            <Pen />
+                            <Trash />
                           </Button>
-                        </Link>
-                      )}
-                      {isAdmin && (
-                        <Button
-                          size="xs"
-                          variant="outline"
-                          className="text-red-700 hover:text-red-700"
-                          onClick={() => onDeleteClick(plant)}
-                        >
-                          <Trash />
-                        </Button>
+                        </>
                       )}
                     </div>
                   </td>
@@ -386,7 +390,7 @@ export default function PlantsList() {
         open={isPublishModalOpen}
         plant={selectedPlant}
         toggle={() => setIsPublishModalOpen(false)}
-        onPublishSuccess={() => {}}
+        onPublishSuccess={fetchPlants}
       />
 
       <PlantDeleteModal

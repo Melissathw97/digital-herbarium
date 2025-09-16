@@ -151,7 +151,7 @@ export default function OcrForm({
       })
         .then((data) => {
           toast.success("Plant created successfully");
-          router.push(`${Pages.PLANTS}/${data.id}`);
+          router.replace(`${Pages.PLANTS}/${data.id}`);
         })
         .catch((error) => {
           toast.error(error);
@@ -291,18 +291,18 @@ export default function OcrForm({
         ...formValues,
         family,
         species: initialValues.species,
-        barcode: initialValues.barcode,
-        prefix: initialValues.prefix,
-        number: initialValues.number,
-        collector: initialValues.collector,
-        date: new Date(initialValues.date),
+        barcode: initialValues.barcode || "",
+        prefix: initialValues.prefix || "",
+        number: initialValues.number || "",
+        collector: initialValues.collector || "",
+        date: initialValues.date ? new Date(initialValues.date) : new Date(),
         state,
         district: initialValues.district,
         location: initialValues.location,
         elevation: (initialValues.elevation || "").toString(),
         latitude: (initialValues.latitude || "").toString(),
         longitude: (initialValues.longitude || "").toString(),
-        vernacularName: initialValues.vernacularName,
+        vernacularName: initialValues.vernacularName || "",
         additionalNotes: initialValues.additionalNotes || "",
       });
     } else {

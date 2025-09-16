@@ -22,6 +22,7 @@ export interface Plant {
   actionType: ActionType;
   status: Status;
   confidenceLevel: number;
+  creatorEmail?: string;
   creatorFirstName?: string;
   creatorLastName?: string;
   isPublished: boolean;
@@ -104,7 +105,7 @@ export interface PlantOCRPayload extends PlantPayload {
 
 export interface PlantAiDetectionPayload extends PlantPayload {
   image?: File;
-  confidenceLevel: number;
+  confidenceLevel?: number;
 }
 
 export interface PlantImageToBase64Api {
@@ -128,6 +129,11 @@ export interface PlantUpdatePayload extends PlantPayload {
   confidenceLevel?: number;
   status?: string;
   remarks?: string;
+}
+
+export interface PlantPublishPayload {
+  id: string;
+  isPublished: boolean;
 }
 
 export interface PlantOrganization {

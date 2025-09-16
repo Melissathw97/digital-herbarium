@@ -6,6 +6,7 @@ import {
   PlantUpdatePayload,
   PlantAiDetectionPayload,
   FileResponse,
+  PlantPublishPayload,
 } from "@/types/plant";
 import { createClient } from "@/utils/supabase/client";
 import {
@@ -30,7 +31,14 @@ export async function getPlants(queryParams: {
 
   Object.entries(queryParams).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
-      params.append(key, String(value));
+      if (Array.isArray(value)) {
+        // If the value is an array, append each item with the same key.
+        value.forEach((val) => {
+          params.append(key, String(val));
+        });
+      } else {
+        params.append(key, String(value));
+      }
     }
   });
 
@@ -60,6 +68,7 @@ export async function getPlants(queryParams: {
           actionType: plant.action_type,
           status: plant.status,
           confidenceLevel: plant.confidence_level,
+          creatorEmail: plant.creator_email,
           creatorFirstName: plant.creator_first_name,
           creatorLastName: plant.creator_last_name,
           organization: plant.organizations,
@@ -101,6 +110,7 @@ export async function getPlantById({ id }: { id: string }): Promise<Plant> {
         status: data.status,
         isPublished: data.is_published,
         confidenceLevel: data.confidence_level,
+        creatorEmail: data.creator_email,
         creatorFirstName: data.creator_first_name,
         creatorLastName: data.creator_last_name,
         remarks: data.remarks,
@@ -266,7 +276,7 @@ export async function postPlantAiDetection({
     image,
     family,
     species,
-    confidence_level: confidenceLevel,
+    ...(confidenceLevel ? { confidence_level: confidenceLevel } : {}),
     vernacular: vernacularName,
     barcode,
     prefix,
@@ -389,6 +399,31 @@ export async function updatePlantImage({
       body: formData,
     })
     .then(async ({ data, response }) => {
+      if (response?.ok === false) {
+        const resp = await response?.json();
+        throw resp.error;
+      }
+
+      return data.data;
+    });
+}
+
+export async function publishPlant({
+  id,
+  isPublished,
+}: PlantPublishPayload): Promise<Plant> {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke(`plant-data/?id=${id}`, {
+      method: "PATCH",
+      body: {
+        is_published: isPublished,
+      },
+    })
+    .then(async ({ data, response, error }) => {
+      if (error) throw error;
+
       if (response?.ok === false) {
         const resp = await response?.json();
         throw resp.error;

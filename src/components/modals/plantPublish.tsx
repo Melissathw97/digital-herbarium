@@ -9,7 +9,7 @@ import {
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Plant } from "@/types/plant";
-import { deletePlants } from "@/services/plantServices";
+import { publishPlant } from "@/services/plantServices";
 
 export default function PlantPublishModal({
   open,
@@ -24,15 +24,20 @@ export default function PlantPublishModal({
 }) {
   const onConfirm = () => {
     if (plant) {
-      deletePlants({ ids: [plant.id] })
+      publishPlant({ id: plant.id, isPublished: !plant.isPublished })
         .then(() => {
           toggle();
           onPublishSuccess();
-          toast.success("Plant published successfully!");
+
+          if (plant?.isPublished) {
+            toast.success("Plant unpublished successfully");
+          } else {
+            toast.success("Plant published successfully");
+          }
         })
         .catch((error) => {
           toggle();
-          toast.error(error);
+          toast.error(error.message);
         });
     }
   };
