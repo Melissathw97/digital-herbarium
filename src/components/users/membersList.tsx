@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { User, UserRole } from "@/types/user";
 import { Pages } from "@/types/pages";
-import SearchField from "./searchField";
+import SearchField from "../searchField";
 import Spinner from "@/components/spinner";
 import { Pagination } from "@/types/plant";
 import UserCard from "@/components/cards/user";
@@ -22,7 +22,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "../ui/select";
 
 export default function MembersList() {
   const router = useRouter();

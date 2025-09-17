@@ -1,4 +1,4 @@
-import Badge from "./badge";
+import Badge from "../badge";
 import { User, UserRole } from "@/types/user";
 import { Crown, Star, User as UserIcon } from "lucide-react";
 

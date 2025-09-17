@@ -1,7 +1,7 @@
 import { Button } from "../ui/button";
 import formatDate from "@/utils/formatDate";
 import { User } from "@/types/user";
-import UserRoleBadge from "../userRoleBadge";
+import UserRoleBadge from "../users/userRoleBadge";
 import {
   Building2,
   Calendar,

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Spinner from "@/components/spinner";
-import MembersList from "@/components/membersList";
+import MembersList from "@/components/users/membersList";
 
 export default function MembersPage() {
   return (
