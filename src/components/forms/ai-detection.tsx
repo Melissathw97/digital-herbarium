@@ -555,19 +555,17 @@ export default function AiDetectionForm({
                   )}
 
                   {/* Action buttons section */}
-                  {!update && (
-                    <div className="flex gap-2 mt-4">
-                      <Button
-                        variant="outline"
-                        className="flex-1"
-                        onClick={resetDetection}
-                        disabled={isSubmitting}
-                      >
-                        <RotateCcw className="h-4 w-4" />
-                        Detect Again
-                      </Button>
-                    </div>
-                  )}
+                  <div className="flex gap-2 mt-4">
+                    <Button
+                      variant="outline"
+                      className="flex-1"
+                      onClick={resetDetection}
+                      disabled={isSubmitting}
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                      Detect Again
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col gap-4 items-center p-12">
@@ -591,7 +589,7 @@ export default function AiDetectionForm({
             </div>
           )}
 
-          {isComplete && (
+          {(isComplete || update) && (
             <form
               onSubmit={onFormSubmit}
               className={`border shadow-sm rounded-sm p-6 flex flex-col gap-4 items-end`}
