@@ -158,6 +158,39 @@ export function updateUserRole({
     });
 }
 
+export function updateUserOrganization({
+  userId,
+  organizationId,
+}: {
+  userId: string;
+  organizationId: string;
+}): Promise<User> {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke(`user-data/organization?user_id=${userId}`, {
+      method: "PUT",
+      body: {
+        organization_id: organizationId,
+      },
+    })
+    .then(async ({ data, response }) => {
+      if (response?.ok === false) {
+        const resp = await response?.json();
+        throw resp.error;
+      }
+
+      return {
+        id: data.data.user_id,
+        firstName: data.data.first_name,
+        lastName: data.data.last_name,
+        role: data.data.role,
+        email: data.data.email,
+        joinedAt: data.data.created_at,
+      };
+    });
+}
+
 export function deleteUsers({ ids }: { ids: string[] }): Promise<User> {
   const supabase = createClient();
 

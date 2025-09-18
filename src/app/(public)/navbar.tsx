@@ -15,13 +15,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import UserRoleBadge from "@/components/userRoleBadge";
 import { getUserProfile } from "@/services/userServices";
-import { FileClock, Home, Sprout, UserCircle, UsersRound } from "lucide-react";
+import UserRoleBadge from "@/components/users/userRoleBadge";
+import {
+  Building2,
+  FileClock,
+  Home,
+  ScrollText,
+  ShieldCheck,
+  Sprout,
+  UserCircle,
+  UsersRound,
+} from "lucide-react";
+import { useAuth } from "@/utils/supabase/tokenStorage";
 
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
+  const { isAdmin } = useAuth();
 
   const [user, setUser] = useState<User>();
 
@@ -91,6 +102,33 @@ export default function Navbar() {
               Users
             </Button>
           </Link>
+
+          {user && isAdmin && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant={
+                    pathname.startsWith(Pages.AUDIT_LOGS) ||
+                    pathname.startsWith(Pages.ORGANIZATIONS)
+                      ? "secondary"
+                      : "ghost"
+                  }
+                  size="sm"
+                >
+                  <ShieldCheck />
+                  Admin
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <Link href={Pages.ORGANIZATIONS}>
+                  <DropdownMenuItem className="py-2">
+                    <Building2 />
+                    Organizations
+                  </DropdownMenuItem>
+                </Link>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
 
         <div className="flex gap-4 shrink-0">

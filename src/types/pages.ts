@@ -12,4 +12,6 @@ export enum Pages {
   APPROVALS = "/approvals",
   PROFILE = "/profile",
   SUPPORT = "/support",
+  ORGANIZATIONS = "/organizations",
+  ORGANIZATIONS_NEW = "/organizations/new",
 }
