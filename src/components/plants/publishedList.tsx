@@ -17,8 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { SimplifiedOrganization } from "@/types/organization";
 import { getOrganizations } from "@/services/organizationServices";
-import { Organization } from "@/types/organization";
 
 export default function PublishedList() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function PublishedList() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [plants, setPlants] = useState<Plant[]>([]);
-  const [organizations, setOrganizations] = useState<Organization[]>([
+  const [organizations, setOrganizations] = useState<SimplifiedOrganization[]>([
     {
       id: "All Organizations",
       name: "All Organizations",

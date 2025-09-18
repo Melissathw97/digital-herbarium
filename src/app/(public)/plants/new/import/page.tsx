@@ -164,7 +164,7 @@ export default function ImportPage() {
         open={isUploadSuccessfulModalOpen}
         onConfirm={() => {
           setIsUploadSuccessfulModalOpen(!isUploadSuccessfulModalOpen);
-          router.push(Pages.PLANTS);
+          router.push(`${Pages.PLANTS}/?tab=All%20Records`);
         }}
       />
     </>

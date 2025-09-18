@@ -20,7 +20,7 @@ export default function UploadSuccessfulModal({
     <AlertDialog open={open}>
       <AlertDialogContent className="gap-8 pt-8">
         <AlertDialogHeader>
-          <CircleCheckBig className="text-amber-700 w-8 h-8 mx-auto mb-2" />
+          <CircleCheckBig className="text-lime-700 w-8 h-8 mx-auto mb-2" />
           <AlertDialogTitle className="text-center">
             Data Import Successful
           </AlertDialogTitle>

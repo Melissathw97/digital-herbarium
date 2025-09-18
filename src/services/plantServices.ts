@@ -132,7 +132,7 @@ export async function getPlantImage({
       method: "GET",
     })
     .then(({ data, error }) => {
-      if (error) throw error;
+      if (error) return error;
 
       return {
         imageUrl: data.image_url,

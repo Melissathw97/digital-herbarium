@@ -9,6 +9,8 @@ import {
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Plant } from "@/types/plant";
+import { Pages } from "@/types/pages";
+import { useRouter } from "next/navigation";
 import { publishPlant } from "@/services/plantServices";
 
 export default function PlantPublishModal({
@@ -22,6 +24,8 @@ export default function PlantPublishModal({
   toggle: () => void;
   onPublishSuccess: () => void;
 }) {
+  const router = useRouter();
+
   const onConfirm = () => {
     if (plant) {
       publishPlant({ id: plant.id, isPublished: !plant.isPublished })
@@ -33,6 +37,7 @@ export default function PlantPublishModal({
             toast.success("Plant unpublished successfully");
           } else {
             toast.success("Plant published successfully");
+            router.push(Pages.PLANTS);
           }
         })
         .catch((error) => {

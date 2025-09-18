@@ -19,6 +19,7 @@ import {
   CheckCircle,
   ChevronLeftIcon,
   Gauge,
+  ImageIcon,
   ScanText,
   Sparkles,
   Sprout,
@@ -98,26 +99,31 @@ export default function PlantDetailsPage() {
     }
   };
 
-  useEffect(() => {
+  const fetchPlant = () => {
     getPlantById({ id: params.id?.toString() || "" })
-      .then((data) => {
-        getPlantImage({ id: params.id?.toString() || "" }).then(
-          async ({ imageUrl }) => {
-            setPlant({
-              ...data,
-              imagePath: imageUrl || "",
-            });
+      .then(async (data) => {
+        const { imageUrl } = await getPlantImage({
+          id: params.id?.toString() || "",
+        });
 
-            const current = await getUserProfile();
-            setCurrentUser(current);
+        setPlant({
+          ...data,
+          imagePath: imageUrl || "",
+        });
 
-            setIsLoading(false);
-          }
-        );
+        const current = await getUserProfile();
+        setCurrentUser(current);
+
+        setIsLoading(false);
       })
       .catch(() => {
         setIsLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchPlant();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id]);
 
   const onPublishClick = () => {
@@ -195,13 +201,20 @@ export default function PlantDetailsPage() {
           </p>
         ) : (
           <div className="flex w-full gap-6 items-start">
-            <div className="bg-gray-100 max-w-[50%] rounded-sm">
-              <Image
-                alt={plant?.species || ""}
-                src={plant?.imagePath || ""}
-                width={500}
-                height={200}
-              />
+            <div className="bg-gray-100 w-full min-h-[400px] max-w-[50%] rounded-sm grid place-items-center">
+              {plant.imagePath ? (
+                <Image
+                  alt={plant?.species || ""}
+                  src={plant?.imagePath || ""}
+                  width={500}
+                  height={200}
+                />
+              ) : (
+                <div className="flex flex-col gap-2 text-gray-400/60 font-semibold">
+                  <ImageIcon className="size-6 mx-auto" />
+                  <p>No plant image</p>
+                </div>
+              )}
             </div>
             <div className="flex-1 p-8 font-semibold shadow-sm rounded-sm border flex flex-col gap-6 sticky top-[80px] items-start">
               <div className="flex gap-2">
@@ -251,7 +264,7 @@ export default function PlantDetailsPage() {
         open={isPublishModalOpen}
         plant={plant}
         toggle={() => setIsPublishModalOpen(false)}
-        onPublishSuccess={() => router.refresh()}
+        onPublishSuccess={fetchPlant}
       />
 
       <PlantDeleteModal
