@@ -63,7 +63,7 @@ export default function UserOrganizationUpdateModal({
   return (
     <AlertDialog open={open}>
       <AlertDialogContent className="!max-w-md gap-8 pt-8">
-        <AlertDialogHeader>
+        <AlertDialogHeader className="text-left">
           <AlertDialogTitle>Change User Organization</AlertDialogTitle>
           <div className="flex flex-col gap-4 mt-3">
             {user && <UserCard user={user} fullDetails={false} />}
@@ -71,7 +71,7 @@ export default function UserOrganizationUpdateModal({
             <div className="flex flex-col gap-2">
               <label>Current Organization</label>
 
-              <Input value={user?.organization?.name} disabled />
+              <Input value={user?.organizations?.name} disabled />
             </div>
             <div className="flex flex-col gap-2">
               <label>New Organization</label>
@@ -95,7 +95,7 @@ export default function UserOrganizationUpdateModal({
             </div>
           </div>
         </AlertDialogHeader>
-        <AlertDialogFooter className="!justify-center">
+        <AlertDialogFooter className="!justify-center !items-center">
           <Button variant="outline" className="w-32" onClick={toggle}>
             Cancel
           </Button>

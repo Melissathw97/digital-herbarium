@@ -105,6 +105,7 @@ export async function getOrganizationById(
               role: user.role,
               email: user.email,
               joinedAt: user.created_at,
+              organizations: user.organizations,
             })),
             pagination: data.users.pagination,
           },
