@@ -6,7 +6,7 @@ import StateChart from "@/components/cards/stateChart";
 import FamilyChart from "@/components/cards/familyChart";
 import MonthChart from "@/components/cards/monthChart";
 import { getSummary } from "@/services/dashboardServices";
-import { Gauge, ScanText, Sparkles, Sprout } from "lucide-react";
+import { Import, ScanText, Sparkles, Sprout } from "lucide-react";
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState<Summary>();
@@ -23,7 +23,7 @@ export default function DashboardPage() {
         <div className="bg-white shadow-sm rounded-sm px-6 py-4 border flex gap-4 items-center">
           <Sprout className="text-lime-700 shrink-0" />
           <div className="flex flex-col gap-1">
-            <p className="text-lime-700 font-semibold">Total Records</p>
+            <p className="text-lime-700 font-semibold">Published Records</p>
             <p className="font-bold text-xl">{summary?.total || "-"}</p>
           </div>
         </div>
@@ -42,14 +42,10 @@ export default function DashboardPage() {
           </div>
         </div>
         <div className="bg-white shadow-sm rounded-sm px-6 py-4 border flex gap-4 items-center">
-          <Gauge className="text-lime-700 shrink-0" />
+          <Import className="text-lime-700 shrink-0" />
           <div className="flex flex-col gap-1">
-            <p className="text-lime-700 font-semibold">Average Confidence</p>
-            <p className="font-bold text-xl">
-              {summary?.averageConfidence
-                ? `${(summary.averageConfidence * 100).toFixed(2)}%`
-                : "-"}
-            </p>
+            <p className="text-lime-700 font-semibold">Imported Records</p>
+            <p className="font-bold text-xl">{summary?.totalImported || "-"}</p>
           </div>
         </div>
       </div>

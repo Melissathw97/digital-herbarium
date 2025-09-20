@@ -20,15 +20,18 @@ export default function FamilyChart() {
   const chartData = useMemo(() => {
     return data?.map((family) => ({
       family: family.name,
+      familyId: family.name.replace(" ", "-").toLowerCase(),
       count: family.total,
-      fill: `var(--color-${family.name})`,
+      fill: `var(--color-${family.name.replace(" ", "-").toLowerCase()})`,
     }));
   }, [data]);
 
   const chartConfig = useMemo(() => {
     const config = data?.reduce((obj, family, index) => {
-      if (!obj[family.name]) {
-        obj[family.name] = {
+      const familyId = family.name.replace(" ", "-").toLowerCase();
+
+      if (!obj[familyId]) {
+        obj[familyId] = {
           label: family.name,
           color: `var(--chart-${index + 1})`,
         };
@@ -44,6 +47,9 @@ export default function FamilyChart() {
       ...(data ? config : {}),
     };
   }, [data]);
+
+  console.log("chartData", chartData);
+  console.log("chartConfig", chartConfig);
 
   useEffect(() => {
     getTopFamilies().then((response) => {
@@ -73,11 +79,11 @@ export default function FamilyChart() {
           >
             <PieChart>
               <ChartTooltip
-                content={<ChartTooltipContent nameKey="family" hideLabel />}
+                content={<ChartTooltipContent nameKey="familyId" hideLabel />}
               />
-              <Pie data={chartData} dataKey="count" />
+              <Pie data={chartData} dataKey="count" nameKey="familyId" />
               <ChartLegend
-                content={<ChartLegendContent nameKey="family" />}
+                content={<ChartLegendContent nameKey="familyId" />}
                 className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
               />
             </PieChart>
