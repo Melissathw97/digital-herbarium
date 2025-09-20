@@ -29,6 +29,7 @@ export default function PublishedList() {
   const [organizations, setOrganizations] = useState<SimplifiedOrganization[]>([
     {
       id: "All Organizations",
+      nid: "All Organizations",
       name: "All Organizations",
     },
   ]);
@@ -169,7 +170,7 @@ export default function PublishedList() {
                   return (
                     <SelectItem
                       key={org.id}
-                      value={org.id}
+                      value={org.nid}
                       className="rounded-lg [&_span]:flex"
                     >
                       <div className="flex items-center gap-2 text-xs">

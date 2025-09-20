@@ -19,6 +19,7 @@ export async function getOrganizations(): Promise<Organization[]> {
 
       return data.map((organization: Organization) => ({
         id: organization.id,
+        nid: organization.nid,
         name: organization.name,
       }));
     });

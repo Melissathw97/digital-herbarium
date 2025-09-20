@@ -3,6 +3,7 @@ import { User } from "./user";
 
 export interface SimplifiedOrganization {
   id: string;
+  nid: string;
   name: string;
 }
 

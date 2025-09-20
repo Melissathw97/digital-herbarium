@@ -12,6 +12,9 @@ export default function PlantCard({ plant }: { plant: Plant }) {
       case ActionType.OCR:
         return "default";
 
+      case ActionType.HERBARIUM:
+        return "success";
+
       default:
         return "info";
     }
@@ -34,10 +37,13 @@ export default function PlantCard({ plant }: { plant: Plant }) {
         </div>
       )}
       <div className="flex flex-col gap-4 items-start w-full">
-        <div className="flex flex-col gap-1.5">
-          <h6 className="sm:text-base font-semibold flex gap-1.5 items-center">
-            <LeafIcon className="size-4 text-lime-700" /> {plant.species}
-          </h6>
+        <div className="flex flex-col gap-1.5 w-full">
+          <div className="sm:text-base font-semibold flex gap-1.5 items-center">
+            <LeafIcon className="size-4 text-lime-700" />
+            <h6 className="whitespace-nowrap overflow-hidden overflow-ellipsis">
+              {plant.species}
+            </h6>
+          </div>
           <p className="text-xs">Family: {plant.family}</p>
         </div>
         <Badge variant={getBadgeVariant(plant.actionType)} bordered>
