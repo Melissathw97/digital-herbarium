@@ -182,7 +182,7 @@ export default function UserActivityLogs() {
                     {label}
                   </th>
                 ))}
-                <th className="px-3 sticky right-0 z-2 bg-white">Action</th>
+                <th className="px-3 sticky right-0 z-2 bg-white"></th>
               </tr>
             </thead>
             <tbody>
