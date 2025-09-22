@@ -17,9 +17,11 @@ import {
 export async function getPlants(queryParams: {
   page?: number;
   limit?: number;
-  organization?: string | null;
-  family?: string | null;
-  action?: string | null;
+  ispublished?: string | boolean;
+  search?: string;
+  organization?: string;
+  family?: string;
+  action?: string;
 }): Promise<{
   data: Plant[];
   pagination: Pagination;
