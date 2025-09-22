@@ -49,8 +49,6 @@ export default function ImportPage() {
       return;
     }
 
-    console.log("file", file);
-
     postImport(file)
       .then((response) => {
         console.log("res", response);
@@ -75,7 +73,7 @@ export default function ImportPage() {
       </div>
 
       <div className="bg-white shadow-sm rounded-md px-6 py-6 border flex flex-col gap-7">
-        {isAdmin === false && (
+        {templates.length > 0 && isAdmin === false && (
           <div className="bg-red-100 text-red-700 font-semibold text-center p-2 rounded-sm">
             This feature is reserved for Admins and Super Admins only.
           </div>
@@ -98,7 +96,7 @@ export default function ImportPage() {
                 <p className="w-full text-center text-sm text-gray-400 pt-8 pb-4">
                   Loading template and guideline...
                 </p>
-              ) : (
+              ) : templates.length > 0 ? (
                 <div className="grid gap-4 sm:grid-cols-2 mt-4">
                   {templates.map((file) => (
                     <div key={file.name}>
@@ -117,6 +115,10 @@ export default function ImportPage() {
                     </div>
                   ))}
                 </div>
+              ) : (
+                <p className="w-full text-center text-sm text-gray-400 pt-8 pb-4">
+                  No templates found
+                </p>
               )}
             </div>
           </div>
@@ -137,24 +139,27 @@ export default function ImportPage() {
               All uploaded data will be automatically marked as{" "}
               <span className="font-semibold text-lime-700">Approved</span>.
             </p>
-            <div className="flex items-center mt-4 gap-4 w-full">
-              <div className="overflow-hidden">
-                <FileUploader
-                  file={file}
-                  onFileChange={setFile}
-                  disabled={!isAdmin}
-                  placeholder="Choose Excel file"
-                />
-              </div>
 
-              <Button
-                className="w-32 shrink-0"
-                onClick={onImport}
-                disabled={!isAdmin}
-              >
-                Import
-              </Button>
-            </div>
+            {templates.length > 0 && (
+              <div className="flex items-center mt-4 gap-4 w-full">
+                <div className="overflow-hidden">
+                  <FileUploader
+                    file={file}
+                    onFileChange={setFile}
+                    disabled={!isAdmin}
+                    placeholder="Choose Excel file"
+                  />
+                </div>
+
+                <Button
+                  className="w-32 shrink-0"
+                  onClick={onImport}
+                  disabled={!isAdmin}
+                >
+                  Import
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
