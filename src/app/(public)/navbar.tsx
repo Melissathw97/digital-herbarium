@@ -158,9 +158,20 @@ export default function Navbar() {
                       <p className="text-xs whitespace-nowrap overflow-hidden overflow-ellipsis">
                         {user?.email}
                       </p>
-                      <p className="text-xs whitespace-nowrap overflow-hidden overflow-ellipsis">
-                        {user?.organizations?.nid}
-                      </p>
+
+                      <div className="flex flex-col gap-0.5 text-[10px] mt-1 text-gray-500">
+                        <p className="whitespace-nowrap overflow-hidden overflow-ellipsis">
+                          {user?.organizations?.name}
+                        </p>
+                        <div className="flex justify-between gap-1 pr-1">
+                          <p className="whitespace-nowrap overflow-hidden overflow-ellipsis">
+                            {user?.expertise}
+                          </p>
+                          <p className="whitespace-nowrap overflow-hidden overflow-ellipsis">
+                            {user?.yearsOfExperience}y
+                          </p>
+                        </div>
+                      </div>
                     </>
                   ) : (
                     <div className="flex flex-col gap-1.5">

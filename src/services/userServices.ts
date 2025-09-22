@@ -23,6 +23,8 @@ export function getUserProfile(): Promise<User> {
         id: data?.user_id || "",
         firstName: data?.first_name,
         lastName: data?.last_name,
+        expertise: data?.expertise || "",
+        yearsOfExperience: data?.year_of_experience || "",
         role: data?.role || "",
         email: data?.email,
         organizations: {
@@ -37,9 +39,13 @@ export function getUserProfile(): Promise<User> {
 export function updateUserProfile({
   firstName,
   lastName,
+  expertise,
+  yearsOfExperience,
 }: {
   firstName: string;
   lastName: string;
+  expertise: string;
+  yearsOfExperience: string;
 }): Promise<User> {
   const supabase = createClient();
 
@@ -49,6 +55,8 @@ export function updateUserProfile({
       body: {
         first_name: firstName,
         last_name: lastName,
+        expertise,
+        year_of_experience: Number(yearsOfExperience),
       },
     })
     .then(({ data }) => {
@@ -56,6 +64,8 @@ export function updateUserProfile({
         id: data?.user_id || "",
         firstName: data?.first_name,
         lastName: data?.last_name,
+        expertise: data?.expertise,
+        yearsOfExperience: data?.year_of_experience,
         role: data?.role || "",
         email: data?.email,
         joinedAt: data?.created_at || "",
@@ -151,6 +161,8 @@ export function updateUserRole({
         id: data.data.user_id,
         firstName: data.data.first_name,
         lastName: data.data.last_name,
+        expertise: data.data.expertise,
+        yearsOfExperience: data.data.year_of_experience,
         role: data.data.role,
         email: data.data.email,
         joinedAt: data.data.created_at,
@@ -184,6 +196,8 @@ export function updateUserOrganization({
         id: data.data.user_id,
         firstName: data.data.first_name,
         lastName: data.data.last_name,
+        expertise: data.data.expertise,
+        yearsOfExperience: data.data.year_of_experience,
         role: data.data.role,
         email: data.data.email,
         joinedAt: data.data.created_at,

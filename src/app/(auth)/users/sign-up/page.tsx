@@ -38,6 +38,8 @@ export default function UsersSignUp() {
     lastName: "",
     email: "",
     organization: "",
+    expertise: "",
+    yearsOfExperience: "",
     password: "",
     confirmPassword: "",
   });
@@ -47,14 +49,26 @@ export default function UsersSignUp() {
     return validatePassword(formValues.password);
   }, [formValues]);
 
+  const requiredFields: (keyof typeof formValues)[] = [
+    "firstName",
+    "lastName",
+    "email",
+    "organization",
+    "expertise",
+    "password",
+    "confirmPassword",
+  ];
+
   const isSubmitButtonDisabled = useMemo(() => {
     if (isLoading) return true;
-    if (Object.values(formValues).some((value) => !value)) return true;
+    if (requiredFields.some((field) => !formValues[field])) return true;
     if (formValues.password !== formValues.confirmPassword) return true;
     if (Object.values(passwordValidation).some((isFulfilled) => !isFulfilled))
       return true;
 
     return false;
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, formValues, passwordValidation]);
 
   const toggleModal = () => {
@@ -78,9 +92,25 @@ export default function UsersSignUp() {
     setIsLoading(true);
     e.preventDefault();
 
-    const { firstName, lastName, email, password, organization } = formValues;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      organization,
+      yearsOfExperience,
+      expertise,
+    } = formValues;
 
-    userSignUp({ email, password, firstName, lastName, organization })
+    userSignUp({
+      email,
+      password,
+      firstName,
+      lastName,
+      organization,
+      yearsOfExperience,
+      expertise,
+    })
       .then(({ error }) => {
         setIsLoading(false);
 
@@ -112,20 +142,28 @@ export default function UsersSignUp() {
           <div className="flex flex-col gap-5">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="w-full flex flex-col gap-2">
-                <label>First Name</label>
+                <label>
+                  First Name<span className="text-red-600 ml-0.5">*</span>
+                </label>
                 <Input name="firstName" onChange={onInputChange} />
               </div>
               <div className="w-full flex flex-col gap-2">
-                <label>Last Name</label>
+                <label>
+                  Last Name<span className="text-red-600 ml-0.5">*</span>
+                </label>
                 <Input name="lastName" onChange={onInputChange} />
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <label>Email</label>
+              <label>
+                Email<span className="text-red-600 ml-0.5">*</span>
+              </label>
               <Input type="email" name="email" onChange={onInputChange} />
             </div>
             <div className="flex flex-col gap-2">
-              <label>Organization</label>
+              <label>
+                Organization<span className="text-red-600 ml-0.5">*</span>
+              </label>
               <Select
                 value={formValues.organization ?? ""}
                 onValueChange={(value) =>
@@ -156,8 +194,27 @@ export default function UsersSignUp() {
               )}
             </div>
 
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="w-full flex flex-col gap-2">
+                <label className="text-sm">
+                  Expertise<span className="text-red-600 ml-0.5">*</span>
+                </label>
+                <Input name="expertise" onChange={onInputChange} />
+              </div>
+              <div className="w-full flex flex-col gap-2">
+                <label className="text-sm">Years of Experience</label>
+                <Input
+                  name="yearsOfExperience"
+                  type="number"
+                  onChange={onInputChange}
+                />
+              </div>
+            </div>
+
             <div className="flex flex-col gap-2">
-              <label>Password</label>
+              <label>
+                Password<span className="text-red-600 ml-0.5">*</span>
+              </label>
               <Input type="password" name="password" onChange={onInputChange} />
               {formValues.password && (
                 <div className="text-[10px] flex flex-col gap-0.5">
@@ -183,7 +240,9 @@ export default function UsersSignUp() {
               )}
             </div>
             <div className="flex flex-col gap-2">
-              <label>Confirm Password</label>
+              <label>
+                Confirm Password<span className="text-red-600 ml-0.5">*</span>
+              </label>
               <Input
                 type="password"
                 name="confirmPassword"

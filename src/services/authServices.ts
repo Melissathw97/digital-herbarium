@@ -21,12 +21,16 @@ export function userSignUp({
   firstName,
   lastName,
   organization,
+  expertise,
+  yearsOfExperience,
 }: {
   email: string;
   password: string;
   firstName: string;
   lastName: string;
   organization: string;
+  expertise: string;
+  yearsOfExperience: string;
 }) {
   const supabase = createClient();
 
@@ -38,6 +42,8 @@ export function userSignUp({
         first_name: firstName,
         last_name: lastName,
         organization_id: organization,
+        expertise,
+        year_of_experience: yearsOfExperience,
       },
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/users/sign-in?confirmed=true&email=${email}`,
     },

@@ -136,8 +136,8 @@ export default function UserActivityLogs() {
   return (
     <>
       <div className="bg-white shadow-sm rounded-sm px-4 py-5 border flex flex-col gap-5 w-full overflow-hidden">
-        <div className="flex justify-between">
-          <div className="flex gap-3 items-center flex-wrap">
+        <div className="flex flex-col sm:flex-row justify-between gap-2">
+          <div className="flex gap-y-2 gap-3 items-center flex-wrap">
             <p className="font-semibold">Filters</p>
 
             {/* Action Filter */}
@@ -161,12 +161,12 @@ export default function UserActivityLogs() {
             </Select>
           </div>
 
-          <div className="ml-auto flex gap-2">
+          <div className="md:ml-auto flex gap-2">
             <Input
               name="search"
               value={search}
               onChange={onInputChange}
-              className="bg-white shadow-sm min-w-[220px]"
+              className="bg-white shadow-sm min-w-[200px]"
               placeholder="Search..."
             />
           </div>

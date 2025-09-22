@@ -3,6 +3,8 @@ export interface User {
   profileId?: string;
   firstName: string;
   lastName: string;
+  expertise: string;
+  yearsOfExperience: string;
   role: UserRole;
   email: string;
   joinedAt: string;

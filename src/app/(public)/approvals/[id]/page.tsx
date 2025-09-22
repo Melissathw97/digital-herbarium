@@ -222,7 +222,10 @@ export default function ApprovalDetailsPage() {
               </div>
               <p className="text-gray-600 font-normal italic text-xs mt-6 -mb-2">
                 Record created by: {plant.creatorFirstName}{" "}
-                {plant.creatorLastName} ({plant.organization?.name})
+                {plant.creatorLastName}{" "}
+                <span className="text-[10px]">
+                  ({plant.organization?.name})
+                </span>
               </p>
             </div>
           </div>

@@ -50,15 +50,15 @@ export default function PlantCard({ plant }: { plant: Plant }) {
           {plant.actionType}
         </Badge>
 
-        <div className="w-full flex gap-2 items-center text-[11px] text-gray-500">
+        <div className="w-full flex gap-2 items-center text-xs text-gray-500">
           <div className="bg-gray-200 size-8 rounded-full grid place-items-center font-semibold text-gray-500 uppercase shrink-0 text-[10px]">
             {plant.creatorFirstName?.substring(0, 1)}
           </div>
-          <div className="overflow-hidden">
-            <p className="whitespace-nowrap overflow-hidden text-ellipsis">
+          <div className="overflow-hidden flex flex-col gap-0.5">
+            <p className="whitespace-nowrap overflow-hidden text-ellipsis font-medium">
               {plant.creatorFirstName} {plant.creatorLastName}
             </p>
-            <p className="whitespace-nowrap overflow-hidden text-ellipsis">
+            <p className="whitespace-nowrap overflow-hidden text-ellipsis text-[10px]">
               {plant.organization?.name}
             </p>
           </div>
