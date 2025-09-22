@@ -1,16 +1,16 @@
 "use client";
 
 import { toast } from "sonner";
+import { Pages } from "@/types/pages";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
 import { ChevronLeftIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import FileUploader from "@/components/fileUploader";
 import { useAuth } from "@/utils/supabase/tokenStorage";
 import ImportFileCard from "@/components/cards/importFile";
 import { getTemplate, postImport } from "@/services/plantServices";
 import UploadSuccessfulModal from "@/components/modals/uploadSuccessful";
-import { Pages } from "@/types/pages";
 
 interface Template {
   name: string;
@@ -124,12 +124,12 @@ export default function ImportPage() {
 
         <hr />
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 overflow-hidden">
           <div className="w-6 h-6 rounded-full bg-lime-700/20 text-lime-900 text-xs flex items-center justify-center font-semibold shrink-0">
             2
           </div>
 
-          <div>
+          <div className="overflow-hidden">
             <p className="text-gray-700 font-semibold leading-6">
               Upload the completed Excel file.
             </p>
@@ -137,22 +137,21 @@ export default function ImportPage() {
               All uploaded data will be automatically marked as{" "}
               <span className="font-semibold text-lime-700">Approved</span>.
             </p>
-            <div className="flex items-center mt-4 gap-4">
-              <Input
-                id="upload"
-                type="file"
-                accept=".xlsx,.xls"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    console.log("Uploading:", file.name);
-                    setFile(file);
-                  }
-                }}
+            <div className="flex items-center mt-4 gap-4 w-full">
+              <div className="overflow-hidden">
+                <FileUploader
+                  file={file}
+                  onFileChange={setFile}
+                  disabled={!isAdmin}
+                  placeholder="Choose Excel file"
+                />
+              </div>
+
+              <Button
+                className="w-32 shrink-0"
+                onClick={onImport}
                 disabled={!isAdmin}
-                className="cursor-pointer"
-              />
-              <Button className="w-32" onClick={onImport} disabled={!isAdmin}>
+              >
                 Import
               </Button>
             </div>
