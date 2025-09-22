@@ -2,6 +2,7 @@
 
 import { toast } from "sonner";
 import { Pages } from "@/types/pages";
+import Spinner from "@/components/spinner";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ChevronLeftIcon } from "lucide-react";
@@ -93,9 +94,7 @@ export default function ImportPage() {
                 uploading your data.
               </p>
               {loading ? (
-                <p className="w-full text-center text-sm text-gray-400 pt-8 pb-4">
-                  Loading template and guideline...
-                </p>
+                <Spinner className="mt-10 mb-8" />
               ) : templates.length > 0 ? (
                 <div className="grid gap-4 sm:grid-cols-2 mt-4">
                   {templates.map((file) => (
