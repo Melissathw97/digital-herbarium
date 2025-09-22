@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Pen, Trash } from "lucide-react";
+import { ImageIcon, Pen, Trash } from "lucide-react";
 import Spinner from "@/components/spinner";
 import { Pagination } from "@/types/plant";
 import { useEffect, useState } from "react";
@@ -48,13 +48,19 @@ export default function OrganizationList() {
       dataKey: "name",
       render: (organization) => (
         <div className="flex gap-3 items-center">
-          <Image
-            alt={organization?.name || "Organization logo"}
-            src={organization.imageUrl}
-            width={35}
-            height={35}
-            className="rounded-full shadow-md size-[35px] object-contain"
-          />
+          {organization.imageUrl ? (
+            <Image
+              alt={organization?.name || "Organization logo"}
+              src={organization.imageUrl}
+              width={35}
+              height={35}
+              className="rounded-full shadow-md size-[35px] object-contain"
+            />
+          ) : (
+            <div className="grid place-items-center bg-white text-gray-400/60 size-[35px] rounded-full shadow-md">
+              <ImageIcon className="size-4 mx-auto" />
+            </div>
+          )}
 
           {organization.name}
         </div>
