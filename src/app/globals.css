@@ -159,4 +159,8 @@
   input[type="checkbox"] {
     @apply !h-3.5 !w-3.5 cursor-pointer;
   }
+
+  table tr#has-click-event:hover td {
+    @apply !bg-[#edf5e9] transition duration-300 !opacity-100;
+  }
 }

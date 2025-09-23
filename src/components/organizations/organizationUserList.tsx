@@ -138,7 +138,7 @@ export default function OrganizationUserList({
                 users.map((user, index) => (
                   <tr
                     key={user.id}
-                    className={`${index % 2 ? "bg-gray-100" : ""}`}
+                    className={`${index % 2 ? "bg-gray-100 border-y" : ""}`}
                   >
                     {headers.map(({ dataKey, render }) => (
                       <td

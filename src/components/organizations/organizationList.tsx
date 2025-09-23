@@ -161,8 +161,9 @@ export default function OrganizationList() {
                 organizations.map((organization, index) => (
                   <tr
                     key={organization.id}
+                    id="has-click-event"
                     onClick={() => onViewClick(organization)}
-                    className={`${index % 2 ? "bg-gray-100" : ""} cursor-pointer`}
+                    className={`${index % 2 ? "bg-gray-100 border-y" : ""} cursor-pointer`}
                   >
                     {headers.map(({ dataKey, render }) => (
                       <td
@@ -180,24 +181,26 @@ export default function OrganizationList() {
                       className={`p-4 sticky right-0 z-2 ${index % 2 ? "bg-gray-100/90" : "bg-white/90"}`}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="xs"
-                          variant="outline"
-                          className="hover:text-lime-700"
-                          onClick={() => onEditClick(organization)}
-                        >
-                          <Pen />
-                        </Button>
-                        <Button
-                          size="xs"
-                          variant="outline"
-                          className="text-red-700 hover:text-red-700"
-                          onClick={() => onDeleteClick(organization)}
-                        >
-                          <Trash />
-                        </Button>
-                      </div>
+                      {organization.nid !== "OTHERS" && (
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="xs"
+                            variant="outline"
+                            className="hover:text-lime-700"
+                            onClick={() => onEditClick(organization)}
+                          >
+                            <Pen />
+                          </Button>
+                          <Button
+                            size="xs"
+                            variant="outline"
+                            className="text-red-700 hover:text-red-700"
+                            onClick={() => onDeleteClick(organization)}
+                          >
+                            <Trash />
+                          </Button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))

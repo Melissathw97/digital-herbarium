@@ -146,8 +146,9 @@ export default function ApprovalsList() {
               plants.map((plant, index) => (
                 <tr
                   key={plant.id}
+                  id="has-click-event"
                   onClick={() => onEditClick(plant)}
-                  className={`${index % 2 ? "bg-gray-100" : ""} cursor-pointer`}
+                  className={`${index % 2 ? "bg-gray-100 border-y" : ""} cursor-pointer`}
                 >
                   {headers.map(({ dataKey }: { dataKey: string }) => (
                     <td

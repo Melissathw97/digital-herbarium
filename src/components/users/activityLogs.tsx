@@ -1,9 +1,9 @@
 import Badge from "@/components/badge";
+import { ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Log, LogAction, User } from "@/types/user";
 import TablePagination from "@/components/pagination";
-import { ExternalLink, LoaderCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { getActivityLogs, getUserProfile } from "@/services/userServices";
@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import Spinner from "../spinner";
 import { Pages } from "@/types/pages";
 import { Pagination } from "@/types/plant";
 import AuditDescription from "../auditDescription";
@@ -192,7 +193,7 @@ export default function UserActivityLogs() {
                     colSpan={headers.length + 2}
                     className="p-3 text-gray-500"
                   >
-                    <LoaderCircle className="animate-spin mx-auto" />
+                    <Spinner />
                   </td>
                 </tr>
               ) : logs.length === 0 ? (
@@ -208,7 +209,7 @@ export default function UserActivityLogs() {
                 logs.map((log, index) => (
                   <tr
                     key={log.id}
-                    className={`${index % 2 ? "bg-gray-100" : ""}`}
+                    className={`${index % 2 ? "bg-gray-100 border-y" : ""}`}
                   >
                     {headers.map(({ dataKey, render }) => (
                       <td
