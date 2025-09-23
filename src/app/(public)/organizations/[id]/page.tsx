@@ -118,19 +118,21 @@ export default function OrganizationDetailsPage() {
             </>
           )}
         </div>
-        <div className="ml-auto flex gap-2">
-          <Button
-            variant="outline"
-            className="text-red-700 hover:text-red-700"
-            onClick={onDeleteClick}
-            title="Delete Organization"
-          >
-            Delete
-          </Button>
-          <Button onClick={onEditClick} title="Edit Organization">
-            Edit
-          </Button>
-        </div>
+        {initialValues?.nid !== "OTHERS" && (
+          <div className="ml-auto flex gap-2">
+            <Button
+              variant="outline"
+              className="text-red-700 hover:text-red-700"
+              onClick={onDeleteClick}
+              title="Delete Organization"
+            >
+              Delete
+            </Button>
+            <Button onClick={onEditClick} title="Edit Organization">
+              Edit
+            </Button>
+          </div>
+        )}
       </div>
 
       <OrganizationUserList
