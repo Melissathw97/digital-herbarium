@@ -184,7 +184,7 @@ export default function UsersSignUp() {
                 </SelectContent>
               </Select>
 
-              {organizations.find(({ label }) => label === "Others")?.value ===
+              {organizations.find(({ label }) => label === "OTHERS")?.value ===
                 formValues.organization && (
                 <Link href={Pages.SUPPORT}>
                   <p className="text-xs text-lime-700 px-1 hover:underline">
