@@ -61,8 +61,8 @@ export default function OrganizationDeleteModal({
                     className="rounded-full border size-[40px]"
                   />
                 ) : (
-                  <div className="rounded-full border size-[35px]">
-                    <ImageIcon />
+                  <div className="rounded-full border size-[35px] grid place-items-center bg-white text-gray-400/60">
+                    <ImageIcon className="size-4" />
                   </div>
                 )}
 

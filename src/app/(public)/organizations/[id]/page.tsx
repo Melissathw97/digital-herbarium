@@ -8,7 +8,7 @@ import Spinner from "@/components/spinner";
 import { Pagination } from "@/types/plant";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronLeftIcon } from "lucide-react";
+import { ChevronLeftIcon, ImageIcon } from "lucide-react";
 import { Organization } from "@/types/organization";
 import { getOrganizationById } from "@/services/organizationServices";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -95,13 +95,19 @@ export default function OrganizationDetailsPage() {
           </button>
           {isLoading ? null : (
             <>
-              <Image
-                alt={initialValues.name || ""}
-                src={initialValues.imageUrl || ""}
-                width={45}
-                height={45}
-                className="rounded-full bg-white shadow-sm size-[45px]"
-              />
+              {initialValues.imageUrl ? (
+                <Image
+                  alt={initialValues?.name || ""}
+                  src={initialValues.imageUrl}
+                  width={45}
+                  height={45}
+                  className="rounded-full bg-white shadow-md size-[45px] object-contain"
+                />
+              ) : (
+                <div className="grid place-items-center bg-white text-gray-400/60 size-[45px] rounded-full shadow-md">
+                  <ImageIcon className="size-5 mx-auto" />
+                </div>
+              )}
 
               <div>
                 <h2>{initialValues.name}</h2>
