@@ -25,6 +25,8 @@ import Alert from "../alert";
 import { Pages } from "@/types/pages";
 import { usePathname, useRouter } from "next/navigation";
 import {
+  patchApprovePlant,
+  patchRejectPlant,
   postPlantOCR,
   updatePlant,
   updatePlantImage,
@@ -193,7 +195,6 @@ export default function OcrForm({
       id: initialValues?.id || "",
       actionType: ActionType.OCR,
       family: formValues.family.value,
-      status: "Approved",
     })
       .then(() => {
         updatePlantImage({
@@ -201,8 +202,10 @@ export default function OcrForm({
           image: selectedFile,
         })
           .then(() => {
-            toast.success("Plant approved successfully");
-            router.push(Pages.APPROVALS);
+            patchApprovePlant({ id: initialValues?.id || "" }).then(() => {
+              toast.success("Plant approved successfully");
+              router.push(Pages.APPROVALS);
+            });
           })
           .catch((error) => {
             toast.error(error);
@@ -223,8 +226,6 @@ export default function OcrForm({
       id: initialValues?.id || "",
       actionType: ActionType.OCR,
       family: formValues.family.value,
-      status: "Rejected",
-      remarks,
     })
       .then(() => {
         updatePlantImage({
@@ -232,8 +233,12 @@ export default function OcrForm({
           image: selectedFile,
         })
           .then(() => {
-            toast.success("Plant rejected successfully");
-            router.push(Pages.APPROVALS);
+            patchRejectPlant({ id: initialValues?.id || "", remarks }).then(
+              () => {
+                toast.success("Plant rejected successfully");
+                router.push(Pages.APPROVALS);
+              }
+            );
           })
           .catch((error) => {
             toast.error(error);

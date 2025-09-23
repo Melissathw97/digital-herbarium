@@ -17,6 +17,8 @@ import { Locate, RotateCcw, Sparkles, Trash2 } from "lucide-react";
 import { ActionType, AiResult, Plant, Status } from "@/types/plant";
 import { postAiDetection, postImageToBase64 } from "@/services/aiServices";
 import {
+  patchApprovePlant,
+  patchRejectPlant,
   postPlantAiDetection,
   updatePlant,
   updatePlantImage,
@@ -298,7 +300,6 @@ export default function AiDetectionForm({
       family: data.family.value,
       species: data.species,
       confidenceLevel: data.confidenceLevel,
-      status: "Approved",
     })
       .then(() => {
         updatePlantImage({
@@ -306,8 +307,10 @@ export default function AiDetectionForm({
           image: data.image,
         })
           .then(() => {
-            toast.success("Plant approved successfully");
-            router.push(Pages.APPROVALS);
+            patchApprovePlant({ id: initialValues?.id || "" }).then(() => {
+              toast.success("Plant approved successfully");
+              router.push(Pages.APPROVALS);
+            });
           })
           .catch((error) => {
             toast.error(error);
@@ -330,8 +333,6 @@ export default function AiDetectionForm({
       family: data.family.value,
       species: data.species,
       confidenceLevel: data.confidenceLevel,
-      status: "Rejected",
-      remarks,
     })
       .then(() => {
         updatePlantImage({
@@ -339,8 +340,12 @@ export default function AiDetectionForm({
           image: data.image,
         })
           .then(() => {
-            toast.success("Plant rejected successfully");
-            router.push(Pages.APPROVALS);
+            patchRejectPlant({ id: initialValues?.id || "", remarks }).then(
+              () => {
+                toast.success("Plant rejected successfully");
+                router.push(Pages.APPROVALS);
+              }
+            );
           })
           .catch((error) => {
             toast.error(error);

@@ -337,7 +337,6 @@ export async function updatePlant({
   latitude,
   longitude,
   additionalNotes,
-  status,
   remarks,
 }: PlantUpdatePayload): Promise<Plant> {
   const supabase = createClient();
@@ -364,7 +363,6 @@ export async function updatePlant({
       day: "2-digit",
     }),
     ...(confidenceLevel ? { confidence_level: confidenceLevel } : {}),
-    ...(status ? { status } : {}),
     ...(remarks ? { remarks } : {}),
   };
 
@@ -495,5 +493,56 @@ export async function postImport(file: File): Promise<FileResponse> {
       }
 
       return data;
+    });
+}
+
+export async function patchApprovePlant({
+  id,
+}: {
+  id: string;
+}): Promise<Plant> {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke(`plant-data/?id=${id}`, {
+      method: "PATCH",
+      body: {
+        status: "Approved",
+      },
+    })
+    .then(async ({ data, response }) => {
+      if (response?.ok === false) {
+        const resp = await response?.json();
+        throw resp.error;
+      }
+
+      return data.data;
+    });
+}
+
+export async function patchRejectPlant({
+  id,
+  remarks,
+}: {
+  id: string;
+  remarks: string;
+}): Promise<Plant> {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke(`plant-data/?id=${id}`, {
+      method: "PATCH",
+      body: {
+        status: "Rejected",
+        remarks,
+      },
+    })
+    .then(async ({ data, response }) => {
+      if (response?.ok === false) {
+        const resp = await response?.json();
+        throw resp.error;
+      }
+
+      return data.data;
     });
 }
