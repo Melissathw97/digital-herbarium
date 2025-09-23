@@ -108,6 +108,9 @@ export default function OrganizationCreateModal({
               <label>
                 ID<span className="text-red-600 ml-0.5">*</span>
               </label>
+              <p className="text-[10px] font-medium text-orange-700 mb-1 -mt-1">
+                Once created, ID cannot be modified.
+              </p>
               <Input
                 name="nid"
                 value={formValues.nid}

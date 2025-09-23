@@ -125,6 +125,7 @@ export default function OrganizationUpdateModal({
                 name="nid"
                 value={formValues.nid}
                 onChange={onInputChange}
+                disabled
               />
             </div>
 
