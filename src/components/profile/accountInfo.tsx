@@ -170,7 +170,10 @@ export default function AccountInfo() {
               <div className="bg-gray-200 h-4 sm:h-6 w-full rounded-sm"></div>
               <div className="bg-gray-200 h-4 w-full rounded-sm"></div>
               <div className="bg-gray-200 h-4 w-full rounded-sm my-2 sm:my-3"></div>
-              <div className="bg-gray-200 h-4 w-16 rounded-sm"></div>
+              <div className="flex sm:flex-col gap-2">
+                <div className="bg-gray-200 h-4 w-20 rounded-sm"></div>
+                <div className="bg-gray-200 h-4 w-28 rounded-sm"></div>
+              </div>
             </>
           ) : (
             <>
