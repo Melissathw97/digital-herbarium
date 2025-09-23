@@ -131,7 +131,23 @@ export function getUserById({ id }: { id: string }): Promise<User> {
     .then(({ data, error }) => {
       if (error) throw error;
 
-      return data.data;
+      return {
+        id: data.user_id,
+        profileId: data.profile_id,
+        firstName: data.first_name,
+        lastName: data.last_name,
+        role: data.role,
+        email: data.email,
+        expertise: data.expertise,
+        yearsOfExperience: data.year_of_experience,
+        organization: {
+          id: data.organization?.id,
+          nid: data.organization?.nid,
+          name: data.organization?.name,
+          colourCode: data.organization?.colour_code,
+        },
+        joinedAt: data.created_at,
+      };
     });
 }
 
