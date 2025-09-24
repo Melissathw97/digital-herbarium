@@ -170,7 +170,7 @@ export default function AccountInfo() {
               <div className="bg-gray-200 h-4 sm:h-6 w-full rounded-sm"></div>
               <div className="bg-gray-200 h-4 w-full rounded-sm"></div>
               <div className="bg-gray-200 h-4 w-full rounded-sm my-2 sm:my-3"></div>
-              <div className="flex sm:flex-col gap-2">
+              <div className="flex sm:flex-col gap-2 items-center">
                 <div className="bg-gray-200 h-4 w-20 rounded-sm"></div>
                 <div className="bg-gray-200 h-4 w-28 rounded-sm"></div>
               </div>
@@ -187,13 +187,11 @@ export default function AccountInfo() {
               {user && (
                 <div className="flex sm:flex-col gap-2 items-center">
                   <UserRoleBadge user={user} />
-                  <div>
-                    <Badge variant="info">
-                      <TestTubeDiagonal />
-                      Joined since{" "}
-                      {user?.joinedAt ? formatDate(user?.joinedAt) : "-"}
-                    </Badge>
-                  </div>
+                  <Badge variant="info">
+                    <TestTubeDiagonal />
+                    Joined since{" "}
+                    {user?.joinedAt ? formatDate(user?.joinedAt) : "-"}
+                  </Badge>
                 </div>
               )}
             </>
