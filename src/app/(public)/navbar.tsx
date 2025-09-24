@@ -95,7 +95,9 @@ export default function Navbar() {
           </Link>
           <Link href={Pages.MEMBERS}>
             <Button
-              variant={pathname === Pages.MEMBERS ? "secondary" : "ghost"}
+              variant={
+                pathname.startsWith(Pages.MEMBERS) ? "secondary" : "ghost"
+              }
               size="sm"
             >
               <UsersRound />
