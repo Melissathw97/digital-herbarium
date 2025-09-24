@@ -3,7 +3,7 @@ import { ScanText } from "lucide-react";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import Spinner from "./spinner";
-import { createWorker } from "tesseract.js";
+import { postOCR } from "@/services/plantServices";
 
 export default function ScanButton({
   croppedImage,
@@ -25,24 +25,38 @@ export default function ScanButton({
     setIsLoading(true);
 
     try {
-      const worker = await createWorker("eng");
-      const {
-        data: { text },
-      } = await worker.recognize(croppedImage);
-      await worker.terminate();
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result as string;
 
-      // Clean up the text (remove extra whitespace and newlines)
-      const cleanedText = text.trim().replace(/\s+/g, " ");
+        postOCR({
+          image: base64.replace(/^data:image\/[a-z]+;base64,/, ""),
+        })
+          .then(({ text }) => {
+            // Clean up the text (remove extra whitespace and newlines)
+            const cleanedText = text.trim().replace(/\s+/g, " ");
 
-      if (!text) {
-        toast.error("No text found");
-      } else {
-        if (isBarcode) onSubmit(cleanedText.match(/([0-9])+/)?.[0] || "");
-        else onSubmit(cleanedText);
-      }
+            if (!text) {
+              toast.error("No text found");
+            } else {
+              if (isBarcode) onSubmit(cleanedText.match(/([0-9])+/)?.[0] || "");
+              else onSubmit(cleanedText);
+            }
 
-      setIsLoading(false);
-    } catch (error) {
+            setIsLoading(false);
+          })
+          .catch(() => {
+            toast.error("OCR scan failed. Please ensure the image is correct.");
+            setIsLoading(false);
+          });
+      };
+      reader.onerror = (error) => {
+        toast.error(`Error processing cropped image: ${error}`);
+        setIsLoading(false);
+      };
+      reader.readAsDataURL(croppedImage);
+    } catch (error: any) {
+      toast.error(error?.message || error || "");
       console.error("OCR Error:", error);
       setIsLoading(false);
     }

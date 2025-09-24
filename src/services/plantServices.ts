@@ -190,6 +190,27 @@ export async function postPlantsExport({ ids }: { ids: string[] }) {
   }
 }
 
+export async function postOCR({ image }: { image: string }) {
+  const response = await fetch("/api/ocr", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJPQ1JfVVNFUl8wMDEiLCJpZCI6IjY4ZDNhMDFiNDg2YmJiZWQ3ZmRiOTg2NiIsInJvbGUiOjAsImV4cCI6MTc2MTM2MTkwOX0.WvJm154Pbb_oeA0YwmhHYw-MibQb5GRucNYYMUoWa2g`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      image_base64: image,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.detail);
+  }
+
+  return data;
+}
+
 export async function postPlantOCR({
   image,
   family,

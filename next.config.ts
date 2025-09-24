@@ -24,6 +24,10 @@ const nextConfig: NextConfig = {
         source: "/api/predict",
         destination: "https://plant-detection.pbd-cairo.my/predict",
       },
+      {
+        source: "/api/ocr",
+        destination: "https://api.pbd-cairo.my/ocr/process",
+      },
     ];
   },
   async redirects() {
