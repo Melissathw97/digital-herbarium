@@ -1,5 +1,6 @@
-import { Button } from "./ui/button";
 import React, { ReactElement, useRef, useState } from "react";
+import { toast } from "sonner";
+import { Button } from "./ui/button";
 import "react-mobile-cropper/dist/style.css";
 import { Crop, Home, Trash2 } from "lucide-react";
 import { Cropper, CropperRef } from "react-mobile-cropper";
@@ -63,7 +64,9 @@ const ImageCropper = ({
       }
       onCropCompleteImage(croppedBlob);
       setIsCropped(true);
+      toast.success("Image cropped");
     } catch (error) {
+      toast.error(error instanceof Error ? error?.message : "");
       console.error("Crop Error:", error);
     }
   };
