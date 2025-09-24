@@ -124,15 +124,14 @@ export default function AiDetectionForm({
     setIsLoading(true);
 
     if (data.image) {
-      let image = data.image;
-      if (croppedImage) image = new File([croppedImage], data.image.name);
+      if (croppedImage) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64 = reader.result as string;
 
-      postImageToBase64({ image })
-        .then((resp) => {
-          const { base64 } = resp;
-
+          // Send to AI detection
           postAiDetection({
-            image: base64.replace("data:image/jpeg;base64,", ""),
+            image: base64.replace(/^data:image\/[a-z]+;base64,/, ""),
           })
             .then((response) => {
               const results = response.final_result.map((result) => ({
@@ -172,10 +171,63 @@ export default function AiDetectionForm({
               );
               setIsLoading(false);
             });
-        })
-        .catch((error) => {
-          toast.error(error);
-        });
+        };
+        reader.onerror = (error) => {
+          toast.error(`Error processing cropped image: ${error}`);
+          setIsLoading(false);
+        };
+        reader.readAsDataURL(croppedImage);
+      } else {
+        postImageToBase64({ image: data.image })
+          .then((resp) => {
+            const { base64 } = resp;
+
+            postAiDetection({
+              image: base64.replace("data:image/jpeg;base64,", ""),
+            })
+              .then((response) => {
+                const results = response.final_result.map((result) => ({
+                  family: capitalizeFirstLetter(result.family),
+                  species: capitalizeFirstLetter(
+                    result.species.replace(result.family, "").trim()
+                  ),
+                  confidenceLevel: result.confidence,
+                }));
+
+                if (results.length > 0) {
+                  const bestResult = results.reduce(
+                    (max: AiResult, current: AiResult) =>
+                      current.confidenceLevel > max.confidenceLevel
+                        ? current
+                        : max
+                  );
+
+                  setData({
+                    ...data,
+                    family: {
+                      label: bestResult.family,
+                      value: bestResult.family,
+                    },
+                    species: bestResult.species,
+                    confidenceLevel: bestResult.confidenceLevel,
+                  });
+                }
+
+                setAiResult(results);
+                setIsLoading(false);
+                setIsComplete(true);
+              })
+              .catch(() => {
+                toast.error(
+                  "AI detection failed. Please ensure the image is correct."
+                );
+                setIsLoading(false);
+              });
+          })
+          .catch((error) => {
+            toast.error(error);
+          });
+      }
     }
   };
 
