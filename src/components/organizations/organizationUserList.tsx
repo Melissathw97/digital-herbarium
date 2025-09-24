@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pen } from "lucide-react";
 import { Button } from "../ui/button";
 import { Pagination } from "@/types/plant";
@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { useRouter, useSearchParams } from "next/navigation";
+import { getUserProfile } from "@/services/userServices";
 
 type OrganizationUserProps = {
   users: User[];
@@ -36,6 +37,7 @@ export default function OrganizationUserList({
   const searchParams = useSearchParams();
 
   const [role, setRole] = useState("all");
+  const [currentUser, setCurrentUser] = useState<User>();
   const [selectedUser, setSelectedUser] = useState<User>();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
@@ -44,7 +46,21 @@ export default function OrganizationUserList({
     dataKey: keyof User | string;
     render?: (insect: User) => React.ReactNode;
   }[] = [
-    { label: "First Name", dataKey: "firstName" },
+    {
+      label: "First Name",
+      dataKey: "firstName",
+      render: (user) =>
+        user.id === currentUser?.id ? (
+          <div className="flex items-center gap-2">
+            <span>{user.firstName}</span>
+            <div className="inline-block bg-gray-600 text-white text-[10px] rounded-sm px-1.5 py-0.5 font-medium">
+              You
+            </div>
+          </div>
+        ) : (
+          user.firstName
+        ),
+    },
     { label: "Last Name", dataKey: "lastName" },
     { label: "Email", dataKey: "email" },
     {
@@ -76,6 +92,15 @@ export default function OrganizationUserList({
     setSelectedUser(user);
     setIsUpdateModalOpen(true);
   };
+
+  const getCurrentUser = async () => {
+    const current = await getUserProfile();
+    setCurrentUser(current);
+  };
+
+  useEffect(() => {
+    getCurrentUser();
+  }, [users]);
 
   return (
     <>
