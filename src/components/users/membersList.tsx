@@ -26,7 +26,7 @@ import {
 
 export default function MembersList() {
   const router = useRouter();
-  const { isAdmin } = useAuth();
+  const { isSuperAdmin, isAdmin } = useAuth();
   const searchParams = useSearchParams();
 
   const [role, setRole] = useState("all");
@@ -101,6 +101,18 @@ export default function MembersList() {
     },
     [router, searchParams]
   );
+
+  const hasEditAccess = (user: User) => {
+    if (isSuperAdmin) {
+      return user.role !== UserRole.SUPER_ADMIN;
+    }
+
+    if (isAdmin) {
+      return user.role !== UserRole.ADMIN && user.role !== UserRole.SUPER_ADMIN;
+    }
+
+    return false;
+  };
 
   const onEditClick = (user: User) => {
     setSelectedUser(user);
@@ -215,25 +227,13 @@ export default function MembersList() {
                     : undefined
                 }
                 onEdit={
-                  isAdmin &&
-                  user.role !== UserRole.ADMIN &&
-                  user.role !== UserRole.SUPER_ADMIN
-                    ? () => onEditClick(user)
-                    : undefined
+                  hasEditAccess(user) ? () => onEditClick(user) : undefined
                 }
                 onDelete={
-                  isAdmin &&
-                  user.role !== UserRole.ADMIN &&
-                  user.role !== UserRole.SUPER_ADMIN
-                    ? () => onDeleteClick(user)
-                    : undefined
+                  hasEditAccess(user) ? () => onDeleteClick(user) : undefined
                 }
                 onSelect={
-                  isAdmin &&
-                  user.role !== UserRole.ADMIN &&
-                  user.role !== UserRole.SUPER_ADMIN
-                    ? () => onSelect(user)
-                    : undefined
+                  hasEditAccess(user) ? () => onSelect(user) : undefined
                 }
               />
             ))}
