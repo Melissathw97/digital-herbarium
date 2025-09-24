@@ -39,7 +39,11 @@ export async function getPlants(queryParams: {
           params.append(key, String(val));
         });
       } else {
-        params.append(key, String(value));
+        if (key === "action") {
+          if (value !== "all") params.append("action_type", String(value));
+        } else {
+          params.append(key, String(value));
+        }
       }
     }
   });
