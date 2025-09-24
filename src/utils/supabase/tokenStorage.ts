@@ -191,6 +191,7 @@ export class TokenStorage {
       organizationId,
       isExpired,
       isAuthenticated: !isExpired && !!token,
+      isSuperAdmin: role === "super_admin",
       isAdmin: role === "super_admin" || role === "admin",
       isExpert: role === "expert",
       isMember: role === "member",
