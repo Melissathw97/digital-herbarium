@@ -17,10 +17,10 @@ export default function SearchField() {
   useEffect(() => {
     const handler = setTimeout(() => {
       const newParams = new URLSearchParams(searchParams.toString());
-      newParams.set("page", "1"); // Reset page to 1
 
       if (search) {
         newParams.set("search", search);
+        newParams.set("page", "1"); // Reset page to 1
       } else {
         newParams.delete("search"); // Remove search param if search is empty
       }
