@@ -56,6 +56,7 @@ export enum LogAction {
   UPDATE = "update",
   DELETE = "delete",
   IMPORT = "import",
+  EXPORT = "export",
 }
 
 export interface Log {

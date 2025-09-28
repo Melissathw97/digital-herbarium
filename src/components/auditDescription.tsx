@@ -128,5 +128,12 @@ export default function AuditDescription({ log }: { log: Log }) {
           Imported <b>{log.name}</b>
         </p>
       );
+
+    case LogAction.EXPORT:
+      return (
+        <p>
+          Exported <b>{log.name}</b>
+        </p>
+      );
   }
 }

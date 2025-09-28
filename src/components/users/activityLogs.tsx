@@ -44,7 +44,7 @@ export default function ActivityLogs({
     { label: "Update", value: "update" },
     { label: "Delete", value: "delete" },
     { label: "Import", value: "import" },
-    // { label: "Export", value: "export" },
+    { label: "Export", value: "export" },
   ];
 
   const onActionSelect = (value: string) => {
@@ -66,6 +66,9 @@ export default function ActivityLogs({
 
       case LogAction.IMPORT:
         return "purple";
+
+      case LogAction.EXPORT:
+        return "indigo";
 
       case LogAction.UPDATE:
       default:
