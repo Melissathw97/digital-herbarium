@@ -206,6 +206,7 @@ export default function UsersSignUp() {
                 <Input
                   name="yearsOfExperience"
                   type="number"
+                  min="0"
                   onChange={onInputChange}
                 />
               </div>
