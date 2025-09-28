@@ -2,7 +2,11 @@ import Badge from "../badge";
 import { User, UserRole } from "@/types/user";
 import { Crown, Star, User as UserIcon } from "lucide-react";
 
-export default function UserRoleBadge({ user }: { user: User }) {
+export default function UserRoleBadge({
+  user,
+}: {
+  user: User | Partial<User>;
+}) {
   return user.role === UserRole.SUPER_ADMIN ? (
     <Badge variant="purple">
       <Crown />

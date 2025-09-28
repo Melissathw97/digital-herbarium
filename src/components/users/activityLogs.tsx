@@ -1,12 +1,10 @@
+import { useEffect, useState } from "react";
 import Badge from "@/components/badge";
 import { ExternalLink } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Log, LogAction } from "@/types/user";
 import { Button } from "@/components/ui/button";
-import { Log, LogAction, User } from "@/types/user";
 import TablePagination from "@/components/pagination";
-import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { getActivityLogs, getUserProfile } from "@/services/userServices";
 import {
   Select,
   SelectContent,
@@ -15,41 +13,48 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "sonner";
 import Spinner from "../spinner";
 import { Pages } from "@/types/pages";
+import SearchField from "../searchField";
 import { Pagination } from "@/types/plant";
 import AuditDescription from "../auditDescription";
 import formatDateTime from "@/utils/formatDateTime";
 
-export default function UserActivityLogs() {
+export default function ActivityLogs({
+  fetchLogs,
+  logs = [],
+  isLoading,
+  pagination,
+  link,
+}: {
+  fetchLogs: () => void;
+  logs: Log[];
+  isLoading: boolean;
+  pagination: Pagination;
+  link?: string;
+}) {
   const router = useRouter();
   const pathname = usePathname();
-
   const searchParams = useSearchParams();
-  const profileIdParam = searchParams.get("profileId");
+  const [action, setAction] = useState("all");
 
-  const [search, setSearch] = useState("");
-  const [action, setAction] = useState("All Actions");
+  const validActions = [
+    { label: "All Actions", value: "all" },
+    { label: "Add", value: "add" },
+    { label: "Update", value: "update" },
+    { label: "Delete", value: "delete" },
+    { label: "Import", value: "import" },
+    // { label: "Export", value: "export" },
+  ];
 
-  const [user, setUser] = useState<User>();
-  const [logs, setLogs] = useState<Log[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [pagination, setPagination] = useState<Pagination>({
-    limit: 0,
-    page: 0,
-    total: 0,
-    totalPages: 0,
-  });
+  const onActionSelect = (value: string) => {
+    setAction(value);
 
-  const validActions = ["All Actions", "Add", "Update", "Delete", "Import"];
+    const currentParams = new URLSearchParams(searchParams.toString());
+    currentParams.set("action", value);
 
-  const onInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearch(e.target.value);
-    },
-    []
-  );
+    router.push(`?${currentParams.toString()}`);
+  };
 
   const getBadgeVariant = (action: LogAction) => {
     switch (action) {
@@ -89,89 +94,62 @@ export default function UserActivityLogs() {
     },
     {
       label: "Description",
-      dataKey: "plantName",
+      dataKey: "name",
       render: (log) => <AuditDescription log={log} />,
     },
+    ...(pathname.startsWith(Pages.AUDIT_LOGS)
+      ? [
+          {
+            label: "Action By",
+            dataKey: "actionBy" as keyof Log,
+          },
+        ]
+      : []),
   ];
 
   const onPageClick = (page: number) => {
     router.push(`?page=${page.toString()}`);
   };
 
-  const fetchData = async () => {
-    try {
-      let profileData = null;
-
-      if (pathname.includes("profile")) {
-        profileData = await getUserProfile();
-        setUser(profileData);
-      }
-
-      setIsLoading(true);
-      const page = searchParams.get("page");
-      const limit = searchParams.get("limit");
-
-      const queryParams = {
-        profileId: profileData?.profileId ?? profileIdParam ?? undefined,
-        page: Number(page) || 1,
-        limit: Number(limit) || 10,
-      };
-
-      const response = await getActivityLogs(queryParams);
-
-      setLogs(response.data);
-      setPagination(response.pagination);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      toast.error("Failed to fetch user activity. Please try again later.");
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
+    fetchLogs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   return (
     <>
       <div className="bg-white shadow-sm rounded-sm px-4 py-5 border flex flex-col gap-5 w-full overflow-hidden">
-        <div className="flex flex-col sm:flex-row justify-between gap-2">
-          <div className="flex gap-y-2 gap-3 items-center flex-wrap">
-            <p className="font-semibold">Filters</p>
+        {isLoading ? null : (
+          <div className="flex flex-col sm:flex-row justify-between gap-2">
+            <div className="flex gap-y-2 gap-3 items-center flex-wrap">
+              <p className="font-semibold">Filters</p>
 
-            {/* Action Filter */}
-            <Select value={action} onValueChange={(value) => setAction(value)}>
-              <SelectTrigger className="w-full sm:w-36">
-                <SelectValue placeholder="Select action" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {validActions.map((value) => (
-                    <SelectItem
-                      key={value}
-                      value={value}
-                      className="rounded-lg [&_span]:flex"
-                    >
-                      {value}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+              {/* Action Filter */}
+              <Select value={action} onValueChange={onActionSelect}>
+                <SelectTrigger className="w-full sm:w-36">
+                  <SelectValue placeholder="Select action" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {validActions.map(({ label, value }) => (
+                      <SelectItem
+                        key={value}
+                        value={value}
+                        className="rounded-lg [&_span]:flex"
+                      >
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="md:ml-auto flex gap-2">
-            <Input
-              name="search"
-              value={search}
-              onChange={onInputChange}
-              className="bg-white shadow-sm min-w-[200px]"
-              placeholder="Search..."
-            />
+            <div className="md:ml-auto flex gap-2">
+              <SearchField />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Table */}
         <div className="rounded-md border overflow-x-auto text-xs">
@@ -214,7 +192,7 @@ export default function UserActivityLogs() {
                     {headers.map(({ dataKey, render }) => (
                       <td
                         key={dataKey}
-                        className={`p-4 whitespace-nowrap ${dataKey === "plantName" ? "w-full" : "max-w-[220px]"} overflow-hidden overflow-ellipsis`}
+                        className={`p-4 whitespace-nowrap ${dataKey === "name" ? "w-full max-w-[350px]" : "max-w-[220px]"} overflow-hidden overflow-ellipsis`}
                       >
                         {render
                           ? render(log)
@@ -229,7 +207,7 @@ export default function UserActivityLogs() {
                     >
                       {log.dataId && (
                         <a
-                          href={`${Pages.PLANTS}/${log.dataId}`}
+                          href={`${link || Pages.PLANTS}/${log.dataId}`}
                           target="_blank"
                           rel="noreferrer noopener"
                         >

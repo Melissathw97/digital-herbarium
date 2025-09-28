@@ -312,23 +312,23 @@ export default function AiDetectionForm({
         });
     } else {
       // Update Plant Details
-      updatePlant({
-        ...formValues,
+      updatePlantImage({
         id: initialValues?.id || "",
-        actionType: ActionType.AI_DETECTION,
-        family: data.family.value,
-        species: data.species,
-        confidenceLevel: data.confidenceLevel,
+        image: data.image,
       })
         .then(() => {
-          // Update Plant Image
-          updatePlantImage({
+          updatePlant({
+            ...formValues,
             id: initialValues?.id || "",
-            image: data.image,
+            actionType: ActionType.AI_DETECTION,
+            family: data.family.value,
+            species: data.species,
+            confidenceLevel: data.confidenceLevel,
           })
-            .then((response) => {
+            .then((plant) => {
+              // Update Plant Image
               toast.success("Plant updated succesfully");
-              router.replace(`${Pages.PLANTS}/${response.id}`);
+              router.replace(`${Pages.PLANTS}/${plant.id}`);
             })
             .catch((error) => {
               toast.error(error);

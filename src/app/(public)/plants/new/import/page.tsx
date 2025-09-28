@@ -51,12 +51,10 @@ export default function ImportPage() {
     }
 
     postImport(file)
-      .then((response) => {
-        console.log("res", response);
+      .then(() => {
         setIsUploadSuccessfulModalOpen(true);
       })
       .catch((error) => {
-        console.log("error", error);
         toast.error(`Failed to import data: ${error.errors[0].error}`);
       });
   };

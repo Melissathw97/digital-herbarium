@@ -128,8 +128,8 @@ export default function MembersList() {
     setIsBulkDeleteModalOpen(true);
   };
 
-  const onViewDetailsClick = (userId: string, profileId: string) => {
-    router.push(`${Pages.MEMBERS}/${userId}?profileId=${profileId}`);
+  const onViewDetailsClick = (userId: string) => {
+    router.push(`${Pages.MEMBERS}/${userId}`);
   };
 
   const onSelect = useCallback((user: User) => {
@@ -222,9 +222,7 @@ export default function MembersList() {
                 isSelected={selectedUsers.has(user)}
                 currentUser={user.id === currentUser?.id}
                 onViewDetails={
-                  isAdmin
-                    ? () => onViewDetailsClick(user.id, user.profileId)
-                    : undefined
+                  isAdmin ? () => onViewDetailsClick(user.id) : undefined
                 }
                 onEdit={
                   hasEditAccess(user) ? () => onEditClick(user) : undefined

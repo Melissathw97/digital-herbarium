@@ -21,6 +21,7 @@ export function getUserProfile(): Promise<User> {
 
       return {
         id: data?.user_id || "",
+        profileId: data?.id || "",
         firstName: data?.first_name,
         lastName: data?.last_name,
         expertise: data?.expertise || "",
@@ -299,8 +300,8 @@ export function getActivityLogs({
             action: log.action,
             updateType: log.update_type,
             changes: log.changes,
-            plantName: log.plant_name,
-            dataId: log.data_captured_id,
+            name: log.name,
+            dataId: log.data_id,
           };
         }),
         pagination: data.pagination,

@@ -521,6 +521,32 @@ export async function postImport(file: File): Promise<FileResponse> {
     });
 }
 
+export async function patchPlantStatus({
+  id,
+  status = "Pending Approval",
+}: {
+  id: string;
+  status?: string;
+}): Promise<Plant> {
+  const supabase = createClient();
+
+  return supabase.functions
+    .invoke(`plant-data/?id=${id}`, {
+      method: "PATCH",
+      body: {
+        status,
+      },
+    })
+    .then(async ({ data, response }) => {
+      if (response?.ok === false) {
+        const resp = await response?.json();
+        throw resp.error;
+      }
+
+      return data.data;
+    });
+}
+
 export async function patchApprovePlant({
   id,
 }: {

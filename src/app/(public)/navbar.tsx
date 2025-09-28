@@ -32,7 +32,7 @@ import { useAuth } from "@/utils/supabase/tokenStorage";
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAdmin } = useAuth();
+  const { isAdmin, isSuperAdmin } = useAuth();
 
   const [user, setUser] = useState<User>();
 
@@ -105,32 +105,52 @@ export default function Navbar() {
             </Button>
           </Link>
 
-          {user && isAdmin && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+          {user &&
+            isAdmin &&
+            (isSuperAdmin ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant={
+                      pathname.startsWith(Pages.AUDIT_LOGS) ||
+                      pathname.startsWith(Pages.ORGANIZATIONS)
+                        ? "secondary"
+                        : "ghost"
+                    }
+                    size="sm"
+                  >
+                    <ShieldCheck />
+                    Admin
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <Link href={Pages.ORGANIZATIONS}>
+                    <DropdownMenuItem className="py-2">
+                      <Building2 />
+                      Organizations
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href={Pages.AUDIT_LOGS}>
+                    <DropdownMenuItem className="py-2">
+                      <ScrollText />
+                      Audit Logs
+                    </DropdownMenuItem>
+                  </Link>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href={Pages.AUDIT_LOGS}>
                 <Button
                   variant={
-                    pathname.startsWith(Pages.AUDIT_LOGS) ||
-                    pathname.startsWith(Pages.ORGANIZATIONS)
-                      ? "secondary"
-                      : "ghost"
+                    pathname === Pages.AUDIT_LOGS ? "secondary" : "ghost"
                   }
                   size="sm"
                 >
-                  <ShieldCheck />
-                  Admin
+                  <ScrollText />
+                  Audit Logs
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <Link href={Pages.ORGANIZATIONS}>
-                  <DropdownMenuItem className="py-2">
-                    <Building2 />
-                    Organizations
-                  </DropdownMenuItem>
-                </Link>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+              </Link>
+            ))}
         </div>
 
         <div className="flex gap-4 shrink-0">

@@ -62,7 +62,8 @@ export interface Log {
   id: string;
   actionDate: string;
   action: LogAction;
-  plantName: string;
+  actionBy: string;
+  name: string;
   updateType: string;
   changes?: FieldChange[];
   dataId: string;
@@ -78,10 +79,11 @@ export interface LogApi {
   id: string;
   action_date: string;
   action: LogAction;
+  action_by: LogAction;
   update_type?: string;
   changes: FieldChange[];
-  plant_name: string;
-  data_captured_id: string;
+  name: string;
+  data_id: string;
 }
 
 export interface LogItemApi {

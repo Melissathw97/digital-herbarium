@@ -1,17 +1,60 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
+import { toast } from "sonner";
+import { Log } from "@/types/user";
+import { Pagination } from "@/types/plant";
 import Spinner from "@/components/spinner";
 import AccountInfo from "@/components/profile/accountInfo";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import UserContributionChart from "@/components/cards/userContributionChart";
 import UserActivityLogs from "@/components/users/activityLogs";
+import { getActivityLogs, getUserProfile } from "@/services/userServices";
+import UserContributionChart from "@/components/cards/userContributionChart";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function MembersPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab");
+
+  const [logs, setLogs] = useState<Log[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [pagination, setPagination] = useState<Pagination>({
+    limit: 0,
+    page: 0,
+    total: 0,
+    totalPages: 0,
+  });
+
+  const onTabClick = (key: string) => {
+    router.push(`?tab=${key}`);
+  };
+
+  const fetchLogs = async () => {
+    try {
+      const profileData = await getUserProfile();
+
+      setIsLoading(true);
+      const page = searchParams.get("page");
+      const limit = searchParams.get("limit");
+
+      const queryParams = {
+        profileId: profileData?.profileId ?? undefined,
+        page: Number(page) || 1,
+        limit: Number(limit) || 10,
+      };
+
+      const response = await getActivityLogs(queryParams);
+
+      setLogs(response.data);
+      setPagination(response.pagination);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch activity logs. Please try again later.");
+      setIsLoading(false);
+    }
+  };
 
   const tabs = [
     { key: "account-info", label: "Account Info", component: <AccountInfo /> },
@@ -21,15 +64,16 @@ export default function MembersPage() {
       component: (
         <div className="flex flex-col md:flex-row gap-4 items-start">
           <UserContributionChart />
-          <UserActivityLogs />
+          <UserActivityLogs
+            fetchLogs={fetchLogs}
+            logs={logs}
+            isLoading={isLoading}
+            pagination={pagination}
+          />
         </div>
       ),
     },
   ];
-
-  const onTabClick = (key: string) => {
-    router.push(`?tab=${key}`);
-  };
 
   return (
     <>

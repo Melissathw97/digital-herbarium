@@ -8,20 +8,22 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Label, Pie, PieChart } from "recharts";
 import { ChartDataWithColor } from "@/types/chart";
 import { UserActivitySummary } from "@/types/user";
-import { usePathname, useSearchParams } from "next/navigation";
 import { addLimeColors, generateChartConfig } from "@/utils/chartUtils";
 import {
   getUserProfile,
   getUserActivitySummary,
 } from "@/services/userServices";
 
-export default function UserContributionChart() {
+export default function UserContributionChart({
+  profileId,
+}: {
+  profileId: string;
+}) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const profileIdParam = searchParams.get("profileId");
 
   const [isLoading, setIsLoading] = useState(true);
   const [topFamily, setTopFamily] = useState("");
@@ -50,9 +52,9 @@ export default function UserContributionChart() {
 
       setIsLoading(true);
 
-      if (profileData?.profileId || profileIdParam) {
+      if (profileData?.profileId || profileId) {
         const response = await getUserActivitySummary(
-          (profileData?.profileId ?? profileIdParam) as string
+          (profileData?.profileId ?? profileId) as string
         );
         setTotalHerbarium(response.totalHerbarium);
         setTopFamily(response.topFamily);

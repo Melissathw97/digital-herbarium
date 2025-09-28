@@ -69,6 +69,7 @@ export async function updateSession(request: NextRequest) {
     Pages.MEMBERS,
     Pages.PROFILE,
     Pages.APPROVALS,
+    Pages.AUDIT_LOGS,
   ];
 
   const pathname = request.nextUrl.pathname;

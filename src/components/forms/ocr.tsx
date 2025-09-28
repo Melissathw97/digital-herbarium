@@ -132,7 +132,7 @@ export default function OcrForm({
         options
       );
     } else {
-      console.log("Geolocation is not supported by this browser.");
+      toast.error("Geolocation is not supported by this browser.");
     }
   };
 
@@ -162,17 +162,17 @@ export default function OcrForm({
 
     // For update
     if (update)
-      updatePlant({
-        ...payload,
+      updatePlantImage({
         id: initialValues?.id || "",
-        actionType: ActionType.OCR,
+        image: selectedFile,
       })
-        .then((data) => {
-          updatePlantImage({
+        .then(() => {
+          updatePlant({
+            ...payload,
             id: initialValues?.id || "",
-            image: selectedFile,
+            actionType: ActionType.OCR,
           })
-            .then(() => {
+            .then((data) => {
               toast.success("Plant updated successfully");
               router.replace(`${Pages.PLANTS}/${data.id}`);
             })
