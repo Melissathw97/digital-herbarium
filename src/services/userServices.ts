@@ -273,10 +273,14 @@ export function getActivityLogs({
   page,
   limit,
   profileId,
+  search,
+  action,
 }: {
   page?: number;
   limit?: number;
   profileId?: string;
+  search?: string;
+  action?: string;
 }): Promise<{
   data: Log[];
   pagination: Pagination;
@@ -284,7 +288,7 @@ export function getActivityLogs({
   const supabase = createClient();
   return supabase.functions
     .invoke(
-      `activity-logs?profileid=${profileId}&page=${page}&limit=${limit}`,
+      `activity-logs?profileid=${profileId}&page=${page}&limit=${limit}&search=${search}&action=${action}`,
       {
         method: "GET",
       }

@@ -35,11 +35,15 @@ export default function MemberDetailsPage() {
     try {
       const page = searchParams.get("page");
       const limit = searchParams.get("limit");
+      const search = searchParams.get("search");
+      const action = searchParams.get("action");
 
       const queryParams = {
         profileId: user?.profileId || "",
         page: Number(page) || 1,
         limit: Number(limit) || 10,
+        search: search || "",
+        action: action || "",
       };
 
       const response = await getActivityLogs(queryParams);

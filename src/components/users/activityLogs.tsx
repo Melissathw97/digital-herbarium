@@ -119,6 +119,12 @@ export default function ActivityLogs({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
+  useEffect(() => {
+    const action = searchParams.get("action") || "";
+    setAction(action);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <div className="bg-white shadow-sm rounded-sm px-4 py-5 border flex flex-col gap-5 w-full overflow-hidden">
