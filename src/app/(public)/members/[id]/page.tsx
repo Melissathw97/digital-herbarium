@@ -89,8 +89,8 @@ export default function MemberDetailsPage() {
           <Spinner />
         </div>
       ) : !isUserLoading && !user ? (
-        <div className="bg-white shadow-sm rounded-sm px-4 py-8 border flex flex-col gap-5 w-full overflow-hidden">
-          <p className="text-gray-500 text-center">User not found</p>
+        <div className="bg-white shadow-sm rounded-sm px-4 py-8 border flex flex-col gap-5 w-full">
+          <p className="text-center text-gray-600 text-xs">No user found.</p>
         </div>
       ) : (
         <div className="flex flex-col md:flex-row gap-4 items-start">

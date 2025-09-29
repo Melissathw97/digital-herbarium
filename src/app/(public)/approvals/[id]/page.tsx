@@ -173,7 +173,7 @@ export default function ApprovalDetailsPage() {
           <Spinner className="my-9" />
         ) : !plant ? (
           <p className="text-center text-gray-600 text-xs py-10">
-            No plant data found. Please try again later.
+            No plant data found.
           </p>
         ) : (
           <div className="flex w-full gap-6 items-start">
