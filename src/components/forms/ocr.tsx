@@ -575,6 +575,7 @@ export default function OcrForm({
                       type="button"
                       onClick={() => setIsRejectModalOpen(!isRejectModalOpen)}
                       variant="outline_destructive"
+                      disabled={isSubmitButtonDisabled}
                     >
                       Reject
                     </Button>

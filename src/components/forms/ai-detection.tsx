@@ -866,6 +866,7 @@ export default function AiDetectionForm({
                               setIsRejectModalOpen(!isRejectModalOpen)
                             }
                             variant="outline_destructive"
+                            disabled={isSubmitButtonDisabled}
                           >
                             Reject
                           </Button>
