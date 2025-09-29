@@ -64,6 +64,7 @@ export default function OrganizationDetailsPage() {
 
   useEffect(() => {
     fetchOrganization();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id, searchParams]);
 
   if (!initialValues) return <Spinner className="my-6" />;

@@ -22,6 +22,7 @@ export async function getSummary(): Promise<Summary> {
         total: data.total_records,
         totalOcr: data.total_collections_ocr,
         totalAi: data.total_collections_ai,
+        totalImported: data.total_collections_herbarium,
         averageConfidence: data.average_confidence,
       };
     });

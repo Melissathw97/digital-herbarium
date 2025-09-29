@@ -59,9 +59,9 @@ export class TokenStorage {
   static setToken(
     accessToken: string,
     expiresAt?: number,
-    userRole?: string,
-    organization?: string | null,
-    organizationId?: string | null
+    userRole?: string
+    // organization?: string | null,
+    // organizationId?: string | null
   ): void {
     safeStorage.set(KEYS.TOKEN, accessToken);
 

@@ -208,7 +208,9 @@ export default function ApprovalDetailsPage() {
                     </p>
                     <div className="mb-4 lg:mb-0">
                       {label === "Status" && value ? (
-                        <p className={getStatusColor(value)}>{value}</p>
+                        <p className={getStatusColor(value as string)}>
+                          {value}
+                        </p>
                       ) : label === "Species" ? (
                         <em>{value || "-"}</em>
                       ) : label === "Reason" ? (

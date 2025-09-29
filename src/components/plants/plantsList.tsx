@@ -96,7 +96,9 @@ export default function PlantsList() {
     router.push(`?${currentParams.toString()}`);
   };
 
-  const headers: { label: string; dataKey: keyof Plant }[] = useMemo(() => {
+  type PlantDataKey = Exclude<keyof Plant, "organization">;
+
+  const headers: { label: string; dataKey: PlantDataKey }[] = useMemo(() => {
     return [
       { label: "Date Collected", dataKey: "date" },
       { label: "Action Type", dataKey: "actionType" },
@@ -110,9 +112,9 @@ export default function PlantsList() {
       { label: "Collector", dataKey: "collector" },
       ...(isExpert || isAdmin
         ? [
-            { label: "State", dataKey: "state" as keyof Plant },
-            { label: "District", dataKey: "district" as keyof Plant },
-            { label: "Location", dataKey: "location" as keyof Plant },
+            { label: "State", dataKey: "state" as PlantDataKey },
+            { label: "District", dataKey: "district" as PlantDataKey },
+            { label: "Location", dataKey: "location" as PlantDataKey },
           ]
         : []),
     ];
@@ -478,7 +480,7 @@ export default function PlantsList() {
                         onChange={() => onCheckboxClick(plant)}
                       />
                     </td>
-                    {headers.map(({ dataKey }: { dataKey: string }) => (
+                    {headers.map(({ dataKey }: { dataKey: PlantDataKey }) => (
                       <td
                         key={dataKey}
                         className="p-4 whitespace-nowrap max-w-[220px] overflow-hidden overflow-ellipsis"

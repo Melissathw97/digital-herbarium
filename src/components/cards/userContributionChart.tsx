@@ -21,7 +21,7 @@ import {
 export default function UserContributionChart({
   profileId,
 }: {
-  profileId: string;
+  profileId?: string;
 }) {
   const pathname = usePathname();
 

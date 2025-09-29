@@ -12,7 +12,7 @@ import { getActivityLogs, getUserProfile } from "@/services/userServices";
 import UserContributionChart from "@/components/cards/userContributionChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function MembersPage() {
+function TabbedContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab");
@@ -76,31 +76,35 @@ export default function MembersPage() {
   ];
 
   return (
+    <Tabs defaultValue={tab || "account-info"}>
+      <TabsList className="w-full p-0 bg-transparent justify-start border-b rounded-none">
+        {tabs.map(({ key, label }) => (
+          <TabsTrigger
+            key={key}
+            value={key}
+            onClick={() => onTabClick(key)}
+            className="flex-0 px-4 rounded-none data-[state=active]:bg-transparent h-full data-[state=active]:shadow-none data-[state=active]:text-lime-700 border-b-2 border-transparent data-[state=active]:border-b-lime-700"
+          >
+            {label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+      {tabs.map(({ key, component }) => (
+        <TabsContent key={key} value={key}>
+          {component}
+        </TabsContent>
+      ))}
+    </Tabs>
+  );
+}
+
+export default function MembersPage() {
+  return (
     <>
       <h1>My Profile</h1>
 
       <Suspense fallback={<Spinner className="my-5" />}>
-        <div>
-          <Tabs defaultValue={tab || "account-info"}>
-            <TabsList className="w-full p-0 bg-transparent justify-start border-b rounded-none">
-              {tabs.map(({ key, label }) => (
-                <TabsTrigger
-                  key={key}
-                  value={key}
-                  onClick={() => onTabClick(key)}
-                  className="flex-0 px-4 rounded-none data-[state=active]:bg-transparent h-full data-[state=active]:shadow-none data-[state=active]:text-lime-700 border-b-2 border-transparent data-[state=active]:border-b-lime-700"
-                >
-                  {label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {tabs.map(({ key, component }) => (
-              <TabsContent key={key} value={key}>
-                {component}
-              </TabsContent>
-            ))}
-          </Tabs>
-        </div>
+        <TabbedContent />
       </Suspense>
     </>
   );

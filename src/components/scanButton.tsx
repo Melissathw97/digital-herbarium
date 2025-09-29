@@ -55,8 +55,8 @@ export default function ScanButton({
         setIsLoading(false);
       };
       reader.readAsDataURL(croppedImage);
-    } catch (error: any) {
-      toast.error(error?.message || error || "");
+    } catch (error) {
+      toast.error(error instanceof Error ? error?.message : "");
       console.error("OCR Error:", error);
       setIsLoading(false);
     }

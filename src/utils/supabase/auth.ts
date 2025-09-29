@@ -12,29 +12,29 @@ const extractRole = (session: Session | null): string => {
   );
 };
 
-const extractOrganization = (session: Session | null): string | null => {
-  return (
-    session?.user?.app_metadata?.organization ||
-    null
-  );
-};
+// const extractOrganization = (session: Session | null): string | null => {
+//   return session?.user?.app_metadata?.organization || null;
+// };
 
-const extractOrganizationId = (session: Session | null): string | null => {
-  return (
-    session?.user?.app_metadata?.organization_id ||
-    null
-  );
-};
+// const extractOrganizationId = (session: Session | null): string | null => {
+//   return session?.user?.app_metadata?.organization_id || null;
+// };
 
 const handleTokenStorage = (session: Session): void => {
   if (!session) return;
 
   const { access_token, expires_at } = session;
   const userRole = extractRole(session);
-  const organization = extractOrganization(session);
-  const organizationId = extractOrganizationId(session);
+  // const organization = extractOrganization(session);
+  // const organizationId = extractOrganizationId(session);
 
-  TokenStorage.setToken(access_token, expires_at, userRole, organization, organizationId);
+  TokenStorage.setToken(
+    access_token,
+    expires_at,
+    userRole
+    // organization,
+    // organizationId
+  );
 };
 
 export const getCurrentUserOrganization = async (): Promise<string | null> => {
@@ -50,10 +50,12 @@ export const getCurrentUserOrganization = async (): Promise<string | null> => {
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select(`
+      .select(
+        `
         organization_id,
         organizations!inner(name)
-      `)
+      `
+      )
       .eq("user_id", user.id)
       .single();
 
@@ -63,7 +65,9 @@ export const getCurrentUserOrganization = async (): Promise<string | null> => {
   }
 };
 
-export const getCurrentUserOrganizationId = async (): Promise<string | null> => {
+export const getCurrentUserOrganizationId = async (): Promise<
+  string | null
+> => {
   try {
     const organizationIdFromToken = TokenStorage.getOrganizationId();
     if (organizationIdFromToken) return organizationIdFromToken;
@@ -161,13 +165,13 @@ export const getCurrentUserInfo = async () => {
   const [role, organization, organizationId] = await Promise.all([
     getCurrentUserRole(),
     getCurrentUserOrganization(),
-    getCurrentUserOrganizationId()
+    getCurrentUserOrganizationId(),
   ]);
 
   return {
     role,
     organization,
-    organizationId
+    organizationId,
   };
 };
 

@@ -579,7 +579,7 @@ export default function AiDetectionForm({
                     <div className="grid lg:grid-cols-2 gap-5">
                       {aiResult.map((result) => (
                         <AiResultCard
-                          key={`${result.family} ${result.species} ${result.confidence}`}
+                          key={`${result.family} ${result.species} ${result.confidenceLevel}`}
                           result={result}
                           isSelected={
                             result.family === data.family.value &&

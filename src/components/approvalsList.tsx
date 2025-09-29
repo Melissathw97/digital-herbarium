@@ -31,7 +31,9 @@ export default function ApprovalsList() {
   const [selectedPlant, setSelectedPlant] = useState<Plant>();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const headers: { label: string; dataKey: keyof Plant }[] = [
+  type PlantDataKey = Exclude<keyof Plant, "organization">;
+
+  const headers: { label: string; dataKey: PlantDataKey }[] = [
     { label: "Date Collected", dataKey: "date" },
     { label: "Action Type", dataKey: "actionType" },
     { label: "Status", dataKey: "status" },
@@ -44,9 +46,9 @@ export default function ApprovalsList() {
     { label: "Collector", dataKey: "collector" },
     ...(isExpert || isAdmin
       ? [
-          { label: "State", dataKey: "state" as keyof Plant },
-          { label: "District", dataKey: "district" as keyof Plant },
-          { label: "Location", dataKey: "location" as keyof Plant },
+          { label: "State", dataKey: "state" as PlantDataKey },
+          { label: "District", dataKey: "district" as PlantDataKey },
+          { label: "Location", dataKey: "location" as PlantDataKey },
         ]
       : []),
   ];
@@ -150,7 +152,7 @@ export default function ApprovalsList() {
                   onClick={() => onEditClick(plant)}
                   className={`${index % 2 ? "bg-gray-100 border-y" : ""} cursor-pointer`}
                 >
-                  {headers.map(({ dataKey }: { dataKey: string }) => (
+                  {headers.map(({ dataKey }: { dataKey: PlantDataKey }) => (
                     <td
                       key={dataKey}
                       className="p-4 whitespace-nowrap max-w-[220px] overflow-hidden overflow-ellipsis"

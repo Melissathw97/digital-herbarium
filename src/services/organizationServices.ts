@@ -153,7 +153,7 @@ export async function updateOrganization(
 ): Promise<Organization> {
   const supabase = createClient();
 
-  let payload: Record<string, any> = {
+  let payload: Record<string, string | File> = {
     nid: organizationPayload.nid,
     name: organizationPayload.name,
   };

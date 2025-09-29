@@ -59,10 +59,10 @@ export default function PublishedList() {
       ispublished: true,
       page: Number(page) || 1,
       limit: Number(limit) || 12,
-      organization: organization,
-      family: family,
-      action_type: action,
-      search: search,
+      organization: organization ?? undefined,
+      family: family ?? undefined,
+      action_type: action ?? undefined,
+      search: search ?? undefined,
     };
 
     getPlants(queryParams)

@@ -261,7 +261,9 @@ export async function postPlantOCR({
   const formData = new FormData();
 
   Object.entries(payload).forEach(([key, value]) => {
-    formData.append(key, value);
+    if (value !== undefined && value !== null) {
+      formData.append(key, value);
+    }
   });
 
   return supabase.functions
