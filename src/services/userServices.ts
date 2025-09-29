@@ -269,13 +269,7 @@ export function getUserActivitySummary(
     });
 }
 
-export function getActivityLogs({
-  page,
-  limit,
-  profileId,
-  search,
-  action,
-}: {
+export function getActivityLogs(queryParams: {
   page?: number;
   limit?: number;
   profileId?: string;
@@ -286,13 +280,23 @@ export function getActivityLogs({
   pagination: Pagination;
 }> {
   const supabase = createClient();
-  return supabase.functions
-    .invoke(
-      `activity-logs?profileid=${profileId}&page=${page}&limit=${limit}&search=${search}&action=${action}`,
-      {
-        method: "GET",
+
+  const params = new URLSearchParams();
+
+  Object.entries(queryParams).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      if (key === "profileId") {
+        params.append("profileid", String(value));
+      } else {
+        params.append(key, String(value));
       }
-    )
+    }
+  });
+
+  return supabase.functions
+    .invoke(`activity-logs?${params.toString()}`, {
+      method: "GET",
+    })
     .then(({ data, error }) => {
       if (error) throw error;
 
