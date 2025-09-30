@@ -89,7 +89,7 @@ export function getUsers({
 }> {
   let path = `user-data?page=${page}&limit=${limit}`;
   if (search) path += `&search=${search}`;
-  if (role) path += `&role=${role}`;
+  if (role && role !== "all") path += `&role=${role}`;
 
   const supabase = createClient();
 

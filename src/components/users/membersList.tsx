@@ -212,6 +212,10 @@ export default function MembersList() {
         <p className="text-center text-gray-600 text-xs py-6">
           Unable to fetch users. Please try again later.
         </p>
+      ) : users.length === 0 ? (
+        <p className="text-center text-gray-600 text-xs py-6">
+          No users found.
+        </p>
       ) : (
         <>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
