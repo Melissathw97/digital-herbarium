@@ -62,14 +62,13 @@ export function updateUserProfile({
     })
     .then(({ data }) => {
       return {
-        id: data?.user_id || "",
-        firstName: data?.first_name,
-        lastName: data?.last_name,
-        expertise: data?.expertise,
-        yearsOfExperience: data?.year_of_experience,
-        role: data?.role || "",
-        email: data?.email,
-        joinedAt: data?.created_at || "",
+        firstName: data?.data.first_name,
+        lastName: data?.data.last_name,
+        expertise: data?.data.expertise,
+        yearsOfExperience: data?.data.year_of_experience,
+        role: data?.data.role || "",
+        email: data?.data.email,
+        joinedAt: data?.data.created_at || "",
       };
     });
 }

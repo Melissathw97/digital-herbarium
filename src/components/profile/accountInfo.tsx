@@ -129,9 +129,9 @@ export default function AccountInfo() {
             expertise,
             yearsOfExperience,
           })
-            .then(() => {
+            .then((response) => {
               setIsSubmitting(false);
-              fetchUserProfile();
+              setUser({ ...user, ...response });
               toast.success("Profile updated successfully");
             })
             .catch((error) => {
@@ -151,9 +151,9 @@ export default function AccountInfo() {
         expertise,
         yearsOfExperience,
       })
-        .then(() => {
+        .then((response) => {
           setIsSubmitting(false);
-          fetchUserProfile();
+          setUser({ ...user, ...response });
           toast.success("Profile updated successfully");
         })
         .catch((error) => {
