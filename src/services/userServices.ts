@@ -62,6 +62,8 @@ export function updateUserProfile({
     })
     .then(({ data }) => {
       return {
+        id: data?.data.user_id || "",           
+        profileId: data?.data.profile_id || "",
         firstName: data?.data.first_name,
         lastName: data?.data.last_name,
         expertise: data?.data.expertise,
@@ -175,6 +177,7 @@ export function updateUserRole({
 
       return {
         id: data.data.user_id,
+        profileId: data.data.profile_id || "", 
         firstName: data.data.first_name,
         lastName: data.data.last_name,
         expertise: data.data.expertise,
@@ -210,6 +213,7 @@ export function updateUserOrganization({
 
       return {
         id: data.data.user_id,
+        profileId: data.data.profile_id || "", 
         firstName: data.data.first_name,
         lastName: data.data.last_name,
         expertise: data.data.expertise,
