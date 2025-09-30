@@ -21,12 +21,14 @@ import AuditDescription from "../auditDescription";
 import formatDateTime from "@/utils/formatDateTime";
 
 export default function ActivityLogs({
+  type = "plants",
   fetchLogs,
   logs = [],
   isLoading,
   pagination,
   link,
 }: {
+  type?: string;
   fetchLogs: () => void;
   logs: Log[];
   isLoading: boolean;
@@ -43,8 +45,12 @@ export default function ActivityLogs({
     { label: "Add", value: "add" },
     { label: "Update", value: "update" },
     { label: "Delete", value: "delete" },
-    { label: "Import", value: "import" },
-    { label: "Export", value: "export" },
+    ...(type === "plants"
+      ? [
+          { label: "Import", value: "import" },
+          { label: "Export", value: "export" },
+        ]
+      : []),
   ];
 
   const onActionSelect = (value: string) => {

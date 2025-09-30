@@ -97,6 +97,7 @@ function TabbedContent() {
       label: "Users",
       component: (
         <ActivityLogs
+          type="users"
           fetchLogs={fetchUserLogs}
           logs={logs}
           isLoading={isLoading}
