@@ -31,4 +31,5 @@ export interface Month {
   month: number;
   OCR: number;
   "AI Detection": number;
+  Herbarium: number;
 }

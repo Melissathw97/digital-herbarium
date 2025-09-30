@@ -22,6 +22,10 @@ const chartConfig = {
     label: "AI",
     color: "var(--chart-1)",
   },
+  herbarium: {
+    label: "Herbarium",
+    color: "var(--chart-12)",
+  },
 } satisfies ChartConfig;
 
 const months = [
@@ -47,9 +51,10 @@ export default function MonthChart() {
     if (!data?.months) return [];
 
     return data?.months.map((month, index) => ({
-      month: months[index + 1],
+      month: months[index],
       ocr: month["OCR"],
       ai: month["AI Detection"],
+      herbarium: month["Herbarium"],
     }));
   }, [data]);
 
@@ -90,6 +95,11 @@ export default function MonthChart() {
               <ChartLegend content={<ChartLegendContent />} />
               <Bar dataKey="ocr" fill="var(--color-ocr)" radius={4} />
               <Bar dataKey="ai" fill="var(--color-ai)" radius={4} />
+              <Bar
+                dataKey="herbarium"
+                fill="var(--color-herbarium)"
+                radius={4}
+              />
             </BarChart>
           </ChartContainer>
         )}
