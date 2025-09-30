@@ -72,7 +72,7 @@ export default function AuditDescription({ log }: { log: Log }) {
                     return orderA - orderB;
                   })
                   .map(({ field, from, to }) => {
-                    const fieldName = field.replace("_", " ");
+                    const fieldName = field.replace(/_/g, " ");
 
                     if (field === "role") {
                       return (
