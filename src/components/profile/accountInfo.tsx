@@ -144,6 +144,22 @@ export default function AccountInfo() {
           toast.error(error);
           return;
         });
+    } else {
+      updateUserProfile({
+        firstName,
+        lastName,
+        expertise,
+        yearsOfExperience,
+      })
+        .then(() => {
+          setIsSubmitting(false);
+          fetchUserProfile();
+          toast.success("Profile updated successfully");
+        })
+        .catch((error) => {
+          toast.error(error);
+          setIsSubmitting(false);
+        });
     }
   };
 
