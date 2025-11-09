@@ -6,6 +6,16 @@ import PlantsList from "@/components/plants/plantsList";
 import { useRouter, useSearchParams } from "next/navigation";
 import PublishedList from "@/components/plants/publishedList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { Pages } from "@/types/pages";
+import { Import, ScanText, Sparkles } from "lucide-react";
+import { useAuth } from "@/utils/supabase/tokenStorage";
 
 function TabbedContent() {
   const router = useRouter();
@@ -45,9 +55,40 @@ function TabbedContent() {
 }
 
 export default function PlantsListPage() {
+  const router = useRouter();
+  const { isMember } = useAuth();
   return (
     <>
-      <h1>Plant Collection</h1>
+      <div className="flex justify-between">
+        <h1>Plant Collection</h1>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="sm" variant="secondary">Add Plant</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={(e) => {
+              e.stopPropagation();
+              router.push(`${Pages.PLANTS_NEW_OCR}?action_type=ocr`)
+            }}>
+              <ScanText /> Scan with OCR
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={(e) => {
+              e.stopPropagation();
+              router.push(`${Pages.PLANTS_NEW_AI}?action_type=ai-detection`)
+            }}>
+              <Sparkles /> AI Detection
+            </DropdownMenuItem>
+            {!isMember && (
+              <DropdownMenuItem onClick={(e) => {
+                e.stopPropagation();
+                router.push(`${Pages.PLANTS_NEW_IMPORT}`)
+              }}>
+                <Import /> Import Data
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       <Suspense fallback={<Spinner className="my-5" />}>
         <TabbedContent />
