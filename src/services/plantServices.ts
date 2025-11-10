@@ -198,7 +198,7 @@ export async function postOCR({ image }: { image: string }) {
   const response = await fetch("/api/ocr", {
     method: "POST",
     headers: {
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJPQ1JfVVNFUl8wMDEiLCJpZCI6IjY4ZDNhMDFiNDg2YmJiZWQ3ZmRiOTg2NiIsInJvbGUiOjAsImV4cCI6MTc2MTM2MTkwOX0.WvJm154Pbb_oeA0YwmhHYw-MibQb5GRucNYYMUoWa2g`,
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJPQ1JfVVNFUl8wMDIiLCJpZCI6IjY4ZTM5OGUwZmI4MzQ1MzAxNWVjNzdlMCIsInJvbGUiOjAsImV4cCI6MjA3ODE1MzEwNX0.EkADtxiwNlCWBKPq9_mKBS5GDv7A3qG_dx67UdqGy3k`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({

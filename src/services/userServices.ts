@@ -114,7 +114,7 @@ export function getUsers({
             id: user.organization?.id,
             nid: user.organization?.nid,
             name: user.organization?.name,
-            colourCode: user.organization?.colour_code,
+            colourCode: user.organization?.color_code,
           },
           joinedAt: user.created_at,
         })),

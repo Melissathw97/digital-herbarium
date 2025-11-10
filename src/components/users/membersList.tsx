@@ -15,6 +15,7 @@ import UserDeleteModal from "@/components/modals/userDelete";
 import { getUserProfile, getUsers } from "@/services/userServices";
 import UserRoleUpdateModal from "@/components/modals/userRoleUpdate";
 import UserBulkDeleteModal from "@/components/modals/userBulkDelete";
+import UserOrganizationUpdateModal from "@/components/modals/userOrganizationUpdate";
 import {
   Select,
   SelectContent,
@@ -44,6 +45,7 @@ export default function MembersList() {
   const [selectedUser, setSelectedUser] = useState<User>();
   const [selectedUsers, setSelectedUsers] = useState<Set<User>>(new Set());
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isUpdateOrganizationModalOpen, setIsUpdateOrganizationModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
 
@@ -117,6 +119,11 @@ export default function MembersList() {
   const onEditClick = (user: User) => {
     setSelectedUser(user);
     setIsUpdateModalOpen(true);
+  };
+
+  const onEditOrganizationClick = (user: User) => {
+    setSelectedUser(user);
+    setIsUpdateOrganizationModalOpen(true);
   };
 
   const onDeleteClick = (user: User) => {
@@ -231,6 +238,7 @@ export default function MembersList() {
                 onEdit={
                   hasEditAccess(user) ? () => onEditClick(user) : undefined
                 }
+                onEditOrganization={isSuperAdmin && user.role !== UserRole.SUPER_ADMIN ? () => onEditOrganizationClick(user) : undefined}
                 onDelete={
                   hasEditAccess(user) ? () => onDeleteClick(user) : undefined
                 }
@@ -249,6 +257,13 @@ export default function MembersList() {
         user={selectedUser}
         open={isUpdateModalOpen}
         toggle={() => setIsUpdateModalOpen(!isUpdateModalOpen)}
+        onUpdateSuccess={fetchUsers}
+      />
+
+      <UserOrganizationUpdateModal
+        user={selectedUser}
+        open={isUpdateOrganizationModalOpen}
+        toggle={() => { setIsUpdateOrganizationModalOpen(!isUpdateOrganizationModalOpen); setSelectedUser(undefined) }}
         onUpdateSuccess={fetchUsers}
       />
 

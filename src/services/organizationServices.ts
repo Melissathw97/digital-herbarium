@@ -69,16 +69,19 @@ export async function getOrganizationById(
     search,
     page,
     limit,
+    role,
   }: {
     search?: string;
     page?: number;
     limit?: number;
+    role?: string;
   }
 ): Promise<{
   data: Organization;
 }> {
   let path = `organization?id=${id}&page=${page}&limit=${limit}`;
   if (search) path += `&search=${search}`;
+  if (role) path += `&role=${role}`;
 
   const supabase = createClient();
 
@@ -95,7 +98,7 @@ export async function getOrganizationById(
           nid: data.nid,
           name: data.name,
           imagePath: data.image_path,
-          colorCode: data.color_code,
+          colorCode: data.colour_code,
           imageUrl: data.image_url,
           users: {
             data: data.users.data.map((user: UserApi) => ({
@@ -105,7 +108,10 @@ export async function getOrganizationById(
               role: user.role,
               email: user.email,
               joinedAt: user.created_at,
-              organizations: user.organizations,
+              organizations: {
+                ...user.organizations,
+                colourCode: data.colour_code,  
+              },
             })),
             pagination: data.users.pagination,
           },

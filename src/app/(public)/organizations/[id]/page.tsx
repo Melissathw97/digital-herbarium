@@ -39,10 +39,14 @@ export default function OrganizationDetailsPage() {
 
     const page = searchParams.get("page");
     const limit = searchParams.get("limit");
+    const role = searchParams.get("role");
+    const search = searchParams.get("search");
 
     const queryParams = {
       page: Number(page) || 1,
       limit: Number(limit) || 10,
+      role: role && role !== 'all' ? role : "",
+      search: search || "",
     };
 
     getOrganizationById(params.id?.toString() || "", queryParams)

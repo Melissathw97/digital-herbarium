@@ -19,6 +19,9 @@ import {
 } from "../ui/select";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getUserProfile } from "@/services/userServices";
+import { Input } from "../ui/input";
+import { Search } from "lucide-react";
+import { useDebouncedCallback } from "use-debounce";
 
 type OrganizationUserProps = {
   users: User[];
@@ -36,10 +39,11 @@ export default function OrganizationUserList({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [role, setRole] = useState("all");
+  const [role, setRole] = useState(searchParams.get("role") || "all");
   const [currentUser, setCurrentUser] = useState<User>();
   const [selectedUser, setSelectedUser] = useState<User>();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [search, setSearch] = useState(searchParams.get("search") || "");
 
   const headers: {
     label: string;
@@ -93,6 +97,20 @@ export default function OrganizationUserList({
     setIsUpdateModalOpen(true);
   };
 
+  const onSearchChange = useDebouncedCallback((value: string) => {
+    const currentParams = new URLSearchParams(searchParams.toString());
+    
+    if (value) {
+      currentParams.set("search", value);
+    } else {
+      currentParams.delete("search");
+    }
+    
+    currentParams.set("page", "1");
+    
+    router.push(`?${currentParams.toString()}`);
+  }, 500);
+
   const getCurrentUser = async () => {
     const current = await getUserProfile();
     setCurrentUser(current);
@@ -133,6 +151,21 @@ export default function OrganizationUserList({
               </SelectGroup>
             </SelectContent>
           </Select>
+
+          {/* Search Input */}
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 size-4 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search by name or email..."
+              defaultValue={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                onSearchChange(e.target.value);
+              }}
+              className="pl-9"
+            />
+          </div>
         </div>
 
         {/* Table */}

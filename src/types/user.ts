@@ -34,7 +34,7 @@ export interface UserApi {
     id: string;
     nid: string;
     name: string;
-    colour_code: string;
+    color_code: string;
   };
   organizations?: {
     id: string;

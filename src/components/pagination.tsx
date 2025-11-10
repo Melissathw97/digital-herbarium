@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { type Pagination } from "@/types/plant";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 export default function Pagination({
   pagination,
@@ -67,9 +67,22 @@ export default function Pagination({
       </p>
       {pages.length > 0 && (
         <div className="border rounded-sm flex items-center gap-1 px-1 py-1 bg-white shadow-sm">
-          <button className="w-6 h-6 grid place-items-center hover:bg-gray-100 rounded-xs">
+
+          <button
+            onClick={() => onPageClick(1)}
+            disabled={pagination.page === 1}
+            className="w-6 h-6 grid place-items-center hover:bg-gray-100 rounded-xs disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          >
+            <ChevronsLeft className="size-3" />
+          </button>
+          <button
+            onClick={() => onPageClick(pagination.page - 1)}
+            disabled={pagination.page === 1}
+            className="w-6 h-6 grid place-items-center hover:bg-gray-100 rounded-xs disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          >
             <ChevronLeft className="size-3" />
           </button>
+
           {pages.map((page, index) =>
             page === "ellipsis" ? (
               <span
@@ -88,9 +101,22 @@ export default function Pagination({
               </button>
             )
           )}
-          <button className="w-6 h-6 grid place-items-center hover:bg-gray-100 rounded-xs">
+
+          <button
+            onClick={() => onPageClick(pagination.page + 1)}
+            disabled={pagination.page === pagination.totalPages}
+            className="w-6 h-6 grid place-items-center hover:bg-gray-100 rounded-xs disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          >
             <ChevronRight className="size-3" />
           </button>
+          <button
+            onClick={() => onPageClick(pagination.totalPages)}
+            disabled={pagination.page === pagination.totalPages}
+            className="w-6 h-6 grid place-items-center hover:bg-gray-100 rounded-xs disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          >
+            <ChevronsRight className="size-3" />
+          </button>
+
         </div>
       )}
     </div>

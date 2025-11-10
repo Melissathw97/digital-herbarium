@@ -62,8 +62,10 @@ export default function PlantsListPage() {
       <div className="flex justify-between">
         <h1>Plant Collection</h1>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button size="sm" variant="secondary">Add Plant</Button>
+          <DropdownMenuTrigger className="outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] rounded-sm">
+            <div className="bg-lime-800 text-white shadow-xs hover:bg-lime-900 inline-flex items-center justify-center font-semibold transition-all cursor-pointer h-8 rounded-sm gap-1.5 px-3 text-xs">
+              Add Plant
+            </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={(e) => {

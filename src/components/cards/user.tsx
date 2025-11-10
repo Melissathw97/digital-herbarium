@@ -24,6 +24,7 @@ export default function UserCard({
   currentUser,
   isSelected,
   onEdit,
+  onEditOrganization,
   onDelete,
   onSelect,
   onViewDetails,
@@ -33,6 +34,7 @@ export default function UserCard({
   currentUser?: boolean;
   isSelected?: boolean;
   onEdit?: () => void;
+  onEditOrganization?: () => void;
   onDelete?: () => void;
   onSelect?: () => void;
   onViewDetails?: () => void;
@@ -40,7 +42,7 @@ export default function UserCard({
 }) {
   const fullName = user.firstName + " " + user.lastName;
   const allowSelect = onSelect && !currentUser;
-  const showActionDropdown = onViewDetails || onEdit || onDelete;
+  const showActionDropdown = onViewDetails || onEdit || onDelete || onEditOrganization;
 
   return (
     <div
@@ -51,7 +53,7 @@ export default function UserCard({
         <div
           className="h-10 w-10 rounded-full grid place-items-center font-semibold text-gray-600 uppercase shrink-0"
           style={{
-            backgroundColor: user?.organization?.colourCode || "lightgrey",
+            backgroundColor: user?.organization?.colourCode || user?.organizations?.colourCode || "lightgrey",
           }}
         >
           {user.firstName.substring(0, 1)}
@@ -104,6 +106,14 @@ export default function UserCard({
                         }}
                       >
                         <Pen className="!w-3.5 !h-3.5" /> Edit Role
+                      </DropdownMenuItem>
+                    )}
+                    {onEditOrganization && (
+                      <DropdownMenuItem className="text-xs" onClick={(e) => {
+                        e.stopPropagation();
+                        onEditOrganization();
+                      }}>
+                        <Building2 className="!w-3.5 !h-3.5" /> Edit Organization
                       </DropdownMenuItem>
                     )}
                     {onDelete && (
