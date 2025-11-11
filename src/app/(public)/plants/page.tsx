@@ -12,7 +12,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
 import { Pages } from "@/types/pages";
 import { Import, ScanText, Sparkles } from "lucide-react";
 import { useAuth } from "@/utils/supabase/tokenStorage";

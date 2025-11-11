@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { User } from "@/types/user";
-import { Pages } from "@/types/pages";
 import Badge from "@/components/badge";
 import Spinner from "@/components/spinner";
 import formatDate from "@/utils/formatDate";
@@ -18,10 +17,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   BookOpen,
   BookX,
-  Import,
   Pen,
-  ScanText,
-  Sparkles,
   Trash,
   X,
 } from "lucide-react";
@@ -29,12 +25,6 @@ import PlantDeleteModal from "@/components/modals/plantDelete";
 import { Plant, ActionType, Pagination, Status } from "@/types/plant";
 import { getPlants, postPlantsExport } from "@/services/plantServices";
 import PlantBulkDeleteModal from "@/components/modals/plantBulkDelete";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
 import {
   Select,
   SelectContent,
